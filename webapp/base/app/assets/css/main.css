@@ -1,0 +1,113 @@
+/* Point d'entrée CSS du socle. */
+
+@import 'tailwindcss';
+@import '@nuxt/ui';
+
+@import './fonts.css';
+@import './themes.css';
+@import './palette.css';
+@import './sizing.css';
+@import './transitions.css';
+/* Après `@nuxt/ui` et `themes.css` : ce fichier remappe les tokens du premier sur ceux du second. */
+@import './nuxt-ui.css';
+
+/* Dark mode piloté par la classe .dark (@nuxtjs/color-mode). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Une seule famille nette pour les titres et l’interface : Geist, auto-hébergée. */
+:root {
+  --font-title: 'Geist', Arial, sans-serif;
+  --font-ui: 'Geist', Arial, sans-serif;
+}
+
+/* Tokens brand → utilitaires Tailwind (bg-surface, text-muted, bg-accent…).
+   `inline` : l'utilitaire référence la variable, qui se remappe en .dark. */
+@theme inline {
+  --font-sans: var(--font-ui);
+  --font-display: var(--font-title);
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-soft: var(--surface-soft);
+  --color-dropdown: var(--dropdown-bg);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-alert: var(--alert);
+  --color-verdict-met: var(--verdict-met);
+  --color-verdict-missed: var(--verdict-missed);
+  --color-scrim: var(--scrim);
+}
+
+/* L'élévation, hors du bloc `inline` ci-dessus, et ce n'est PAS une inattention : `inline` demande à
+   Tailwind de résoudre la valeur à la compilation, or `--overlay-shadow` est déclaré dans
+   `themes.css`. Il n'y arrive pas et laisse tomber l'utilitaire — en silence, mesuré : la classe
+   n'était tout simplement pas générée. Sans `inline`, la référence survit dans `--tw-shadow`, donc
+   l'utilitaire existe ET suit la bascule sombre. */
+@theme {
+  --shadow-overlay: var(--overlay-shadow);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-title);
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+/* Primitive de mise en page (les briques visuelles sont des composants ui/). */
+@layer components {
+  .container {
+    @apply mx-auto max-w-4xl px-4;
+  }
+
+  /* Les deux gabarits de page. LECTURE : largeur contrainte, le vide latéral est voulu.
+     OUTIL : pleine largeur, bornée puis centrée (au-delà, l'espace devient marge). Les
+     gouttières horizontales grandissent avec l'écran via `--spacing-gutter`. */
+  .readable {
+    @apply mx-auto w-full max-w-readable;
+    padding-inline: var(--spacing-gutter);
+  }
+
+  .shell {
+    @apply mx-auto w-full max-w-shell;
+    padding-inline: var(--spacing-gutter);
+  }
+
+  /* Bloc de chargement générique (états squelette). Les tailles restent en utilitaires. */
+  .skeleton {
+    display: block;
+    flex: none;
+    border-radius: 0.375rem;
+    background: var(--surface-soft);
+  }
+
+  /* UiField habille le contrôle qu'on lui confie : sans cette règle, chaque formulaire répéterait
+     la même chaîne de classes sur chaque champ — autant d'occasions de diverger. */
+  .ui-field :is(input, select, textarea) {
+    @apply rounded-lg border border-line bg-dropdown px-3 py-2;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skeleton {
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+  }
+}
+@keyframes skeleton-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}

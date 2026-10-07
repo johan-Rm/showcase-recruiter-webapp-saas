@@ -1,0 +1,8 @@
+# Une transaction par test, annulée à la fin — au lieu du DROP/CREATE du schéma entier que Foundry
+# rejouait avant CHAQUE test (1,6 s pièce, six minutes sur la suite). Foundry détecte ce bundle et ne
+# recrée plus le schéma qu'une fois par exécution : même isolation, obtenue par ROLLBACK. Cf. API-015.
+when@test:
+    dama_doctrine_test:
+        enable_static_connection: true
+        enable_static_meta_data_cache: true
+        enable_static_query_cache: true

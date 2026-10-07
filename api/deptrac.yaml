@@ -1,0 +1,49 @@
+# Frontières d'architecture (cf. docs/showcase-recruiter-webapp-saas/content/2.architecture/api-structure.md).
+# Domain ne dépend jamais de ApiResource/State/HTTP ; Entity ne dépend que d'Enum.
+deptrac:
+  paths:
+    - ./src
+  layers:
+    - name: Command
+      collectors: [{ type: directory, value: src/Command/.* }]
+    - name: Controller
+      collectors: [{ type: directory, value: src/Controller/.* }]
+    - name: ApiResource
+      collectors: [{ type: directory, value: src/ApiResource/.* }]
+    - name: State
+      collectors: [{ type: directory, value: src/State/.* }]
+    - name: Domain
+      collectors: [{ type: directory, value: src/Domain/.* }]
+    - name: Repository
+      collectors: [{ type: directory, value: src/Repository/.* }]
+    - name: Entity
+      collectors: [{ type: directory, value: src/Entity/.* }]
+    - name: Enum
+      collectors: [{ type: directory, value: src/Enum/.* }]
+    - name: Message
+      collectors: [{ type: directory, value: src/Message/.* }]
+    - name: MessageHandler
+      collectors: [{ type: directory, value: src/MessageHandler/.* }]
+    - name: Security
+      collectors: [{ type: directory, value: src/Security/.* }]
+    - name: Translation
+      collectors: [{ type: directory, value: src/Translation/.* }]
+    - name: Validator
+      collectors: [{ type: directory, value: src/Validator/.* }]
+    - name: DataFixtures
+      collectors: [{ type: directory, value: src/DataFixtures/.* }]
+  ruleset:
+    Command: [Domain, Enum]
+    Controller: [ApiResource, State, Domain]
+    ApiResource: [State, Enum]
+    State: [Domain, Repository, Entity, ApiResource, Enum, Translation, Security]
+    Domain: [Entity, Repository, Message, Enum]
+    MessageHandler: [Domain, Entity, Message, Repository, Enum]
+    Repository: [Entity, Enum]
+    Security: [Domain, Entity, Enum]
+    Translation: [Entity, Enum]
+    Validator: [Entity, Enum]
+    DataFixtures: [Entity, Enum]
+    Entity: [Enum]
+    Message: [Entity, Enum]
+    Enum: ~

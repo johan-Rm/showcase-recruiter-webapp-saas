@@ -1,0 +1,17 @@
+# ─── PROXY (Caddy frontal partagé prod + preprod) ──────────────────────────
+# À démarrer AVANT les stacks applicatives : il possède le réseau `showcase-recruiter-webapp-saas_edge`.
+.PHONY: proxy-up proxy-down proxy-reload proxy-logs proxy-status
+proxy-up: ## Lancer le Caddy frontal (crée le réseau showcase-recruiter-webapp-saas_edge)
+	$(COMPOSE_PROXY) up -d
+
+proxy-down: ## Arrêter le Caddy frontal (coupe prod ET preprod)
+	$(COMPOSE_PROXY) down
+
+proxy-reload: ## Recharger le Caddyfile sans coupure
+	$(COMPOSE_PROXY) exec -w /etc/caddy caddy caddy reload
+
+proxy-logs: ## Suivre les logs du proxy
+	$(COMPOSE_PROXY) logs -f --tail=200
+
+proxy-status: ## État du proxy
+	$(COMPOSE_PROXY) ps

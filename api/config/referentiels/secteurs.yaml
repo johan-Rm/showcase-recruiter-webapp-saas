@@ -1,0 +1,41 @@
+# Référentiel des secteurs d'activité — liste fermée.
+#
+# Source de vérité UNIQUE du secteur, partagée à terme entre l'entreprise (Organization.sector),
+# le candidat (Candidate.desiredSector) et les facettes de recherche. La valeur stockée EST le
+# libellé français ci-dessous : pas de code séparé pour l'instant (fr suffit), et cela reste continu
+# avec les données de recherche existantes qui emploient déjà « Informatique », « Finance »…
+#
+# L'ordre suit la priorité commerciale du ciblage entreprise, pas l'alphabet ni le poids des
+# employeurs marocains : industrie et supply chain d'abord (Tanger, Kénitra, Casablanca, OCP,
+# Tanger Med), puis tech, grandes infrastructures, finance et conseil. Le champ est un combobox
+# avec recherche, donc l'ordre ne coûte rien à celui qui sait ce qu'il cherche et affiche le
+# positionnement à celui qui parcourt.
+#
+# « Autre » reste en dernier : une porte de sortie, jamais un défaut.
+
+secteurs:
+  # Industrie et supply chain
+  - Automobile et aéronautique
+  - Industrie et production
+  - Mines, chimie et matériaux
+  - Supply chain, transport et logistique
+  - Énergie et environnement
+  # Tech et numérique
+  - Informatique et numérique
+  # Grandes infrastructures
+  - BTP et grandes infrastructures
+  # Finance et conseil
+  - Finance et assurance
+  - Conseil et audit
+  # Secteurs secondaires
+  - Santé et pharmaceutique
+  - Agriculture et agroalimentaire
+  - Commerce et distribution
+  - Immobilier
+  - Relation client et offshoring
+  - Textile et habillement
+  - Tourisme et hôtellerie
+  - Média et communication
+  - Éducation et formation
+  - Services juridiques
+  - Autre

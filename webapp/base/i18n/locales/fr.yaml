@@ -1,0 +1,998 @@
+app:
+  name: Shortlist
+  tagline: Les bons profils,{break}au bon endroit.
+  loading: Chargement…
+  # Les trois gestes du recruteur, montrés à l'ouverture de l'espace entreprise. On y nomme son BUT,
+  # pas la mécanique du produit — qui dit « dévoiler » et « favoris ».
+  journey:
+    search: Rechercher
+    select: Sélectionner
+    contact: Contacter
+a11y:
+  moreInfo: Plus d'informations
+space:
+  public: Site public
+  candidat: Espace candidat
+  entreprise: Espace entreprise
+  admin: Espace admin
+nav:
+  login: Se connecter
+  logout: Se déconnecter
+  home: Accueil
+  brandHome: "{app} — retour à l'accueil"
+  theme: Thème
+  language: Langue
+  toggleTheme: Basculer le thème
+  main: Navigation principale
+  breadcrumb: Fil d'Ariane
+  entreprise:
+    dashboard: Tableau de bord
+    searches: Mes recherches
+    account: Mon compte
+    credits: Crédits
+    team: L'équipe
+    company: L'entreprise
+    profile: Mon profil
+  admin:
+    pilotage: Pilotage
+    comptes: Comptes
+    supervision: Supervision
+    referentiels: Référentiels
+    vivier: État de la base
+    recherches: Recherches débordantes
+    activite: Activité
+    dashboard: Tableau de bord
+    entreprises: Entreprises
+    candidats: Le vivier
+    utilisateurs: Utilisateurs
+    jarvi: Jarvi
+    compte: Compte
+    openMenu: Ouvrir le menu
+    collapseMenu: Replier la navigation
+    expandMenu: Déplier la navigation
+auth:
+  intro: Connectez-vous à votre {space}.
+  email: Adresse e-mail
+  password: Mot de passe
+  submit: Connexion
+  invalidCredentials: Identifiants invalides
+  accountSuspended: Votre compte est suspendu. Écrivez-nous pour en connaître la raison et demander un réexamen.
+  sessionExpired: Votre session a expiré. Reconnectez-vous pour retrouver votre espace.
+  showPassword: Afficher le mot de passe
+  hidePassword: Masquer le mot de passe
+  passwordRulesTitle: Votre mot de passe doit contenir
+  passwordRule:
+    length: au moins {n} caractères
+    upper: une majuscule
+    lower: une minuscule
+    digit: un chiffre
+home:
+  public:
+    title: La seule plateforme dédiée aux talents basés en Europe qui visent le Maroc
+    candidateCta: Je suis candidat
+    companyCta: Je recrute
+  candidat:
+    title: Mon tableau de bord
+  entreprise:
+    title: Smart Home
+  admin:
+    title: Centre de contrôle
+demo:
+  loggedInAs: Connecté en tant que {email}
+  spaceServedBy: Cette page est servie par l'espace « {space} »
+page:
+  candidat:
+    projet: Mon projet de retour
+  entreprise:
+    vivier: Le vivier
+    searches:
+      title: Mes recherches
+    editSearch:
+      title: Modifier la recherche
+    newSearch:
+      title: Nouvelle recherche
+    viewer:
+      title: Parcourir les profils
+      lead: Un profil à la fois, avec tout son détail.
+      aside: Son contexte
+      criteria: Vos critères, ajustables sans quitter vos résultats
+    table:
+      title: Ma sélection
+      empty: Aucun profil dans cette recherche.
+      emptyRetained: Aucun profil retenu pour l’instant
+      emptyRetainedHint: >-
+        Parcourez les profils de cette recherche et mettez de côté ceux qui vous
+        intéressent : ils arriveront ici.
+    account:
+      title: Mon compte
+      lead: Ce qui administre votre compte, à part de ce qui sert à chercher.
+    credits:
+      title: Crédits
+      lead: Le solde et le journal des consommations, communs à l'entreprise. L'achat est réservé au propriétaire du compte.
+      error: Les crédits n'ont pas pu être chargés.
+      journal: Mouvements
+      empty: Aucun mouvement pour l'instant.
+      wallet: 'Solde : {count} crédit | Solde : {count} crédits'
+      after: solde {count}
+      howTo: 'Pour obtenir des crédits, écrivez-nous : nous ajustons le solde de votre entreprise sous 24 h ouvrées.'
+      type:
+        GRANT_FREE: Crédits offerts
+        PURCHASE: Achat
+        CONSUMPTION: Dévoilement
+        REFUND: Remboursement
+        ADJUSTMENT: Ajustement
+    team:
+      title: L'équipe
+      lead: Les membres de l'entreprise, leurs invitations et leurs rôles.
+      error: L'équipe n'a pas pu être chargée.
+      members: '{count} membre | {count} membres'
+      pending: '{count} invitation en attente | {count} invitations en attente'
+      expires: 'expire le {date}'
+      remove: "Retirer {name} de l'équipe"
+      role:
+        ROLE_COMPANY_OWNER: Propriétaire
+        ROLE_COMPANY_MEMBER: Membre
+      invite:
+        label: Inviter un collègue
+        hint: Il recevra un lien pour rejoindre l'entreprise en tant que membre. Seul le propriétaire administre l'équipe.
+        # `@` introduit un LIEN vers un autre message en vue-i18n : non échappé, il fait
+        # échouer la compilation du catalogue entier, et toutes les clés retombent brutes.
+        placeholder: "prenom.nom{'@'}entreprise.com"
+        submit: Envoyer l'invitation
+        failed: Cette adresse est déjà membre de l'entreprise ou déjà invitée.
+    company:
+      title: L'entreprise
+      lead: La société, la facturation et l'abonnement.
+      error: La fiche n'a pas pu être chargée.
+      saved: Modifications enregistrées.
+      failed: Certaines valeurs ont été refusées — vérifiez l'adresse du site et le secteur.
+      submit: Enregistrer
+      sectorPlaceholder: Choisir un secteur
+    profile:
+      title: Mon profil
+      lead: Votre identité, vos préférences et votre mot de passe.
+      error: "Le profil n'a pas pu être chargé."
+      identity: 'Identité'
+      name: 'Nom'
+      email: 'Adresse e-mail'
+      role: "Rôle dans l'entreprise"
+      jobTitle: 'Poste'
+      readOnly: "Ces informations ne sont pas modifiables depuis l'application. Écrivez-nous pour les corriger."
+      password: 'Mot de passe'
+      currentPassword: 'Mot de passe actuel'
+      newPassword: 'Nouveau mot de passe'
+      submit: 'Changer le mot de passe'
+      saved: 'Mot de passe changé.'
+      failed: 'Changement refusé — vérifiez votre mot de passe actuel.'
+  admin:
+    recherches: Recherches débordantes
+    activite: Activité
+    entreprises: Entreprises — file de revue
+    dashboard: Centre de contrôle
+    candidats: Le vivier
+    utilisateurs: Utilisateurs & droits
+    jarvi: Ingestion Jarvi
+    referentiels: Référentiels qualifiés
+    vivier: État de la base
+    compte: Mon compte
+referentials:
+  subtitle: Relire et valider le vocabulaire dérivé. Tant que rien n'est validé, la recherche élargit sans affirmer.
+  loading: Chargement…
+  previous: Précédent
+  next: Suivant
+  filter:
+    all: Tous les statuts
+  type:
+    METIER: Métiers
+    COMPETENCE: Compétences
+  status:
+    CANDIDAT: À relire
+    VALIDE: Validé
+    DEPRECIE: Déprécié
+  column:
+    concept: Concept
+    frequency: Fréquence
+    coverage: Couverture cumulée
+    status: Statut
+  action:
+    validate: Valider
+    deprecate: Déprécier
+  label:
+    exclude: Exclure ce libellé de l'élargissement
+    restore: Restaurer ce libellé
+  selected: '{count} sélectionné(s)'
+  pagination: 'Page {page} sur {total}'
+vivier:
+  subtitle: 'Au {at}. Mêmes chiffres que le rapport en ligne de commande.'
+  loading: Chargement…
+  empty: Aucune donnée sur cet axe.
+  axis:
+    sectors: Top secteurs d'expérience
+    jobs: Top métiers exercés
+    languages: Top langues
+  gap:
+    open: '{metric} : voir les {count} profils que ce chiffre ne compte pas'
+    count: '{count} profils que ce chiffre ne compte pas'
+    filter: Filtrer par motif
+    all: Tous
+    unknown: Cette page n'existe pas.
+    backToState: Revenez à l'état de la base pour choisir une qualification.
+    empty: Aucun profil en manque sur cette qualification.
+    column:
+      name: Nom
+      location: Lieu
+      reason: Motif
+    reason:
+      NO_POSITION: Aucun poste
+      NO_USABLE_START_DATE: Aucune date de début exploitable
+      INCOHERENT_DATES: Dates incohérentes
+      UNDER_ONE_YEAR: Moins d'un an d'expérience
+      NO_ONGOING_POSITION: Aucun poste en cours
+      ONGOING_WITHOUT_START_DATE: Poste en cours sans date de début
+      UNDER_ONE_MONTH: En poste depuis moins d'un mois
+      NO_EDUCATION: Aucune formation
+      UNRECOGNIZED_TITLE: Aucun intitulé reconnu
+      SOURCE_WITHOUT_DATE: Date non fournie par la source
+cockpit:
+  close: Fermer l'inspecteur
+  profilePanel:
+    title: Profil complet
+    close: Fermer le profil
+  zone:
+    toolbar: Gouttière
+    actions: Barre haute
+    console: Console
+    main: Vue principale
+    inspector: Inspecteur
+    viewerAside: Panneau latéral
+search:
+  new: Créer une recherche
+  back: Retour aux recherches
+  empty: Aucune recherche pour l'instant. Créez-en une pour explorer le vivier.
+  newAi: Recherche assistée
+  seeAll: Voir les {count} recherches
+  sharedSection: Partagées avec moi · {count}
+  loading: Chargement…
+  error: Vos recherches n'ont pas pu être chargées.
+  card:
+    unnamed: Recherche sans nom
+    noCriteria: Aucun critère — cette recherche ne retourne encore rien.
+    shared: Partagée avec l'équipe
+    readOnly: Recherche de {name} · lecture seule
+    sharedBy: partagée par {name} · lecture seule
+    more: '+{count} critère | +{count} critères'
+    profiles: profil | profils
+    newCount: '{count} nouveau | {count} nouveaux'
+    # Le nombre passe AU-DESSUS de son mot (task ENT-056) : ces deux clés ne portent plus que le
+    # libellé, accordé sur un compte qu'elles n'affichent pas.
+    seen: vu | vus
+    noKeywords: pas de mots clés
+    # « retenus » et non « favoris » : le mot dit le GESTE du recruteur là où « favori » dit un
+    # goût. Arbitré en ENT-050 pour cette carte seulement — la Table et la Visionneuse disent
+    # encore « Favoris » jusqu'à ce qu'on les touche.
+    retained: retenu | retenus
+    retainedByTeam: '{count} retenu par l’équipe | {count} retenus par l’équipe'
+    closed: close
+    closedOn: close le {date} par {name}
+  # UN CONSEIL, JAMAIS UN REPROCHE (task ENT-131). Le nombre exact y figure : c'est lui qui rend
+  # l'avertissement crédible, et qui explique qu'il apparaisse ici et pas ailleurs. `short` est la
+  # forme de la carte de collection, où la place est comptée ; le reste s'affiche à l'ouverture.
+  broad:
+    title: Recherche large — {count} profils
+    body: Au-delà d'une centaine, le tri devient difficile à mener jusqu'au bout. Ajoutez un critère pour resserrer.
+  manage:
+    menu: Actions sur « {name} »
+    modify: Modifier les critères
+    saveAndBrowse: Enregistrer et voir les profils
+    confirmTitle: Enregistrer les modifications ?
+    confirmBody: Changer les critères relance la recherche. Des profils que vous aviez retenus ou écartés peuvent ne plus y figurer — rien n'est perdu, ils restent dans votre sélection.
+    notEditable: Cette recherche ne peut pas être modifiée. Une recherche partagée par un collègue se duplique ; une recherche clôturée se rouvre d'abord.
+    backToList: Revenir à mes recherches
+    rename: Renommer
+    renameHint: Videz le champ pour rétablir le nom automatique.
+    duplicate: Dupliquer
+    share: Partager avec l'équipe
+    unshare: Ne plus partager
+    delete: Supprimer
+    deleteTitle: Supprimer « {name} » ?
+    deleteBody: Ses profils retenus et sa trace d'export seront perdus. Cette action est définitive.
+    cancel: Annuler
+    error: L'action n'a pas pu aboutir. Réessayez.
+  closure:
+    close: Clôturer
+    reopen: Rouvrir
+    hint: Une recherche close ne peut plus être modifiée tant qu'elle n'est pas rouverte.
+    fold: '{count} recherche close | {count} recherches closes'
+    conflict: Cette recherche a été clôturée entre-temps. Rouvrez-la pour la modifier.
+    error: L'état de la recherche n'a pas pu être changé. Réessayez.
+  masked:
+    hidden: Masqué — dévoilez le profil pour l'obtenir
+    none: Aucune coordonnée
+  export:
+    action: Exporter
+    title: Exporter la sélection
+    body: '{count} profil sera exporté. | {count} profils seront exportés.'
+    ignored: '{count} profil masqué sera ignoré : le fichier ne contient que des profils dévoilés. | {count} profils masqués seront ignorés : le fichier ne contient que des profils dévoilés.'
+    nothing: Aucun profil dévoilé dans cette sélection — il n'y a rien à exporter. Dévoilez d'abord les coordonnées.
+    gdpr: Je m'engage à traiter ces coordonnées conformément au RGPD.
+    cancel: Annuler
+    submit: Télécharger le CSV
+  reveal:
+    balance: '{count} crédit | {count} crédits'
+    cost: '· {count} cr.'
+    owned: · déjà obtenu
+    none: · aucun
+    insufficient: Crédits insuffisants pour ce dévoilement
+    confirm:
+      title: Dévoiler la sélection
+      body: 'Vous allez dévoiler {access} sur {count} profil pour {cost} crédit. | Vous allez dévoiler {access} sur {count} profils pour {cost} crédits.'
+      capped: Le lot est plafonné à {max} profils ; les {count} sélectionnés ne partiront pas d'un seul coup.
+      cancel: Annuler
+      submit: 'Dévoiler · {cost} cr.'
+    action:
+      EMAIL: E-mail
+      PHONE: Téléphone
+      RESUME: CV
+      INTERVIEW_REPORT: Compte rendu
+    granted:
+      EMAIL: E-mail obtenu
+      PHONE: Téléphone obtenu
+      RESUME: CV obtenu
+      INTERVIEW_REPORT: Compte rendu obtenu
+  action:
+    retain: Retenir
+    release: Ne plus retenir
+    retained: Retenu
+    dismiss: Écarter
+    restore: Remettre
+  contact:
+    email:
+      available: E-mail disponible
+      none: E-mail indisponible
+    phone:
+      available: Téléphone disponible
+      none: Téléphone indisponible
+  badge:
+    met: Rencontré
+    inMorocco: Au Maroc
+    available: Disponible
+    new: Nouveau
+    favorite: Favori
+    seen: Vu
+    dismissed: Écarté
+  horizon:
+    M3: Retour sous 3 mois
+    M6: Retour sous 6 mois
+    Y1: Retour dans l'année
+    THINKING: Retour en réflexion
+  console:
+    title: Console de recherche
+    current: En cours
+    primary: Classiques
+    secondary: Secondaires
+  criterion:
+    facet:
+      q: Mot-clé
+      job: Poste recherché
+      experienceMin: Expérience
+      educationLevel: Études
+      availability: Disponibilité
+      returnHorizon: Horizon de retour
+      geoMobility: Mobilité
+      hasPiedATerre: Pied-à-terre
+      star: Profil vérifié
+      country: Pays
+      sector: Secteur visé
+      function: Fonction visée
+      experienceSector: Secteur d'expérience
+      language: Langue
+      languageLevel: Niveau de langue
+      presenceCity: Ville au Maroc
+      presenceWithinDays: Présence au Maroc
+    value:
+      experienceMin: '{count} an et plus | {count} ans et plus'
+      yes: Oui
+      no: Non
+  return:
+    title: Retour au Maroc
+    horizon: Horizon
+    piedATerre: Pied-à-terre
+    mobility: Mobile au Maroc
+    yes: Oui
+  profile:
+    untitled: Poste non renseigné
+    experience: "{count} an(s) d'expérience"
+    email: E-mail
+    phone: Tél.
+    years: '{count} an | {count} ans'
+    unknown: Non renseigné
+    facts:
+      experience: Expérience
+      location: Localisation
+      availability: Disponibilité
+      education: Études
+    open: Voir le profil complet
+    loading: Chargement du profil…
+    loadFailed: Le détail du profil n'a pas pu être chargé.
+    linkedin: Profil LinkedIn
+    ongoing: en poste
+    experiences: Expériences
+    educations: Formations
+    languages: Langues
+    skills: Compétences
+    jobs: Métiers
+    sectors: Secteurs
+    presence: 'Au Maroc du {start} au {end}'
+    presenceIn: '{city}, du {start} au {end}'
+    section:
+      morocco: Son projet au Maroc
+      career: Son parcours
+      locked: À dévoiler
+    locked:
+      email: E-mail
+      phone: Téléphone
+      resume: CV
+      report: Compte rendu d'entretien
+      hidden: Masqué — 1 crédit
+      available: Disponible
+      none: Non communiqué
+  state:
+    errorHint: Réessayez dans un instant ; si cela persiste, la recherche n'est pas en cause.
+    noCriteriaHint: Posez un intitulé de poste pour commencer.
+    emptyHint: Retirez un critère, ou élargissez l'intitulé.
+  viewer:
+    noCriteria: Aucun critère de recherche — commencez par un poste.
+    empty: Aucun profil ne correspond — élargissez vos critères.
+    stack:
+      title: Profils à examiner
+      retry: Réessayer
+    verdict:
+      region: Le profil affiché
+    panel:
+      title: Panneau de contrôle
+      current: Recherche en cours
+      matches: Ce profil face à vos critères
+      publicResumeOnly: >-
+        Les critères non trouvés portent sur le CV public. Le compte rendu d'entretien peut les
+        couvrir.
+      score:
+        summary: '{count} critère sur {total} retrouvé dans le profil. | {count} critères sur {total} retrouvés dans le profil.'
+        tier:
+          low: Loin de vos critères
+          medium: Proche de vos critères
+          high: Aligné sur vos critères
+      tenure:
+        CURRENT: Poste actuel
+        PAST: Poste passé
+      source:
+        HEADLINE: son accroche
+        SKILL: une compétence
+        JOB_TITLE: un poste occupé
+      progress: Profils vus
+      position: 'Profil {position} sur {total}'
+      of: 'sur {count}'
+      positionOf: 'Profil {position} sur {total} chargés, {count} profils correspondent'
+      scope: 'sur {count} profils chargés'
+      order:
+        label: Ordre du parcours
+        unseen: Non vus d'abord
+        relevance: Pertinence
+      dismissedTitle: Profils écartés
+      counts:
+        seen: Vus
+        favorites: Favoris
+        dismissed: Écartés
+  secondary:
+    any: Peu importe
+    withinDays: Sous {count} jours
+    cityPlaceholder: Casablanca, Rabat…
+    sectorPlaceholder: Informatique, Finance…
+    functionPlaceholder: Développeur, comptable…
+    languagePlaceholder: Arabe, anglais…
+    group:
+      morocco: Maroc
+      return: Projet de retour
+      job: Métier
+      profile: Profil
+      place: Lieu
+  refine:
+    kept: '{count} profil sur {total} | {count} profils sur {total}'
+    clear: Tout retirer
+    emptyTitle: Aucun profil ne correspond
+    emptyHint: Retirez un affinage pour retrouver le reste de la recherche.
+    currentJob: Occupe ce poste aujourd'hui
+    star: Profil vérifié par Shortlist
+    languageLevel: Niveau déclaré, au moins
+    group:
+      presence: Présence au Maroc
+      return: Projet de retour
+      availability: Disponibilité
+      sector: Secteur
+      project: Poste recherché au Maroc
+    value:
+      presence:
+        now: Maintenant
+        '15': Sous 15 j
+        '30': Sous 30 j
+        '60': Sous 60 j
+      returnHorizon:
+        M3: Sous 3 mois
+        M6: Sous 6 mois
+        Y1: Dans l'année
+        THINKING: En réflexion
+      availability:
+        IMMEDIATE: Immédiate
+        NOTICE_1M: Préavis 1 mois
+        NOTICE_3M: Préavis 3 mois
+  selection:
+    toggle: Sélectionner ce profil
+    count: '{count} sélectionné(s)'
+    hidden: '{count} hors de cette vue'
+    show: Voir les profils sélectionnés
+    clear: Tout désélectionner
+  view:
+    all: Tous
+    favorites: Retenus
+  column:
+    role: Poste
+    experience: Exp.
+    retain: Retenir
+    tenure:
+      CURRENT: actuel
+      PAST: passé
+    name: Nom & prénom
+    email: E-mail
+    phone: Tél.
+    presence: Fenêtre Maroc
+    city: Ville actuelle
+    mobility: Mobilité
+  mobility:
+    all: Tout le Maroc
+  criteria:
+    remove: Retirer le critère « {value} »
+    refine: Affiner
+    apply: Appliquer
+  create:
+    noCriteria: 'Posez au moins un critère : le vivier entier n’est pas un résultat de recherche.'
+    error: La recherche n’a pas pu être créée. Réessayez.
+  guide:
+    list: Vos recherches enregistrées
+    edit: Ajustez les critères de cette recherche
+    classic: Décrivez le profil que vous cherchez
+    ai: Dites en une phrase qui vous cherchez
+    table: Les profils retenus, prêts à être contactés
+  ai:
+    title: Recherche assistée
+    query:
+      label: Décrivez le profil recherché
+      placeholder: Un développeur en Belgique qui parle néerlandais
+      hint: Écrivez en langage naturel. Seule votre phrase est envoyée au modèle, jamais les profils du vivier.
+    understood: Critères compris
+    removeFilter: Retirer le critère « {filter} »
+    submit: Rechercher
+    launch: Lancer la recherche
+    pending: Analyse en cours…
+    error:
+      generic: La traduction a échoué. Reformulez votre demande ou réessayez.
+      notConfigured: La recherche assistée n'est pas disponible pour le moment.
+    criteria:
+      country: 'Pays : {value}'
+      city: 'Ville : {value}'
+      language: 'Langue : {value}'
+      languageLevel: '{value} · {level}'
+      geoMobility: Mobilité géographique
+    proficiency:
+      ELEMENTARY: notions
+      LIMITED_WORKING: limité
+      PROFESSIONAL_WORKING: professionnel
+      FULL_PROFESSIONAL: courant
+      NATIVE_OR_BILINGUAL: bilingue
+  primary:
+    noResult: Aucun résultat
+    jobTitle:
+      label: Intitulé de poste
+      placeholder: Développeur, chef de projet…
+      hint: Les synonymes et rôles proches sont inclus automatiquement.
+      loading: Recherche des intitulés…
+    keywords:
+      label: Mots-clés
+      placeholder: Compétence, technologie, secteur…
+      remove: Retirer le mot-clé {value}
+      add: Ajouter un mot-clé
+      close: Fermer la liste des mots-clés
+      loading: Recherche en cours…
+      unavailable: Suggestions indisponibles — saisissez votre terme.
+      create: Ajouter « {value} »
+      added: ajouté
+      addAll: Ajouter les {count}
+      addedCount: '{count} mots-clés ajoutés'
+    experience:
+      label: Années d'expérience
+      labelInJob: Années dans ce métier
+      any: Toutes
+      value: '{count} an et plus | {count} ans et plus'
+    education:
+      label: Niveau d'études
+    volume:
+      pending: Comptage des profils…
+      none: Aucun profil ne correspond
+      unknownJob: '« {term} » ne désigne aucun métier connu — choisissez une proposition de la liste.'
+      count: '{count} profil correspond | {count} profils correspondent'
+      failed: Comptage indisponible — la recherche reste lançable.
+    submit: Rechercher
+  sentence:
+    lead: 'Je cherche un profil de '
+    with: ' avec '
+    experience: " d'expérience,"
+    experienceInJob: ' dans ce métier,'
+    level: ' niveau '
+    jobPlaceholder: poste…
+    experienceAny: peu importe
+    experienceValue: '{count} an | {count} ans'
+    experienceMax: '{count} ans et plus'
+    educationAny: peu importe
+    educationAtLeast: '{level} +'
+    keywords: qui maîtrise l'un de ces mots-clés
+    keywordAdd: Ajouter un mot-clé
+    volumeUnit: profil | profils
+    submit: Sélectionner les profils
+    name:
+      label: Nom de la recherche
+      placeholder: Se nomme tout seul…
+      edit: Renommer la recherche
+  availability:
+    IMMEDIATE: Disponible immédiatement
+    NOTICE_1M: Préavis 1 mois
+    NOTICE_3M: Préavis 3 mois
+  education:
+    BAC: Bac
+    BAC_PLUS_2: Bac+2
+    LICENCE: Licence
+    MASTER: Master
+    INGENIEUR: Ingénieur
+    DOCTORAT: Doctorat
+  sectorExperience:
+    CONSEIL_AUDIT: Conseil et audit
+    INFORMATIQUE: Informatique
+    INDUSTRIE: Industrie
+    BANQUE_FINANCE: Banque et finance
+    ASSURANCE: Assurance
+    TELECOM: Télécoms
+    TRANSPORT_LOGISTIQUE: Transport et logistique
+    ENERGIE: Énergie
+    AERONAUTIQUE: Aéronautique
+    AUTOMOBILE: Automobile
+    SANTE_PHARMA: Santé et pharmacie
+    DISTRIBUTION: Distribution
+    BTP: Bâtiment et travaux publics
+    AGROALIMENTAIRE: Agroalimentaire
+    PUBLIC_ADMINISTRATION: Secteur public
+    EDUCATION: Éducation
+    INDEPENDANT: Indépendant
+    AUTRE: Autre
+account:
+  menu: Mon compte
+  appearance: Apparence
+notifications:
+  title: Notifications
+  open: 'Notifications ({count} non lues)'
+  empty: Aucune notification pour l'instant.
+error:
+  notFound:
+    title: Page introuvable
+    message: Cette page n'existe pas ou a été déplacée.
+  unexpected:
+    title: Une erreur est survenue
+    message: Quelque chose s'est mal passé de notre côté. Réessayez dans un instant.
+  backHome: Retour à l'accueil
+dashboard:
+  subtitle: L'état de la plateforme, et ce qui attend une décision.
+  organizationsInReview: Entreprises à revoir
+  logins: Connexions (7 j)
+  reveals: Dévoilements (7 j)
+  signups: Inscriptions (7 j)
+  vivier: Vivier
+  total: Total
+  active: Actifs
+  goToCandidates: Voir le vivier
+  goToJarvi: Supervision Jarvi
+users:
+  user: Utilisateur
+  roles: Rôles
+  status: Statut
+  lastLogin: Dernière connexion
+  never: Jamais
+  count: '{count} utilisateur(s)'
+  empty: Aucun utilisateur.
+jarvi:
+  total: Profils
+  active: Actifs
+  inactive: Désactivés
+  withConsent: Consentis
+  syncTitle: Statut de synchronisation
+  synced: Synchronisés
+  pending: En attente
+  failed: En échec
+  streams: Flux de synchronisation
+  cursor: Dernier curseur
+  lastRun: Dernier import
+  healthy: Sain
+  degraded: À surveiller
+candidate:
+  contact: Coordonnées
+  profile: Profil professionnel
+  skills: Compétences
+  languages: Langues
+  experiences: Expériences
+  educations: Formations
+  morocco: Projet Maroc
+  availability: Disponibilité
+  returnHorizon: Horizon de retour
+  returnProject: Projet de retour
+  piedATerre: Pied-à-terre
+  geoMobility: Mobilité tout le Maroc
+  presence: Présence au Maroc
+  star: Profil vérifié (Star)
+  ops: Exploitation
+  visibility: Visibilité
+  active: Actif
+  consent: Consentement
+  consentSource: Source
+  sync: Synchronisation
+  jarviId: Ancre Jarvi
+  createdAt: Créé le
+  oui: Oui
+  non: Non
+admin:
+  activity:
+    count: '{count} consultation(s) de profil'
+    caption: Qui a consulté quel candidat, du plus récent au plus ancien
+    loading: Chargement…
+    empty: Aucune consultation enregistrée pour le moment.
+    error: Le fil n'a pas pu être chargé.
+    unknown: Compte fermé
+    pagination: Page {page} sur {total}
+    previous: Précédent
+    next: Suivant
+    column:
+      moment: Quand
+      recruiter: Recruteur
+      organization: Entreprise
+      candidate: Candidat consulté
+      revealed: Dévoilé
+    revealed:
+      yes: Dévoilé
+      no: Non dévoilé
+  organization:
+    loading: Chargement…
+    error: La fiche n'a pas pu être chargée.
+    notFound: Cette entreprise n'existe pas.
+    balance: Solde de crédits
+    subscription: Abonnement
+    noSubscription: Aucun abonnement
+    until: "jusqu'au {date}"
+    unknownMember: Compte fermé
+    members: 'Membres ({count})'
+    noMember: Aucun membre rattaché.
+    ledger: Mouvements de crédits
+    ledgerCaption: Les mouvements de crédits de cette entreprise, du plus récent au plus ancien
+    noMovement: Aucun mouvement de crédits.
+    balanceAfterLine: 'Solde après : {balance}'
+    column:
+      moment: Quand
+      nature: Nature
+      amount: Montant
+      balanceAfter: Solde après
+      reason: Motif
+    role:
+      ROLE_COMPANY_OWNER: Propriétaire
+      ROLE_COMPANY_MEMBER: Membre
+    subscriptionStatus:
+      ACTIVE: Actif
+      PAST_DUE: Impayé
+      CANCELED: Résilié
+    movement:
+      GRANT_FREE: Crédits offerts
+      PURCHASE: Achat
+      CONSUMPTION: Dévoilement
+      REFUND: Remboursement
+      ADJUSTMENT: Ajustement
+  overflow:
+    count: '{count} recherche(s) au-dessus de la borne'
+    caption: Recherches dont le vivier ramène plus de profils que ce qui est servi
+    loading: Chargement…
+    empty: Aucune recherche ne dépasse la borne. Tout ce que le vivier ramène tient dans ce qui est servi.
+    error: L'inventaire n'a pas pu être chargé.
+    unnamed: Recherche sans nom ni critère
+    fromCriteria: Nommée par ses critères
+    matchesLine: '{count} correspondances, dont {hidden} jamais montrées'
+    pagination: Page {page} sur {total}
+    previous: Précédent
+    next: Suivant
+    column:
+      search: Recherche
+      organization: Organisation
+      owner: Propriétaire
+      matches: Correspondances
+      hidden: Non montrées
+      state: État
+      activity: Dernière activité
+    state:
+      open: Ouverte
+      closed: Close
+  candidates:
+    name: Candidat
+    location: Localisation
+    contact: Joignabilité
+    status: Statut
+    inactive: Inactif
+    count: '{count} candidat(s)'
+    empty: Aucun candidat.
+    fillRate:
+      title: Taux de remplissage du vivier
+      detail: '{filled} sur {total}'
+      field:
+        givenName: Prénom
+        familyName: Nom
+        linkedin: LinkedIn
+        employers: Employeur
+        photo: Photo
+        email: E-mail
+        phone: Téléphone
+        resume: CV
+        whatsapp: WhatsApp
+        interviewReport: Compte rendu
+  notifications:
+    title: Notifications
+    empty: Aucune notification
+  organizations:
+    name: Entreprise
+    statusHeader: Statut
+    actions: Actions
+    filter: Filtrer par statut
+    count: '{count} entreprise(s)'
+    empty: Aucune entreprise dans cette file.
+    legalName: Raison sociale
+    taxId: Immatriculation (ICE / RC)
+    location: Localisation
+    website: Site web
+    acquisitionChannel: Provenance
+    sector: Secteur d'activité
+    validate: Valider
+    reject: Refuser
+    confirmReject: Confirmer le refus
+    cancel: Annuler
+    decisionFailed: La décision n'a pas pu être enregistrée. Réessayez.
+inscription:
+  start:
+    title: Créer un accès
+    message: Réservé aux entreprises et cabinets de recrutement. Indiquez votre adresse e-mail pour recevoir un lien de connexion sécurisé.
+    submit: Recevoir mon lien
+  sent:
+    title: Vérifiez votre boîte mail
+    message: Nous vous avons envoyé un lien à {email}.
+    messageAnonymous: Nous vous avons envoyé un lien de connexion.
+    action: Ouvrez cet e-mail pour poursuivre votre inscription.
+    hint: Le lien est valable une seule fois. Si vous ne le recevez pas dans quelques minutes, vérifiez vos courriers indésirables ou utilisez une autre adresse e-mail.
+    retry: Utiliser une autre adresse
+  social:
+    google: Continuer avec Google
+    linkedin: Continuer avec LinkedIn
+    name:
+      google: Google
+      linkedin: LinkedIn
+    or: ou
+    failed: La connexion avec ce service n'a pas abouti. Réessayez ou utilisez votre adresse e-mail.
+  link:
+    checking: Un instant, nous vérifions votre lien…
+    next: Juste après, nous vous demanderons quelques informations sur votre entreprise. Deux minutes, pas plus.
+    invalidTitle: Ce lien n'est plus valable
+    invalidMessage: Les liens de connexion expirent après 30 minutes et ne servent qu'une seule fois. Demandez-en un nouveau, nous vous l'envoyons immédiatement.
+    restart: Recevoir un nouveau lien
+  company:
+    title: Votre entreprise
+    message: Ces informations nous permettent de vérifier la légitimité de votre entreprise avant de vous donner accès aux profils.
+    declarant: Vous
+    company: Entreprise
+    acquisition: Comment nous avez-vous connus ?
+    optional:
+      title: Facultatif, pour accélérer votre validation
+      message: Rien de tout cela n'est obligatoire. Ces informations aident notre équipe à vérifier votre entreprise plus vite, et vous pourrez les compléter plus tard.
+      more: Ajouter des détails
+    submit: Envoyer ma demande
+  onboarding:
+    company:
+      lead: Votre adresse est confirmée.
+      focus: Renseignez-nous sur votre entreprise.
+    contact:
+      lead: Et vous ?
+      focus: Indiquez-nous simplement votre prénom et votre nom.
+    channel:
+      lead: Dernière chose.
+      focus: Comment nous avez-vous connus ?
+    gauge:
+      label: Profil entreprise
+      value: '{percent} %'
+    next: Continuer
+    send: Envoyer ma demande
+    back: Retour
+    incomplete: Complétez les champs pour continuer.
+  field:
+    cityPlaceholder: Ex. Casablanca
+    countryHint: Code à 2 lettres (MA, FR, BE…)
+    countryPlaceholder: Choisissez un pays
+    givenName: Prénom
+    contactGivenName: Votre prénom
+    contactFamilyName: Votre nom
+    familyName: Nom
+    jobTitle: Votre fonction dans l'entreprise
+    legalName: Raison sociale
+    taxId: Immatriculation (ICE / RC)
+    sector: Secteur d'activité
+    sectorPlaceholder: Choisissez ou saisissez un secteur
+    sectorNoResult: Aucun secteur ne correspond
+    country: Pays
+    countryNoResult: Aucun pays ne correspond
+    postalCode: Code postal
+    postalCodePlaceholder: Ex. 20000
+    city: Ville
+    address: Adresse
+    addressPlaceholder: Cherchez votre adresse…
+    addressNoResult: Aucune adresse ne correspond
+    addressLoading: Recherche…
+    addressManual: Saisir l'adresse manuellement
+    addressSearch: Rechercher une adresse
+    streetPlaceholder: Rue et numéro
+    website: Site web
+    websitePlaceholder: https://
+    description: Description
+    acquisitionChannel: Provenance
+    acquisitionChannelEmpty: Sélectionnez une réponse
+    acquisitionChannelDetail: Précisez
+    acquisitionChannelDetailPlaceholder: Ex. un salon, un partenaire, un article…
+  review:
+    title: Votre espace est prêt
+    received: Il ne manque que votre mot de passe.
+    sent: 'Un e-mail vient de partir à {email}. Ouvrez-le pour choisir votre mot de passe : vous entrerez juste après.'
+    why: Notre équipe vérifie les informations de votre entreprise de son côté. Vous n'avez rien à attendre pour commencer.
+    missing: Vous ne le trouvez pas ? Regardez dans vos courriers indésirables.
+  password:
+    title: Définir votre mot de passe
+    message: "Choisissez un mot de passe : votre espace Shortlist s'ouvre juste après."
+    field: Mot de passe
+    confirmField: Confirmer le mot de passe
+    submit: Définir mon mot de passe
+    mismatch: Les deux mots de passe ne correspondent pas.
+    invalidTitle: Lien invalide ou expiré
+    invalidMessage: Ce lien a déjà été utilisé ou n'est plus valable. Reprenez depuis la page de connexion.
+  login:
+    prompt: Pas de compte entreprise ?
+    link: Inscrire mon entreprise
+    back: Déjà un compte ?
+  error:
+    unexpected: Une erreur est survenue. Réessayez dans un instant.
+organization:
+  websitePlaceholder: https://
+  name: Raison sociale
+  legalName: Dénomination légale
+  taxId: Identifiant fiscal
+  country: Pays (code à 2 lettres)
+  city: Ville
+  billingAddress: Adresse de facturation
+  website: Site web
+  sector: Secteur d'activité
+  description: Description
+  status:
+    NOUVEAU: Nouveau
+    EMAIL_VERIFIE: E-mail vérifié
+    EN_REVUE: En revue
+    INCOMPLET: Incomplet
+    VALIDEE: Validée
+    REFUSE: Refusée
+  channel:
+    RECOMMANDATION: Recommandation
+    LINKEDIN: LinkedIn
+    RECHERCHE_WEB: Recherche web
+    SALON: Salon ou événement
+    CONTACT_DIRECT: Contact direct Shortlist
+    AUTRE: Autre

@@ -1,0 +1,10 @@
+{
+  "url_api": "https://functions.prod.jarvi.tech/v1/public-api/rest/v2",
+  "url_graphql": "https://functions.prod.jarvi.tech/v1/public-api/graphql",
+  "x_api_key": "REMPLACER_PAR_CLE_PRIVEE",
+  "x_api_key_public": "REMPLACER_PAR_CLE_PUBLIQUE",
+  "showcase_recruiter_webapp_saas_project_uuid": "00000000-0000-4000-8000-000000000001",
+  "person_uuid": "replace-with-person-uuid",
+  "company_uuid": "replace-with-company-uuid",
+  "project_uuid": "00000000-0000-4000-8000-000000000002"
+}

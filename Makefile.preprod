@@ -1,0 +1,77 @@
+# ─── PREPROD (staging continu, déployé auto depuis develop) ────────────────
+.PHONY: preprod-build preprod-docs-build preprod-up preprod-docs-up preprod-down preprod-clean preprod-status preprod-logs
+preprod-build: ## Builder les images app preprod (api + worker + 1 image par espace) — UNE À LA FOIS (anti-OOM)
+	@for s in api $(WORKER_SERVICE) $(WEBAPP_SERVICES); do \
+		echo "→ build preprod: $$s"; \
+		COMPOSE_BAKE=false $(COMPOSE_PRE) build $$s || exit 1; \
+	done
+
+preprod-docs-build: ## Builder les 3 documentations preprod — UNE À LA FOIS (anti-OOM)
+	@for s in $(DOCS_SERVICES); do \
+		echo "→ build docs: $$s"; \
+		COMPOSE_BAKE=false $(COMPOSE_PRE) build $$s || exit 1; \
+	done
+
+preprod-up: ## Lancer la stack app preprod (db + api + worker + les 4 espaces + mailpit ; docs à part)
+	$(COMPOSE_PRE) up -d db api $(WORKER_SERVICE) $(WEBAPP_SERVICES) mailpit
+
+preprod-docs-up: ## Lancer uniquement les 3 documentations preprod
+	$(COMPOSE_PRE) up -d $(DOCS_SERVICES)
+
+preprod-down: ## Arrêter et supprimer les containers preprod
+	$(COMPOSE_PRE) down
+
+preprod-clean: ## Reset volumes preprod
+	$(COMPOSE_PRE) down -v
+
+preprod-status: ## État des services preprod
+	$(COMPOSE_PRE) ps
+
+preprod-logs: ## Suivre les logs preprod
+	$(COMPOSE_PRE) logs -f --tail=200
+
+.PHONY: preprod-api
+# L'image prod garde le `memory_limit` par défaut (128 M) pour le web ; une commande de lot décode
+# des pages entières de JSON Jarvi et a besoin de marge — donnée ici, à la CLI seule.
+preprod-api: ## Console Symfony (preprod). Ex: make preprod-api CMD="app:jarvi:profiles:import --limit=10 --dry-run"
+	$(COMPOSE_PRE) exec -T api php -d memory_limit=512M bin/console $(CMD)
+
+.PHONY: preprod-schema preprod-messenger-setup preprod-healthcheck preprod-notify preprod-deploy preprod-reset
+preprod-schema: ## DESTRUCTIF — (re)créer le schéma preprod depuis le mapping (drop + create), miroir de dev-schema
+	@echo "⚠️  preprod-schema DÉTRUIT toutes les données preprod. Ctrl-C sous 5 s pour annuler."
+	@sleep 5
+	$(COMPOSE_PRE) exec -T api php bin/console doctrine:schema:drop --full-database --force
+	$(COMPOSE_PRE) exec -T api php bin/console doctrine:schema:create
+	$(MAKE) preprod-messenger-setup
+
+preprod-messenger-setup: ## Créer les tables des transports Messenger (hors mapping Doctrine, idempotent)
+	$(COMPOSE_PRE) exec -T api php bin/console messenger:setup-transports
+
+preprod-healthcheck: ## Vérifier que l'API preprod répond (via le proxy frontal)
+	@. ./.env && curl -fsSk --resolve api.$${BASE_DOMAIN}:443:127.0.0.1 https://api.$${BASE_DOMAIN}/v1/health > /dev/null && echo "OK" || (echo "KO" && exit 1)
+
+.PHONY: preprod-seed-team
+preprod-seed-team: ## Comptes de recette (candidat/entreprise/admin). Options : PASSWORD=... CREDITS=...
+	$(COMPOSE_PRE) exec -T api php bin/console app:accounts:seed-team --force \
+		$(if $(PASSWORD),--password=$(PASSWORD),) $(if $(CREDITS),--credits=$(CREDITS),)
+
+preprod-notify: ## Prévenir par e-mail que la preprod est en ligne (silencieux si DEPLOY_NOTIFY_* absents du .env)
+	@./scripts/notify-deploy.sh preprod
+
+# La notification est la DERNIÈRE ligne : make interrompt la chaîne dès qu'une étape échoue, donc
+# l'e-mail ne part que sur un déploiement entièrement passé. Aucune condition à écrire.
+preprod-deploy: ## Déploiement app preprod : build → up → JWT → tables Messenger → healthcheck → e-mail. NE DÉTRUIT AUCUNE DONNÉE.
+	$(MAKE) preprod-build
+	$(MAKE) preprod-up
+	$(COMPOSE_PRE) exec -T api php bin/console lexik:jwt:generate-keypair --skip-if-exists
+	$(MAKE) preprod-messenger-setup
+	$(MAKE) preprod-healthcheck
+	$(MAKE) preprod-notify
+
+preprod-reset: ## DESTRUCTIF — repartir de zéro : schéma recréé + comptes de recette. Options : PASSWORD=... CREDITS=...
+	$(MAKE) preprod-schema
+	$(MAKE) preprod-search-index
+	$(MAKE) preprod-seed-team
+
+preprod-search-index: ## Extension pg_trgm + index trigrammes de la recherche (idempotent)
+	$(COMPOSE_PRE) exec -T api php bin/console app:search:index

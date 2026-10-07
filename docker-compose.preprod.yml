@@ -1,0 +1,217 @@
+# Environnement PREPROD — staging continu (déployé auto depuis develop).
+# Miroir jetable de la prod : mêmes images, données synthétiques, e-mails captés
+# par Mailpit, verrouillé (basic auth + noindex) au niveau du Caddy frontal PARTAGÉ
+# (docker-compose.proxy.yml, réseau externe `showcase-recruiter-webapp-saas_edge`, alias *-preprod).
+# ⚠️ Dans le .env de la copie preprod : BASE_DOMAIN=preprod.showcase-recruiter-webapp-saas.example.
+
+# Socle commun aux 4 builds de la webapp (une par espace — cf. plus bas).
+x-webapp-preprod: &webapp-preprod
+  restart: unless-stopped
+  environment:
+    NODE_ENV: production
+    NUXT_PUBLIC_API_BASE: "https://api.${BASE_DOMAIN}"
+    NUXT_API_INTERNAL_BASE: "http://api:80"
+    NUXT_PUBLIC_BASE_DOMAIN: ${BASE_DOMAIN}
+    # Maquettes de conception (`/artefacts/*`, espace public) : la preprod est le seul
+    # environnement déployé qui les serve. Ne JAMAIS reporter cette ligne dans
+    # docker-compose.prod.yml — c'est son absence qui ferme les routes en production.
+    NUXT_PUBLIC_ARTEFACTS: "true"
+    # `.preprod.showcase-recruiter-webapp-saas.example` — SSO limité aux sous-domaines preprod.
+    # Le même NUXT_SESSION_PASSWORD dans les 4 builds, sinon pas de session partagée.
+    NUXT_SESSION_COOKIE_DOMAIN: ".${BASE_DOMAIN}"
+    NUXT_SESSION_PASSWORD: ${NUXT_SESSION_PASSWORD}
+    # Autocomplétion d'adresse (Google Places), côté serveur uniquement. Vide → saisie manuelle.
+    NUXT_GOOGLE_PLACES_API_KEY: ${NUXT_GOOGLE_PLACES_API_KEY:-}
+    # Social login (OIDC) — SERVEUR uniquement. Le secret échange le code contre l'id_token et ne
+    # doit jamais atteindre le navigateur. Vides → le fournisseur est masqué, le tunnel e-mail reste.
+    NUXT_GOOGLE_OIDC_CLIENT_ID: ${NUXT_GOOGLE_OIDC_CLIENT_ID:-}
+    NUXT_GOOGLE_OIDC_CLIENT_SECRET: ${NUXT_GOOGLE_OIDC_CLIENT_SECRET:-}
+    NUXT_LINKEDIN_OIDC_CLIENT_ID: ${NUXT_LINKEDIN_OIDC_CLIENT_ID:-}
+    NUXT_LINKEDIN_OIDC_CLIENT_SECRET: ${NUXT_LINKEDIN_OIDC_CLIENT_SECRET:-}
+  depends_on: [api]
+
+# Socle commun à l'API et au worker Messenger : même image, même configuration.
+x-api-preprod: &api-preprod
+  build:
+    context: ./api
+    dockerfile: Dockerfile.prod
+  restart: unless-stopped
+  environment:
+    # Staging = miroir prod : APP_ENV=prod (pas d'env Symfony custom `preprod`, non
+    # autorisé par App\Kernel::getAllowedEnvs()). La preprod se distingue par ses
+    # domaines/données/infra, pas par l'environnement applicatif.
+    APP_ENV: prod
+    DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?serverVersion=${POSTGRES_VERSION:-17}&charset=utf8"
+    # E-mails de recette captés par Mailpit (jamais d'envoi réel en preprod).
+    MAILER_DSN: "smtp://mailpit:1025"
+    MAILER_FROM: "showcase-recruiter-webapp-saas <no-reply@${BASE_DOMAIN}>"
+    # Les liens des e-mails (magic link, mot de passe, invitation) se construisent À PARTIR D'ICI.
+    # Sans ces trois lignes, Symfony retombe sur `api/.env` — versionné, donc embarqué dans l'image —
+    # et envoie `entreprise.localhost:8080` à de vrais destinataires : le lien ouvre le poste de qui
+    # le reçoit. Aucune erreur nulle part, l'e-mail part très bien.
+    APP_BASE_URL: "https://entreprise.${BASE_DOMAIN}"
+    APP_CANDIDATE_BASE_URL: "https://candidat.${BASE_DOMAIN}"
+    APP_COMPANY_BASE_URL: "https://entreprise.${BASE_DOMAIN}"
+    # Clé API Jarvi (import candidats) — fournie par le .env racine, vide par défaut.
+    JARVI_API_KEY: "${JARVI_API_KEY:-}"
+  volumes:
+    - media_uploads:/app/var/uploads
+    # Keypair JWT persistant : généré au deploy (lexik:jwt:generate-keypair), il DOIT
+    # survivre à la recréation du conteneur (sinon login KO à chaque preprod-up/redeploy).
+    - jwt_keys:/app/config/jwt
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+  api:
+    <<: *api-preprod
+    networks:
+      showcase-recruiter-webapp-saas: {}
+      edge:
+        aliases: [api-preprod]
+
+  # Consomme la file `async` (e-mails). Sans lui, aucun e-mail ne part.
+  # Hors du réseau `edge` : il ne sert aucune requête.
+  worker:
+    <<: *api-preprod
+    command: php bin/console messenger:consume async --time-limit=3600 --memory-limit=128M
+    # L'image FrankenPHP sonde son serveur web ; le worker n'en lance pas, il serait
+    # donc marqué `unhealthy` en permanence.
+    healthcheck:
+      disable: true
+    networks: [showcase-recruiter-webapp-saas]
+
+  # ─── Webapp : UNE IMAGE PAR ESPACE (architecture Nuxt Layers) ──────────────────
+  # Une build ne contient QUE son espace. Caddy route host → service via les alias `edge`.
+  webapp-public:
+    <<: *webapp-preprod
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+      args:
+        SHOWCASE_RECRUITER_WEBAPP_SAAS_SPACE: public
+    networks:
+      showcase-recruiter-webapp-saas: {}
+      edge:
+        aliases: [webapp-public-preprod]
+
+  webapp-candidat:
+    <<: *webapp-preprod
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+      args:
+        SHOWCASE_RECRUITER_WEBAPP_SAAS_SPACE: candidat
+    networks:
+      showcase-recruiter-webapp-saas: {}
+      edge:
+        aliases: [webapp-candidat-preprod]
+
+  webapp-entreprise:
+    <<: *webapp-preprod
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+      args:
+        SHOWCASE_RECRUITER_WEBAPP_SAAS_SPACE: entreprise
+    networks:
+      showcase-recruiter-webapp-saas: {}
+      edge:
+        aliases: [webapp-entreprise-preprod]
+
+  webapp-admin:
+    <<: *webapp-preprod
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+      args:
+        SHOWCASE_RECRUITER_WEBAPP_SAAS_SPACE: admin
+    networks:
+      showcase-recruiter-webapp-saas: {}
+      edge:
+        aliases: [webapp-admin-preprod]
+
+  mailpit:
+    image: axllent/mailpit
+    restart: unless-stopped
+    networks:
+      showcase-recruiter-webapp-saas: {}
+      edge:
+        aliases: [mailpit-preprod]
+
+  docs:
+    build:
+      context: .
+      dockerfile: docs/Dockerfile
+      args:
+        DOCS_SITE: showcase-recruiter-webapp-saas
+        NUXT_SITE_URL: "https://docs.${BASE_DOMAIN}"
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NUXT_SITE_URL: "https://docs.${BASE_DOMAIN}"
+    networks:
+      showcase-recruiter-webapp-saas: {}
+      edge:
+        aliases: [docs-preprod]
+
+  swagger:
+    build:
+      context: .
+      dockerfile: docs/Dockerfile
+      args:
+        DOCS_SITE: api
+        NUXT_SITE_URL: "https://swagger.${BASE_DOMAIN}"
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NUXT_SITE_URL: "https://swagger.${BASE_DOMAIN}"
+    networks:
+      showcase-recruiter-webapp-saas: {}
+      edge:
+        aliases: [swagger-preprod]
+
+  devbook:
+    build:
+      context: .
+      dockerfile: docs/Dockerfile
+      args:
+        DOCS_SITE: dev-book
+        NUXT_SITE_URL: "https://dev-book.${BASE_DOMAIN}"
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NUXT_SITE_URL: "https://dev-book.${BASE_DOMAIN}"
+    networks:
+      showcase-recruiter-webapp-saas: {}
+      edge:
+        aliases: [devbook-preprod]
+
+  db:
+    image: postgres:${POSTGRES_VERSION:-17}-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [showcase-recruiter-webapp-saas]
+
+volumes:
+  postgres_data:
+  media_uploads:
+  jwt_keys:
+
+networks:
+  showcase-recruiter-webapp-saas:
+    driver: bridge
+  edge:
+    external: true
+    name: showcase-recruiter-webapp-saas_edge

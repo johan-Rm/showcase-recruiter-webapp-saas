@@ -1,0 +1,180 @@
+# Environnement DEV — calqué sur la prod : un espace = un host = une build, derrière Caddy.
+# La webapp est une architecture Nuxt Layers : une build ne sert QU'UN espace (SHOWCASE_RECRUITER_WEBAPP_SAAS_SPACE).
+# Un conteneur unique servant les 4 hosts afficherait partout le même espace — chemin écarté.
+#
+# Écart assumé avec la prod : HTTP (pas de TLS local), donc cookie de session non `Secure`.
+
+# Socle commun aux conteneurs Nuxt de dev.
+x-webapp-env: &webapp-env
+  # Vue du navigateur (login, liens) — port API exposé sur l'hôte.
+  NUXT_PUBLIC_API_BASE: "http://localhost:${DEV_API_PORT:-18080}"
+  # Vue du serveur Nuxt (BFF → API) — réseau Docker interne.
+  NUXT_API_INTERNAL_BASE: "http://api:80"
+  # Liens inter-espaces (useSpaceUrl) — candidat.localhost / entreprise.localhost / admin.localhost.
+  # Une stack de worktree pose son propre domaine (`wt-api.localhost`, …) : le port ne suffirait
+  # pas à séparer les sessions, les cookies l'ignorent. Cf. parallel-work.md § stack par worktree.
+  NUXT_PUBLIC_BASE_DOMAIN: "${DEV_BASE_DOMAIN:-localhost}"
+  # Maquettes de conception (`/artefacts/*`, espace public) : ouvertes en dev et en preprod,
+  # jamais en production — c'est l'ABSENCE de cette variable qui les ferme là-bas.
+  NUXT_PUBLIC_ARTEFACTS: "true"
+  # Le dev tourne en HTTP : un cookie `Secure` ne serait jamais renvoyé (la session serait
+  # perdue à chaque requête). Il reste `Secure` partout ailleurs — cf. base/nuxt.config.ts.
+  NUXT_SESSION_COOKIE_SECURE: "false"
+  # Les événements inotify émis sur l'hôte ne traversent pas le bind mount (WSL2, macOS) : sans
+  # scrutation, Vite ne revalide jamais ses modules et sert indéfiniment le code d'avant la
+  # dernière modification. Coûteux en CPU, donc réservé au compose de dev — cf. webapp/nuxt.config.ts.
+  DEV_WATCH_POLLING: "true"
+  # Clé Google Places (autocomplétion d'adresse à l'inscription entreprise), côté serveur. Absente
+  # en dev → le formulaire retombe en saisie manuelle (ville + pays). La poser dans l'env de l'hôte
+  # (ou webapp/.env) pour tester la recherche localement.
+  NUXT_GOOGLE_PLACES_API_KEY: "${NUXT_GOOGLE_PLACES_API_KEY:-}"
+  # Clé Claude (recherche assistée de l'espace entreprise), côté serveur. Absente en dev → la
+  # recherche IA se désactive proprement (la recherche par critères reste). La poser dans le .env
+  # racine pour tester localement — cf. server/api/ai/parse-search.
+  NUXT_ANTHROPIC_API_KEY: "${NUXT_ANTHROPIC_API_KEY:-}"
+  # Social login (OIDC) — SERVEUR uniquement. Le secret échange le code contre l'id_token et ne
+  # doit jamais atteindre le navigateur. Vides → le fournisseur est masqué, le tunnel e-mail reste.
+  NUXT_GOOGLE_OIDC_CLIENT_ID: ${NUXT_GOOGLE_OIDC_CLIENT_ID:-}
+  NUXT_GOOGLE_OIDC_CLIENT_SECRET: ${NUXT_GOOGLE_OIDC_CLIENT_SECRET:-}
+  NUXT_LINKEDIN_OIDC_CLIENT_ID: ${NUXT_LINKEDIN_OIDC_CLIENT_ID:-}
+  NUXT_LINKEDIN_OIDC_CLIENT_SECRET: ${NUXT_LINKEDIN_OIDC_CLIENT_SECRET:-}
+
+x-webapp-space: &webapp-space
+  build:
+    context: ./webapp
+    dockerfile: Dockerfile.dev
+  working_dir: /app
+  command: bun run dev --host 0.0.0.0 --port 3000
+  volumes:
+    - ./webapp:/app
+    - /app/node_modules
+    # `.nuxt` vient du montage ./webapp : sans volume dédié, les espaces lancés en parallèle
+    # écriraient dans le MÊME répertoire de build et s'écraseraient mutuellement.
+    - /app/.nuxt
+  depends_on: [api]
+  networks: [showcase-recruiter-webapp-saas]
+
+services:
+  db:
+    image: postgres:${POSTGRES_VERSION:-17}-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${DEV_DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [showcase-recruiter-webapp-saas]
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile        # FrankenPHP (créé au scaffold)
+    working_dir: /app
+    environment:
+      APP_ENV: dev
+      # DATABASE_URL n'est plus injectée ici : la source de vérité est api/.env
+      # (hôte "db" = ce service). POSTGRES_* (racine .env) ne sert qu'au conteneur db.
+    volumes:
+      - ./api:/app
+      - media_uploads:/app/var/uploads
+    ports:
+      - "${DEV_API_PORT:-18080}:80"
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    networks: [showcase-recruiter-webapp-saas]
+
+  # Consomme la file `async` (e-mails). Sans lui, aucun e-mail ne part : le message
+  # reste en base. Le dev le fait tourner comme la prod, pour ne pas découvrir en prod
+  # un envoi qui n'était vérifié qu'en synchrone.
+  worker:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    working_dir: /app
+    command: php bin/console messenger:consume async --time-limit=3600 -v
+    environment:
+      APP_ENV: dev
+    # L'image FrankenPHP sonde son serveur web ; le worker n'en lance pas, il serait
+    # donc marqué `unhealthy` en permanence.
+    healthcheck:
+      disable: true
+    volumes:
+      - ./api:/app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    networks: [showcase-recruiter-webapp-saas]
+
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "${DEV_MAILPIT_UI_PORT:-18025}:8025"
+    networks: [showcase-recruiter-webapp-saas]
+
+  # ─── Les 4 espaces derrière Caddy ──────────────────────────────────────────────
+  # localhost / candidat.localhost / entreprise.localhost / admin.localhost — un host,
+  # une build, comme en prod. Coût : 4 serveurs Nuxt dev.
+
+  webapp-public:
+    <<: *webapp-space
+    environment:
+      <<: *webapp-env
+      SHOWCASE_RECRUITER_WEBAPP_SAAS_SPACE: public
+
+  webapp-candidat:
+    <<: *webapp-space
+    environment:
+      <<: *webapp-env
+      SHOWCASE_RECRUITER_WEBAPP_SAAS_SPACE: candidat
+
+  webapp-entreprise:
+    <<: *webapp-space
+    environment:
+      <<: *webapp-env
+      SHOWCASE_RECRUITER_WEBAPP_SAAS_SPACE: entreprise
+
+  webapp-admin:
+    <<: *webapp-space
+    environment:
+      <<: *webapp-env
+      SHOWCASE_RECRUITER_WEBAPP_SAAS_SPACE: admin
+
+  caddy:
+    image: caddy:2-alpine
+    environment:
+      # Consommés par Caddyfile.dev — hosts servis et port de l'accès OAuth.
+      DEV_BASE_DOMAIN: "${DEV_BASE_DOMAIN:-localhost}"
+      DEV_OAUTH_PORT: "${DEV_OAUTH_PORT:-8082}"
+    # 8080 par défaut : le port 80 est souvent déjà pris sur la machine de dev.
+    # Mettre DEV_PROXY_PORT=80 dans .env pour des URLs sans port (http://admin.localhost).
+    ports:
+      - "${DEV_PROXY_PORT:-8080}:80"
+      # Accès `localhost` littéral à l'espace entreprise, pour les callbacks OAuth (cf. Caddyfile.dev).
+      - "${DEV_OAUTH_PORT:-8082}:${DEV_OAUTH_PORT:-8082}"
+    volumes:
+      - ./docker/caddy/Caddyfile.dev:/etc/caddy/Caddyfile:ro
+    # Pas de `depends_on` : il forcerait le démarrage des quatre espaces, alors qu'une stack de
+    # worktree n'en allume qu'un (`make dev-up-space`). Caddy résout ses upstreams à la requête,
+    # un espace éteint répond 502 sur SON host et ne gêne pas les autres.
+    networks: [showcase-recruiter-webapp-saas]
+
+volumes:
+  postgres_data:
+  media_uploads:
+
+networks:
+  showcase-recruiter-webapp-saas:
+    driver: bridge

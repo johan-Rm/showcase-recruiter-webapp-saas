@@ -1,0 +1,51 @@
+name: api-quality
+
+# Gate de pré-merge BLOQUANT pour l'API (cf. docs/showcase-recruiter-webapp-saas/content/3.quality/testing-and-ci.md).
+# Parité local ↔ CI : on exécute le MÊME `composer quality` dans le MÊME conteneur
+# que le dev (docker-compose.dev.yml), via les cibles Makefile `ci-*`.
+on:
+  pull_request:
+    branches: [develop, main]
+    paths:
+      - 'api/**'
+      - 'Makefile'
+      - 'Makefile.common'
+      - 'Makefile.dev'
+      - 'docker-compose.dev.yml'
+      - '.env.example'
+      - '.github/workflows/api-quality.yml'
+  workflow_dispatch: {} # permet de lancer la CI manuellement (UI Actions ou `gh workflow run`)
+
+concurrency:
+  group: api-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api-quality:
+    name: api — lint:container, phpstan, cs, deptrac, phpunit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Préparer les fichiers .env (depuis les *.example)
+        run: make dev-env
+
+      - name: Pipeline qualité API (bring-up db+api → setup → composer quality)
+        run: make ci-api-quality
+
+      # L'API possède son contrat : si le code change sans que api/openapi.json soit
+      # régénéré, le front génèrerait ses types depuis un artefact périmé.
+      - name: Contrat — api/openapi.json à jour avec le code
+        run: |
+          make dev-openapi
+          git diff --exit-code -- api/openapi.json
+
+      - name: Logs des conteneurs si échec
+        if: failure()
+        run: docker compose -f docker-compose.dev.yml logs --no-color --tail=200
+
+      - name: Teardown
+        if: always()
+        run: docker compose -f docker-compose.dev.yml down -v --remove-orphans

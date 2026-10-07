@@ -1,0 +1,31 @@
+# syntax=docker/dockerfile:1
+# ─────────────────────────────────────────────────────────────────────────────
+# API showcase-recruiter-webapp-saas — image PREPROD/PROD (FrankenPHP). Build hermétique (composer dans
+# l'image), aucune dépendance locale. Sert /app/public via le Caddyfile par défaut
+# de l'image FrankenPHP.
+#
+# Worker mode (perf) : `composer require runtime/frankenphp-symfony` puis définir
+# FRANKENPHP_CONFIG="worker ./public/index.php" — à activer avant la mise en prod.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ---- Stage 1 : dépendances + autoload optimisé (sans dev) ----
+FROM dunglas/frankenphp:1-php8.4 AS builder
+RUN install-php-extensions intl opcache pdo_pgsql zip @composer
+WORKDIR /app
+COPY composer.json composer.lock symfony.lock ./
+ENV APP_ENV=prod
+RUN composer install --no-dev --no-scripts --no-interaction --prefer-dist --no-progress
+COPY . .
+RUN composer dump-autoload --no-dev --optimize --classmap-authoritative \
+ && composer run-script --no-dev post-install-cmd || true
+
+# ---- Stage 2 : runtime ----
+FROM dunglas/frankenphp:1-php8.4
+RUN install-php-extensions intl opcache pdo_pgsql zip
+ENV SERVER_NAME=:80 \
+    APP_ENV=prod \
+    APP_DEBUG=0
+WORKDIR /app
+COPY --from=builder /app /app
+RUN mkdir -p var/cache var/log var/uploads \
+ && chown -R www-data:www-data var

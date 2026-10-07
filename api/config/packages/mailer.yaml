@@ -1,0 +1,9 @@
+framework:
+    mailer:
+        dsn: '%env(MAILER_DSN)%'
+        # Posé sur tout message qui n'a pas d'expéditeur, donc sur les quatre — aucun n'a de raison
+        # d'en choisir un autre. Ici et non dans le code : le jour où le domaine d'envoi change, une
+        # variable d'environnement suffit. C'est cette absence qui laissait `no-reply@showcase-recruiter-webapp-saas.test`
+        # recopié dans les quatre émetteurs — un TLD de développement, en preprod comme en prod.
+        headers:
+            from: '%env(MAILER_FROM)%'

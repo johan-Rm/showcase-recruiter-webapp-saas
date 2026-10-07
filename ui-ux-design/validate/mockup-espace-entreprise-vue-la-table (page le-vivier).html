@@ -1,0 +1,2415 @@
+<!doctype html>
+<html lang="fr" data-theme="dark" class="h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>showcase-recruiter-webapp-saas — Vivier · Console contextuelle (profils vérifiés)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind Play CDN (prototypage uniquement) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: ['selector', '[data-theme="dark"]'],
+      theme: {
+        extend: {
+          colors: {
+            bg: 'var(--bg)',
+            surface: 'var(--surface)',
+            'surface-soft': 'var(--surface-soft)',
+            text: 'var(--text)',
+            muted: 'var(--muted)',
+            accent: 'var(--accent)',
+            'accent-soft': 'var(--accent-soft)',
+            dropdown: 'var(--dropdown-bg)',
+            available: 'var(--available)',
+            revealed: 'var(--revealed)',
+            new: 'var(--new)',
+            morocco: 'var(--morocco)',
+          },
+          fontFamily: {
+            title: ['var(--font-title)', 'serif'],
+            ui: ['var(--font-ui)', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Theming + états dynamiques (hors portée des utilitaires) -->
+  <style>
+    /* ════════════════════════════════════════════════════════════════════════
+       🎨  FICHE D'ESSAI — PALETTE & FONTS
+       Pour tester une nouvelle palette : remplace UNIQUEMENT les valeurs ci-dessous.
+       --accent-soft est dérivé de --accent (color-mix) → 1 seule valeur à changer.
+       Pour les fonts : change --font-title / --font-ui ICI + l'import Google Fonts (<head>).
+       ════════════════════════════════════════════════════════════════════════ */
+    :root {
+      /* — Réglages structurels (ne pas toucher pour un essai couleur) — */
+      --gap: 8px;
+      --topbar-height: 54px;
+      --console-height: 27dvh;
+      --console-header-h: 5dvh;
+      --console-footer-h: 4.5dvh;
+
+      /* — Duo de fonts — */
+      --font-title: "Exo 2";   /* Titres */
+      --font-ui: "Manrope";    /* Texte & interface */
+
+      /* ░░ PALETTE — MODE CLAIR ░░ */
+      /* Couleurs principales */
+      --bg: #f3f0ea;            /* 1 · Fond de page */
+      --surface: #ffffff;       /* 2 · Surface (cartes, dropdowns) */
+      /* Autres neutres */
+      --surface-soft: #efede5;  /* Surface secondaire (chips, widgets) */
+      --dropdown-bg: #ffffff;   /* Fond des menus */
+      --text: #111111;          /* Texte principal */
+      --muted: #6f6a61;         /* Texte atténué */
+      /* Accent (signature) — argile · accent-soft dérivé, ne pas saisir à la main */
+      --accent: #C8A882;
+      --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
+      /* Statuts */
+      --available: #b2b760;     /* Disponible — Olive Green */
+      --revealed: #e8b52d;      /* Dévoilé — Tulip Tree */
+      --new: #6ab3e4;           /* Nouveau — Picton Blue */
+      --morocco: #f25558;       /* Bientôt au Maroc — Carnation */
+    }
+
+    html[data-theme="dark"] {
+      /* ░░ PALETTE — MODE SOMBRE ░░ */
+      /* Couleurs principales */
+      --bg: #08090B;            /* 1 · Fond de page — Glass dark */
+      --surface: #151A22;       /* 2 · Surface (cartes, dropdowns) — Glass dark, remonté pour contraste */
+      /* Autres neutres */
+      --surface-soft: #222944;  /* Surface secondaire (chips, widgets) */
+      --dropdown-bg: #1f1f21;   /* Fond des menus */
+      --text: #ffffff;          /* Texte principal */
+      --muted: #a9a9ad;         /* Texte atténué */
+      /* Accent (signature) — argile · accent-soft dérivé, ne pas saisir à la main */
+      --accent: #C8A882;
+      --accent-soft: color-mix(in srgb, var(--accent) 18%, transparent);
+      /* Statuts */
+      --available: #b2b760;     /* Disponible — Olive Green */
+      --revealed: #e8b52d;      /* Dévoilé — Tulip Tree */
+      --new: #6ab3e4;           /* Nouveau — Picton Blue */
+      --morocco: #f25558;       /* Bientôt au Maroc — Carnation */
+    }
+
+    /* Base icônes (stroke commun) */
+    svg {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+
+    /* Dropdown compte : révélation au survol / focus */
+    .account-dropdown { transform: translateY(-4px); pointer-events: none; }
+    .account:hover .account-dropdown,
+    .account:focus-within .account-dropdown {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .account:hover .chevron,
+    .account:focus-within .chevron { transform: rotate(180deg); }
+
+    /* Bascule thème : icône lune/soleil */
+    .icon { display: none; }
+    html[data-theme="dark"] .icon-moon { display: block; }
+    html[data-theme="light"] .icon-sun { display: block; }
+
+    /* Carte : sélection PAR COULEUR (pattern --color + color-mix, sans case à cocher).
+       Chaque carte ne connaît qu'une couleur (--color) ; hover/sélection en dérivent. */
+    .candidate-card {
+      --color: var(--accent);
+      transition: background-color .16s ease;
+    }
+    .candidate-grid.is-selecting .candidate-card { cursor: pointer; }
+    .candidate-grid.is-selecting .candidate-card:hover {
+      background: color-mix(in srgb, var(--color) 10%, var(--surface));
+    }
+    .candidate-card.is-selected {
+      background: color-mix(in srgb, var(--color) 16%, var(--surface));
+    }
+    .candidate-grid.is-selecting .candidate-card.is-selected:hover {
+      background: color-mix(in srgb, var(--color) 22%, var(--surface));
+    }
+    html[data-theme="light"] .candidate-card { box-shadow: 0 0 0 1px rgba(17, 17, 17, .06); }
+
+    /* Profils vérifiés (starProfile) : mise en avant de la carte.
+       Marquage posé en JS (présence du badge « Profil vérifié »). */
+    .candidate-card.is-verified {
+      box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 45%, transparent);
+    }
+    html[data-theme="light"] .candidate-card.is-verified {
+      box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 50%, transparent);
+    }
+    /* Fond teinté accent, sauf si la carte est sélectionnée (la sélection garde la priorité) */
+    .candidate-card.is-verified:not(.is-selected) {
+      background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+    }
+    /* Liseré accent à gauche (clippé par le rayon de la carte) */
+    .candidate-card.is-verified::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      left: 0;
+      width: 3px;
+      background: var(--accent);
+    }
+    /* Filtre direct « Profils vérifiés » : masque les cartes non vérifiées */
+    .candidate-grid.is-verified-only .candidate-card:not(.is-verified) { display: none; }
+
+    /* Vue d'ensemble : pastilles */
+    .overview-item::before {
+      content: "";
+      width: 8px; height: 8px;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: currentColor;
+    }
+    .overview-item.is-total::before { display: none; }
+    /* Compteurs cliquables : raccourcis de filtre (teinte = couleur du compteur) */
+    .overview-item:hover { background: color-mix(in srgb, currentColor 14%, transparent); }
+    .overview-item.is-on { background: color-mix(in srgb, currentColor 20%, transparent); }
+    .overview-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* Footer — zone notifications temps réel : pastille « live » qui pulse */
+    .notify-dot {
+      width: 7px; height: 7px;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: var(--accent);
+      animation: notify-pulse 1.8s ease-out infinite;
+    }
+    @keyframes notify-pulse {
+      0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); }
+      70%  { box-shadow: 0 0 0 6px transparent; }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+    @media (prefers-reduced-motion: reduce) { .notify-dot { animation: none; } }
+
+    /* Console header — toggle du sens de défilement des cartes (gallery-vertical / -horizontal) */
+    .scroll-toggle { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 2px; padding: 2px; border-radius: 6px; background: var(--bg); }
+    .scroll-btn { width: 20px; height: 20px; display: grid; place-items: center; border: 0; border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; transition: background-color .16s ease, color .16s ease; }
+    .scroll-btn svg { width: 14px; height: 14px; }
+    .scroll-btn:hover { color: var(--text); }
+    .scroll-btn.is-active { background: var(--accent); color: #111; }
+    .scroll-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* Masque dégradé en haut de la grille : les cartes scrollent en fondu sous le bandeau
+       (sinon elles passent derrière la mini-barre transparente). */
+    .grid-topmask {
+      position: absolute; top: 0; left: 0; right: 0; height: 52px; z-index: 11;
+      pointer-events: none;
+      background: linear-gradient(to bottom, var(--bg) 70%, transparent);
+    }
+
+    /* Mini-barre de contrôles au-dessus de la grille (déportée hors console) */
+    .grid-toolbar {
+      position: absolute; top: 24px; left: 8px; right: 8px; z-index: 12;
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+    }
+    .grid-toolbar .scroll-toggle { gap: 1px; padding: 1px; border-radius: 5px; }
+    .grid-toolbar .scroll-btn { width: 17px; height: 17px; border-radius: 3px; }
+    .grid-toolbar .scroll-btn svg { width: 11px; height: 11px; }
+    .grid-toolbar .console-modes { height: 18px; gap: 1px; padding: 1px; border-radius: 5px; background: var(--bg); display: inline-flex; align-items: stretch; }
+    .grid-toolbar .console-mode { padding: 0 6px; font-size: 9px; font-weight: 700; gap: 3px; border-radius: 4px; color: var(--muted); }
+    .grid-toolbar .console-mode svg { width: 10px; height: 10px; }
+    .grid-toolbar .console-mode.is-active { background: var(--accent); color: #111; }
+
+    /* Panneau notifications : recouvre la bande body (header + footer restent visibles) */
+    .notify-panel {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: var(--console-header-h);
+      bottom: var(--console-footer-h);
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
+    }
+    html[data-theme="dark"] .notify-panel { background: var(--dropdown-bg); }
+    .console.is-notify-open .notify-panel {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: none;
+      transition-delay: 0s;
+    }
+    .console.is-notify-open .console-notify { color: var(--accent); }
+    @media (prefers-reduced-motion: reduce) { .notify-panel { transition: none; } }
+    .selection-count::before {
+      content: "";
+      width: 9px; height: 9px;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    /* Zone principale : split déterministe — cards = reste (1fr), console = --console-height.
+       Forcé en CSS pur (l'utilitaire Tailwind arbitraire avec var()+virgule ne compile pas). */
+    #viewPanel {
+      grid-template-rows: minmax(0, 1fr) var(--console-height);
+      transition: grid-template-rows .24s ease;
+    }
+    /* Mode Focus : la console se réduit à son en-tête, les cards récupèrent l'espace */
+    #viewPanel:has(.console.is-focus) { grid-template-rows: minmax(0, 1fr) auto; }
+
+    /* Console : 3 lignes, le corps (1fr) absorbe la hauteur de la piste */
+    .console {
+      display: grid;
+      grid-template-rows: var(--console-header-h) minmax(0, 1fr) var(--console-footer-h);
+      transition: grid-template-rows .24s ease;
+    }
+    /* Filet de sécurité : si la piste est trop courte, le corps défile au lieu de rogner */
+    .console-body { overflow: auto; }
+    .console-body,
+    .console-context { transition: opacity .18s ease, padding .24s ease; }
+    .console.is-focus { grid-template-rows: var(--console-header-h) 0 0; }
+    .console.is-focus .console-body,
+    .console.is-focus .console-context {
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      padding-top: 0;
+      padding-bottom: 0;
+      border: 0;
+    }
+    /* Bouton focus : centré verticalement dans la bande header (et non sur toute la console) */
+    .console-focus { top: calc(var(--console-header-h) / 2); transform: translateY(-50%); }
+    .console-chevron { transition: transform .16s ease; }
+    .console.is-open .console-chevron { transform: rotate(180deg); }
+    .focus-expand { display: none; }
+    .console.is-focus .focus-collapse { display: none; }
+    .console.is-focus .focus-expand { display: block; }
+
+    /* Bascule corps selon le mode Normal / Sélection */
+    .console[data-mode="select"] .show-normal { display: none; }
+    .console[data-mode="normal"] .show-select { display: none; }
+
+    /* Panneau contextuel : ouverture animée */
+    .console-panel {
+      visibility: hidden;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(48px);
+      transition: opacity .22s ease, transform .22s ease, visibility 0s linear .22s;
+      will-change: opacity, transform;
+    }
+    .console-panel.is-open {
+      visibility: visible;
+      pointer-events: auto;
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0s;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .console-panel, .console, .console-body, .console-context, .candidate-card { transition: none; }
+    }
+
+    /* Adaptations responsive ponctuelles */
+    @media (max-width: 1280px) {
+      .candidate-grid { grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); }
+      .console-action .action-label { display: none; }
+      .console-action { padding-left: 10px; padding-right: 10px; }
+    }
+    @media (max-width: 840px) {
+      :root { --gap: 7px; --topbar-height: 52px; }
+      .topbar-center { display: none; }
+      .account-copy { display: none; }
+      .chevron { display: none; }
+      .console-mode .mode-label { display: none; }
+      .console-body { flex-direction: column; align-items: stretch; }
+      .console-actions { justify-content: space-between; }
+      .console-action { flex: 1 1 auto; justify-content: center; }
+      .panel-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .candidate-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <!-- Composants stylés via utilitaires Tailwind (@apply) -->
+  <style type="text/tailwindcss">
+    @layer components {
+      /* ---------- Topbar ---------- */
+      .brand-mark { @apply grid h-[34px] w-[34px] flex-none place-items-center rounded-lg bg-accent-soft text-[21px] font-extrabold leading-none tracking-[-0.08em] text-accent; }
+      .topbar-tab { @apply cursor-pointer rounded-[7px] border-0 bg-transparent px-2.5 py-2 text-xs font-bold text-muted transition-colors hover:text-text; }
+      .topbar-tab.is-active { @apply bg-accent text-[#111]; }
+      .topbar-tab:focus-visible { @apply outline outline-2 outline-offset-2 outline-accent; }
+
+      .account-button { @apply flex h-[38px] cursor-pointer items-center gap-2 rounded-lg border-0 bg-transparent pl-2 text-text; }
+      .account-name { @apply block whitespace-nowrap text-[13px] font-bold; }
+      .account-role { @apply mt-[3px] block whitespace-nowrap text-[11px] text-muted; }
+      .avatar { @apply grid h-[34px] w-9 flex-none place-items-center rounded-lg bg-accent text-[13px] font-extrabold text-[#111]; }
+      .chevron { @apply h-[15px] w-[15px] flex-none text-muted transition-transform; }
+
+      .account-dropdown { @apply absolute right-0 top-[calc(100%+6px)] z-30 w-[232px] rounded-lg bg-dropdown p-1.5 opacity-0 transition; }
+      .dropdown-item { @apply flex min-h-[34px] w-full cursor-pointer items-center justify-between gap-2.5 rounded-lg border-0 bg-transparent px-[9px] text-left text-[13px] font-semibold text-muted hover:bg-bg hover:text-text; }
+      .dropdown-separator { @apply mx-[5px] my-[5px] h-px; background: color-mix(in srgb, var(--muted) 20%, transparent); }
+      .dropdown-credits { @apply cursor-default text-text hover:bg-transparent hover:text-text; }
+      .dropdown-credits-label { @apply inline-flex items-center gap-2 text-accent; }
+      .dropdown-credits-label svg { @apply h-4 w-4 flex-none; }
+      .credits-count { @apply font-extrabold text-text; }
+      .theme-toggle { @apply grid h-8 w-8 cursor-pointer place-items-center rounded-lg border-0 bg-bg text-text transition-colors hover:bg-accent-soft hover:text-accent; }
+      .theme-toggle .icon { @apply h-[18px] w-[18px]; }
+
+      /* ---------- Cartes candidat ---------- */
+      .candidate-card { @apply relative flex min-w-0 flex-col gap-2 overflow-hidden rounded-lg border bg-surface px-5 py-4; border-color: color-mix(in srgb, var(--text) 9%, transparent); box-shadow: 0 1px 2px rgba(0, 0, 0, .22), 0 8px 22px rgba(0, 0, 0, .16); }
+
+      .candidate-header { @apply grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2.5; }
+      .candidate-avatar { @apply h-[46px] w-[46px] flex-none overflow-hidden rounded-lg opacity-90 blur-[3px]; }
+      .candidate-avatar img { @apply block h-full w-full object-cover; }
+      .candidate-heading { @apply min-w-0 pt-px; }
+      .candidate-identity { @apply inline-flex max-w-full items-center text-sm font-extrabold leading-tight text-text; }
+      .identity-protected { @apply inline-block max-w-full select-none overflow-hidden text-ellipsis whitespace-nowrap blur-[4px]; }
+      .candidate-experience { @apply mt-[5px] whitespace-nowrap text-xs font-bold leading-tight text-muted; }
+      .candidate-badges { @apply flex min-w-[84px] flex-col items-end gap-[5px]; }
+
+      .candidate-body { @apply flex min-w-0 flex-col gap-2; }
+      .candidate-title { @apply m-0 text-[17px] font-extrabold leading-snug tracking-tight text-text; }
+      .candidate-skills { @apply flex flex-wrap items-start gap-1.5; }
+
+      .status-pill,
+      .candidate-tag,
+      .candidate-badge { @apply inline-flex min-h-[22px] items-center whitespace-nowrap rounded-lg px-2 text-[11px] font-extrabold leading-none; }
+      .candidate-tag { @apply bg-surface-soft text-muted; }
+      .candidate-badge { @apply bg-accent-soft text-accent; }
+      .status-pill.is-available { @apply text-available; background: rgba(125, 164, 84, .18); }
+      .status-pill.is-working { @apply text-[#55b8c6]; background: rgba(85, 184, 198, .16); }
+      .status-pill.is-discussing { @apply text-accent; background: rgba(220, 130, 96, .18); }
+      .candidate-verified:empty,
+      .candidate-status:empty { @apply hidden; }
+      .candidate-badge.candidate-verified::before { content: "✓"; @apply mr-1 font-black; }
+
+      .candidate-footer { @apply mt-auto flex items-center justify-between gap-3 border-t pt-2 text-[11px] font-semibold leading-snug text-muted; border-top-color: color-mix(in srgb, var(--muted) 18%, transparent); }
+      .candidate-footer strong { @apply font-black text-text; }
+      .candidate-presence,
+      .candidate-compensation { @apply inline-flex min-w-0 items-center gap-1.5 whitespace-nowrap; }
+      .candidate-presence { @apply overflow-hidden text-ellipsis; }
+      .candidate-presence span { @apply overflow-hidden text-ellipsis whitespace-nowrap; }
+      .candidate-compensation { @apply flex-none justify-end text-right; }
+      .candidate-presence svg,
+      .candidate-compensation svg { @apply h-[13px] w-[13px] flex-none; }
+
+      /* ---------- Console : en-tête ---------- */
+      .console-focus { @apply absolute right-3 z-[25] grid h-6 w-6 cursor-pointer place-items-center rounded-md border-0 bg-bg text-muted transition-colors hover:bg-accent-soft hover:text-accent; }
+      .console-focus:focus-visible { @apply outline outline-2 outline-offset-2 outline-accent; }
+      .console-focus svg { @apply h-3.5 w-3.5; }
+
+      .console-header { @apply flex items-center justify-between gap-3 overflow-hidden bg-dropdown py-1 pl-4 pr-11; }
+      .console-header:focus-visible { @apply outline outline-2 outline-offset-2 outline-accent; }
+      .console-header h2 { @apply m-0 overflow-hidden text-ellipsis whitespace-nowrap font-title text-lg font-normal leading-none tracking-tight; }
+      .console-chevron { @apply h-3.5 w-3.5 flex-none text-accent; }
+
+      .console-modes { @apply inline-flex h-6 flex-none items-stretch gap-0.5 rounded-md bg-bg p-0.5; }
+      .console-mode { @apply inline-flex cursor-pointer items-center gap-1.5 rounded-[5px] border-0 bg-transparent px-2 py-0 text-[11px] font-bold text-muted transition-colors hover:text-text; }
+      .console-mode svg { @apply h-3 w-3; }
+      .console-mode.is-active { @apply bg-accent text-[#111]; }
+      .console-mode:focus-visible { @apply outline outline-2 outline-offset-2 outline-accent; }
+
+      /* ---------- Console : corps (filtres / sélection + actions) ---------- */
+      .console-body { @apply flex min-h-0 items-center bg-surface px-2 py-2; }
+
+      /* ---------- Body : rangée de widgets (1 à 4) ---------- */
+      .console-widgets { @apply flex w-full items-stretch gap-2; }
+      .widget { @apply flex min-w-0 flex-col gap-1.5 rounded-lg bg-surface-soft px-3 py-2; }
+      .widget-search { @apply flex-[1.4]; }
+      .widget-saved { @apply flex-1; }
+      .widget-head { @apply flex items-center gap-1.5 whitespace-nowrap text-[10px] font-extrabold uppercase tracking-[0.06em] text-muted; }
+      .widget-head svg { @apply h-3.5 w-3.5 flex-none text-accent; }
+      .widget-badge { @apply ml-1 inline-flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-extrabold leading-none text-[#111]; }
+
+      /* Widget Vue d'ensemble */
+      .widget-stats { @apply flex flex-1 items-center gap-3.5; }
+      .stat { @apply flex flex-col leading-none; }
+      .stat-num { @apply text-lg font-extrabold leading-none text-text; }
+      .stat-num.is-available { @apply text-available; }
+      .stat-num.is-new { @apply text-new; }
+      .stat-num.is-revealed { @apply text-revealed; }
+      .stat-label { @apply mt-1 whitespace-nowrap text-[10px] font-bold text-muted; }
+
+      /* Widget Recherche */
+      .search-row { @apply flex items-center gap-2; }
+      .search-input { @apply flex h-8 min-w-0 flex-1 items-center gap-2 rounded-md border bg-surface px-2.5 text-muted; border-color: color-mix(in srgb, var(--muted) 26%, transparent); }
+      .search-input svg { @apply h-3.5 w-3.5 flex-none; }
+      .search-input input { @apply min-w-0 flex-1 border-0 bg-transparent text-[12px] font-medium text-text outline-none; }
+      .search-filters { @apply inline-flex h-8 flex-none cursor-pointer items-center gap-1.5 rounded-md border-0 bg-bg px-3 text-[11px] font-bold text-text transition-colors hover:bg-accent-soft hover:text-accent; }
+      .search-filters svg { @apply h-3.5 w-3.5; }
+
+      /* Filtre direct « Profils vérifiés » (accent, toggle) */
+      .verified-filter { @apply inline-flex h-8 flex-none cursor-pointer items-center gap-1.5 rounded-md border px-3 text-[11px] font-bold text-accent transition-colors; border-color: color-mix(in srgb, var(--accent) 45%, transparent); background: var(--accent-soft); }
+      .verified-filter svg { @apply h-3.5 w-3.5; }
+      .verified-filter:hover { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+      .verified-filter.is-on { @apply bg-accent text-[#111]; border-color: var(--accent); }
+      .verified-filter:focus-visible { @apply outline outline-2 outline-offset-2 outline-accent; }
+      .verified-count { @apply inline-flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-extrabold leading-none text-[#111]; }
+      .verified-filter.is-on .verified-count { background: rgba(17, 17, 17, .2); }
+      .saved-row { @apply flex min-h-8 items-center gap-1.5 overflow-x-auto; scrollbar-width: none; }
+      .saved-row::-webkit-scrollbar { display: none; }
+      .saved-label { @apply flex-none whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.04em] text-muted; }
+      .saved-chip { @apply inline-flex h-[22px] flex-none cursor-pointer items-center whitespace-nowrap rounded-lg bg-surface px-2.5 text-[11px] font-semibold text-text transition-colors hover:text-accent; }
+      .saved-add-mini { @apply grid h-[22px] w-[22px] flex-none cursor-pointer place-items-center rounded-full bg-surface text-muted transition-colors hover:text-accent; }
+      .saved-add-mini svg { @apply h-3 w-3; }
+
+      /* Widget Sélection */
+      .widget-selection-body { @apply flex flex-1 flex-col justify-center; }
+      .selection-title { @apply whitespace-nowrap text-[13px] font-extrabold leading-tight text-text; }
+      .selection-sub { @apply mt-0.5 whitespace-nowrap text-[11px] text-muted; }
+
+      /* Widget Actions */
+      .actions-row { @apply flex flex-1 items-center gap-1.5; }
+      .console-left { @apply flex min-w-0 flex-1 items-center gap-2.5; }
+      .console-block-label { @apply inline-flex flex-none items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-[0.04em] text-muted; }
+      .console-block-label svg { @apply h-3.5 w-3.5; }
+
+      .console-filters { @apply flex min-w-0 items-center gap-[7px] overflow-x-auto py-0.5; scrollbar-width: none; }
+      .console-filters::-webkit-scrollbar { display: none; }
+      .filter-chip { @apply inline-flex min-h-[26px] flex-none items-center gap-1.5 whitespace-nowrap rounded-lg bg-surface-soft py-0 pl-2.5 pr-1.5 text-[11px] font-bold text-text; }
+      .filter-chip.is-star { @apply bg-accent-soft text-accent; }
+      .filter-chip .chip-icon { @apply h-[13px] w-[13px] flex-none; }
+      .chip-remove { @apply grid h-[18px] w-[18px] cursor-pointer place-items-center rounded-full border-0 bg-transparent text-muted transition-colors hover:text-text; }
+      .chip-remove:hover { background: color-mix(in srgb, var(--muted) 22%, transparent); }
+      .chip-remove svg { @apply h-[11px] w-[11px]; stroke-width: 2.4; }
+      .filter-more { @apply inline-flex min-h-[28px] flex-none cursor-pointer items-center whitespace-nowrap rounded-full border border-dashed bg-transparent px-[11px] text-xs font-extrabold text-muted hover:border-accent hover:text-accent; border-color: color-mix(in srgb, var(--muted) 40%, transparent); }
+
+      .console-selection { @apply flex min-w-0 items-center gap-3; }
+      .selection-count { @apply inline-flex items-center gap-2 text-sm font-extrabold text-text; }
+      .selection-clear { @apply cursor-pointer border-0 bg-transparent text-xs font-bold text-muted underline underline-offset-[3px] hover:text-accent; }
+
+      .console-actions { @apply flex flex-none items-center gap-[7px]; }
+      .console-action { @apply inline-flex min-h-[32px] cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-lg border-0 bg-surface-soft px-3 text-[11px] font-bold text-text transition-colors hover:text-accent active:translate-y-px; }
+      .console-action svg { @apply h-3.5 w-3.5; }
+      .console-action:focus-visible { @apply outline outline-2 outline-offset-2 outline-accent; }
+      .console-action.is-primary { @apply bg-accent text-[#111] hover:text-[#111]; }
+
+      /* ---------- Console : pied (vue d'ensemble) ---------- */
+      .console-context { @apply flex items-center justify-between gap-[var(--gap)] overflow-hidden border-t bg-surface px-4 py-1.5 text-[11px] text-muted; border-top-color: color-mix(in srgb, var(--muted) 18%, transparent); }
+      .console-overview { @apply flex min-w-0 items-center gap-2 overflow-x-auto; scrollbar-width: none; }
+      .console-overview::-webkit-scrollbar { display: none; }
+      .overview-item { @apply inline-flex flex-none cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-md border-0 bg-transparent px-1.5 py-1 text-[11px] font-bold text-muted transition-colors; }
+      .overview-item strong { @apply font-extrabold text-text; }
+      .overview-item.is-total { @apply text-muted; }
+      .overview-item.is-available { @apply text-available; }
+      .overview-item.is-revealed { @apply text-revealed; }
+      .overview-item.is-new { @apply text-new; }
+      .overview-item.is-morocco { @apply text-morocco; }
+      .console-saved { @apply inline-flex flex-none cursor-pointer items-center gap-1.5 rounded-lg border-0 bg-transparent px-2.5 py-1 text-[11px] font-extrabold text-accent transition-colors hover:bg-accent-soft; }
+      .console-saved svg { @apply h-3.5 w-3.5; }
+
+      /* Footer gauche : notifications temps réel (cliquable → déplie le panneau) */
+      .console-notify { @apply flex min-w-0 cursor-pointer items-center gap-2 rounded-md border-0 bg-transparent px-2 py-1 text-[11px] text-muted transition-colors hover:text-text; }
+      .console-notify svg { @apply h-3.5 w-3.5 flex-none; }
+      .notify-text { @apply min-w-0 overflow-hidden text-ellipsis whitespace-nowrap; }
+      .notify-text strong { @apply font-extrabold text-text; }
+
+      /* Panneau notifications (recouvre le body) */
+      .notify-panel-head { @apply flex flex-none items-center justify-between gap-2 border-b px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.04em] text-muted; border-bottom-color: color-mix(in srgb, var(--muted) 16%, transparent); }
+      .notify-panel-head svg { @apply h-3.5 w-3.5 text-accent; }
+      .notify-panel-close { @apply grid h-6 w-6 flex-none cursor-pointer place-items-center rounded-md border-0 bg-bg text-muted transition-colors hover:bg-accent-soft hover:text-accent; }
+      .notify-panel-close svg { @apply h-4 w-4; }
+      .notify-panel-body { @apply min-h-0 flex-1 overflow-y-auto px-4 py-1; }
+      .notify-item { @apply flex items-start gap-2.5 border-b py-2.5 text-[12px] leading-relaxed text-muted; border-bottom-color: color-mix(in srgb, var(--muted) 12%, transparent); }
+      .notify-item:last-child { @apply border-b-0; }
+      .notify-item strong { @apply font-extrabold text-text; }
+      .notify-item .notify-dot { @apply mt-1.5; }
+      .notify-time { @apply mt-1 block text-[10px] font-semibold uppercase tracking-[0.04em] text-muted; }
+
+      /* ---------- Panneau contextuel ---------- */
+      .panel-head { @apply flex items-center justify-between gap-3 border-b px-[18px] py-4; border-bottom-color: color-mix(in srgb, var(--muted) 16%, transparent); }
+      .panel-head h3 { @apply m-0 font-title text-[22px] font-normal tracking-tight; }
+      .panel-head p { @apply mt-1 text-[12.5px] text-muted; }
+      .panel-close { @apply grid h-[34px] w-[34px] flex-none cursor-pointer place-items-center rounded-lg border-0 bg-bg text-muted transition-colors hover:bg-accent-soft hover:text-accent; }
+      .panel-close svg { @apply h-[17px] w-[17px]; }
+
+      .panel-card { @apply min-w-0 rounded-lg bg-surface-soft p-4; }
+      .panel-card h4 { @apply m-0 mb-3.5 flex items-center gap-2 text-[13px] font-extrabold uppercase tracking-[0.02em] text-text; }
+      .panel-card h4 svg { @apply h-4 w-4 text-accent; }
+
+      .filter-group-label { @apply mb-[7px] block text-[11px] font-extrabold uppercase tracking-[0.04em] text-muted; }
+      .filter-option { @apply inline-flex min-h-[30px] cursor-pointer items-center gap-1.5 rounded-full border bg-surface px-[11px] text-xs font-bold text-text transition-colors hover:border-accent hover:text-accent; border-color: color-mix(in srgb, var(--muted) 26%, transparent); }
+      .filter-option.is-on { @apply border-accent bg-accent text-[#111]; }
+      .filter-select { @apply min-h-[38px] w-full rounded-lg border bg-surface px-3 text-[13px] font-semibold text-text; border-color: color-mix(in srgb, var(--muted) 26%, transparent); }
+
+      .saved-item { @apply grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2.5 rounded-lg bg-surface px-3 py-[11px]; }
+      .saved-name { @apply block overflow-hidden text-ellipsis whitespace-nowrap text-[13px] font-extrabold text-text; }
+      .saved-summary { @apply mt-[3px] block overflow-hidden text-ellipsis whitespace-nowrap text-[11.5px] text-muted; }
+      .saved-actions { @apply inline-flex flex-none items-center gap-1; }
+      .saved-btn { @apply grid h-8 w-8 cursor-pointer place-items-center rounded-[7px] border-0 bg-transparent text-muted transition-colors hover:bg-accent-soft hover:text-accent; }
+      .saved-btn svg { @apply h-4 w-4; }
+      .saved-btn.is-on { @apply text-accent; }
+      .saved-btn.is-on .alert-bell { fill: var(--accent); }
+      .saved-add { @apply mt-[11px] inline-flex min-h-[40px] w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed bg-accent-soft text-[13px] font-extrabold text-accent; border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+      .saved-add svg { @apply h-4 w-4; }
+    }
+
+    /* Surcharges dark ciblées (surfaces internes plus contrastées) */
+    html[data-theme="dark"] .filter-chip { background: #2a2a2e; }
+    html[data-theme="dark"] .console-action { background: #2a2a2e; }
+    html[data-theme="dark"] .console-panel { background: var(--dropdown-bg); }
+    html[data-theme="dark"] .panel-card { background: #18181b; }
+    html[data-theme="dark"] .filter-option { background: #232327; }
+    html[data-theme="dark"] .filter-select { background: #232327; }
+    html[data-theme="dark"] .saved-item { background: #232327; }
+    html[data-theme="dark"] .widget { background: #18181b; }
+    html[data-theme="dark"] .search-input { background: #232327; }
+    html[data-theme="dark"] .search-filters { background: #2a2a2e; }
+    html[data-theme="dark"] .saved-chip,
+    html[data-theme="dark"] .saved-add-mini { background: #232327; }
+  </style>
+</head>
+
+<body class="m-0 h-full overflow-hidden bg-bg font-ui text-text antialiased">
+  <div class="relative grid h-[100dvh] max-h-[100dvh] w-screen grid-rows-[var(--topbar-height)_minmax(0,1fr)] gap-[var(--gap)] overflow-hidden p-[var(--gap)]">
+    <header class="relative z-20 flex min-w-0 items-center justify-between gap-[var(--gap)] overflow-visible rounded-lg bg-surface px-3" aria-label="Navigation principale">
+      <div class="flex min-w-0 items-center gap-2">
+        <div class="brand-mark" aria-hidden="true">N</div>
+        <div>
+          <p class="m-0 whitespace-nowrap font-title text-[17px] font-bold leading-none tracking-[0.02em]">Shortlist</p>
+          <div class="mt-[3px] whitespace-nowrap text-[11px] text-muted">Europe ⇄ Maroc</div>
+        </div>
+      </div>
+
+      <nav class="topbar-center flex gap-1.5 rounded-lg bg-bg p-1" aria-label="Navigation espace entreprise">
+        <button class="topbar-tab is-active" type="button">Le Vivier</button>
+        <button class="topbar-tab" type="button">Les Offres</button>
+        <button class="topbar-tab" type="button">L'Équipe</button>
+      </nav>
+
+      <div class="account relative flex min-w-0 items-center justify-end">
+        <button class="account-button" type="button" aria-label="Compte utilisateur">
+          <span class="account-copy text-right leading-[1.15]">
+            <span class="account-name">Julien Martin</span>
+            <span class="account-role">Recruteur · NextGen Industries</span>
+          </span>
+          <span class="avatar" aria-hidden="true">JM</span>
+          <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+
+        <div class="account-dropdown" role="menu">
+          <button class="dropdown-item" type="button" role="menuitem">
+            <span>Mon profil</span>
+          </button>
+
+          <div class="dropdown-separator" aria-hidden="true"></div>
+
+          <div class="dropdown-item dropdown-credits">
+            <span class="dropdown-credits-label">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              Profils restants
+            </span>
+            <span class="credits-count" id="creditsCount">12</span>
+          </div>
+
+          <div class="dropdown-separator" aria-hidden="true"></div>
+
+          <div class="dropdown-item" role="menuitem">
+            <span>Apparence</span>
+            <button class="theme-toggle" id="themeButton" type="button" aria-label="Changer le mode couleur">
+              <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg>
+              <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="dropdown-separator" aria-hidden="true"></div>
+
+          <button class="dropdown-item" type="button" role="menuitem">
+            <span>Déconnexion</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="relative grid min-h-0 grid-rows-[minmax(0,1fr)_var(--console-height)] gap-[var(--gap)] overflow-hidden text-left" id="viewPanel" aria-label="La table du vivier">
+      <!-- Masque haut : fond dégradé pour que les cartes scrollent en fondu sous la mini-barre -->
+      <div class="grid-topmask" aria-hidden="true"></div>
+      <!-- Contrôles défilement + mode, déportés au-dessus de la grille (très compacts) -->
+      <div class="grid-toolbar" aria-label="Contrôles de la grille">
+        <div class="console-modes" id="consoleModes" role="group" aria-label="Mode de la console">
+          <button class="console-mode is-active" type="button" data-mode="normal" aria-pressed="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7" /><circle cx="12" cy="12" r="3" /></svg>
+            <span class="mode-label">Recherche</span>
+          </button>
+          <button class="console-mode" type="button" data-mode="select" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg>
+            <span class="mode-label">Sélection</span>
+          </button>
+        </div>
+        <div class="scroll-toggle" role="group" aria-label="Sens de défilement des cartes">
+          <button class="scroll-btn is-active" type="button" data-scroll="vertical" aria-pressed="true" title="Défilement vertical">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="12" x="3" y="6" rx="2" /><path d="M6 2h12" /><path d="M6 22h12" /></svg>
+          </button>
+          <button class="scroll-btn" type="button" data-scroll="horizontal" aria-pressed="false" title="Défilement horizontal">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="12" height="18" x="6" y="3" rx="2" /><path d="M2 6v12" /><path d="M22 6v12" /></svg>
+          </button>
+        </div>
+      </div>
+      <!-- Vivier : grille de cartes (grid sans lignes fixes, hauteur libre) -->
+      <section
+        class="candidate-grid row-start-1 col-start-1 grid h-full min-h-0 content-start items-start gap-4 overflow-y-auto overflow-x-hidden px-0.5 pt-14 pb-0.5 no-scrollbar [grid-auto-rows:min-content] [grid-template-columns:repeat(auto-fill,minmax(21rem,1fr))]"
+        id="candidateGrid"
+        aria-label="Profils candidats anonymisés"
+        aria-live="polite"
+      >
+                              <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Rachid Idrissi</span>
+                </div>
+                <div class="candidate-experience">4 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Responsable Supply Chain</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#SupplyChain</span>
+                <span class="candidate-tag">#SAP</span>
+                <span class="candidate-tag">#Industrie</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>34-41 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card is-selected">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Léa Garnier</span>
+                </div>
+                <div class="candidate-experience">11 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Développeur Symfony senior</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Symfony</span>
+                <span class="candidate-tag">#API</span>
+                <span class="candidate-tag">#Backend</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 08-24 juil.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>37-44 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Lucas Moreau</span>
+                </div>
+                <div class="candidate-experience">6 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-working">En poste</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Contrôleur financier</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Finance</span>
+                <span class="candidate-tag">#Audit</span>
+                <span class="candidate-tag">#Excel</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 15-30 août</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>40-47 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Mehdi Tazi</span>
+                </div>
+                <div class="candidate-experience">13 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Chef de projet IT</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Management</span>
+                <span class="candidate-tag">#ERP</span>
+                <span class="candidate-tag">#Delivery</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>43-50 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Sofia El Amrani</span>
+                </div>
+                <div class="candidate-experience">8 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-discussing">En discussion</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Responsable marketing</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Marketing</span>
+                <span class="candidate-tag">#Retail</span>
+                <span class="candidate-tag">#CRM</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 03-15 nov.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>46-53 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Yassine Berrada</span>
+                </div>
+                <div class="candidate-experience">15 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Ingénieur industriel</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Industrie</span>
+                <span class="candidate-tag">#Lean</span>
+                <span class="candidate-tag">#Qualité</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 01-10 oct.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>49-56 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Camille Dubois</span>
+                </div>
+                <div class="candidate-experience">10 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Data Analyst</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#SQL</span>
+                <span class="candidate-tag">#Python</span>
+                <span class="candidate-tag">#PowerBI</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 12-26 sept.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>52-59 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Karim Benali</span>
+                </div>
+                <div class="candidate-experience">5 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Architecte logiciel</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Cloud</span>
+                <span class="candidate-tag">#Microservices</span>
+                <span class="candidate-tag">#DDD</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>55-62 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Inès Lefèvre</span>
+                </div>
+                <div class="candidate-experience">12 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-working">En poste</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Responsable RH</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#RH</span>
+                <span class="candidate-tag">#Paie</span>
+                <span class="candidate-tag">#SIRH</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 05-20 déc.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>34-41 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card is-selected">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Omar Cherkaoui</span>
+                </div>
+                <div class="candidate-experience">7 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Comptable général</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Compta</span>
+                <span class="candidate-tag">#Fiscalité</span>
+                <span class="candidate-tag">#Reporting</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 18-29 fév.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>37-44 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Manon Rousseau</span>
+                </div>
+                <div class="candidate-experience">14 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-discussing">En discussion</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Ingénieur DevOps</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Docker</span>
+                <span class="candidate-tag">#K8s</span>
+                <span class="candidate-tag">#CI/CD</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>40-47 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Hamza Alaoui</span>
+                </div>
+                <div class="candidate-experience">9 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Chef de produit</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Roadmap</span>
+                <span class="candidate-tag">#Agile</span>
+                <span class="candidate-tag">#UX</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 02-14 mars</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>43-50 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Julie Bernard</span>
+                </div>
+                <div class="candidate-experience">4 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Responsable commercial</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Vente</span>
+                <span class="candidate-tag">#B2B</span>
+                <span class="candidate-tag">#Négo</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>46-53 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Nabil Saidi</span>
+                </div>
+                <div class="candidate-experience">11 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Designer UX/UI</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Figma</span>
+                <span class="candidate-tag">#UI</span>
+                <span class="candidate-tag">#Design</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 08-24 juil.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>49-56 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Chloé Martin</span>
+                </div>
+                <div class="candidate-experience">6 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-working">En poste</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Ingénieur qualité</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Qualité</span>
+                <span class="candidate-tag">#ISO</span>
+                <span class="candidate-tag">#Process</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 15-30 août</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>52-59 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Reda Fassi</span>
+                </div>
+                <div class="candidate-experience">13 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Directeur d'usine</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Production</span>
+                <span class="candidate-tag">#Lean</span>
+                <span class="candidate-tag">#Sécurité</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>55-62 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Emma Petit</span>
+                </div>
+                <div class="candidate-experience">8 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-discussing">En discussion</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Responsable logistique</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Logistique</span>
+                <span class="candidate-tag">#WMS</span>
+                <span class="candidate-tag">#Flux</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 03-15 nov.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>34-41 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Anas Bennani</span>
+                </div>
+                <div class="candidate-experience">15 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Développeur Frontend</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Vue</span>
+                <span class="candidate-tag">#TS</span>
+                <span class="candidate-tag">#Tailwind</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 01-10 oct.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>37-44 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Sarah Lambert</span>
+                </div>
+                <div class="candidate-experience">10 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Administrateur systèmes</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Linux</span>
+                <span class="candidate-tag">#Réseau</span>
+                <span class="candidate-tag">#Sécu</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 12-26 sept.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>40-47 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Youssef Kabbaj</span>
+                </div>
+                <div class="candidate-experience">5 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Responsable achats</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Achats</span>
+                <span class="candidate-tag">#Sourcing</span>
+                <span class="candidate-tag">#Négo</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>43-50 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Marie Girard</span>
+                </div>
+                <div class="candidate-experience">12 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-working">En poste</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Juriste d'entreprise</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Droit</span>
+                <span class="candidate-tag">#Contrats</span>
+                <span class="candidate-tag">#RGPD</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 05-20 déc.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>46-53 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Adil Ouazzani</span>
+                </div>
+                <div class="candidate-experience">7 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Ingénieur réseaux</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Cisco</span>
+                <span class="candidate-tag">#VPN</span>
+                <span class="candidate-tag">#Firewall</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 18-29 fév.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>49-56 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Laura Fontaine</span>
+                </div>
+                <div class="candidate-experience">14 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-discussing">En discussion</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Chargé de recrutement</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Sourcing</span>
+                <span class="candidate-tag">#ATS</span>
+                <span class="candidate-tag">#Talent</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>52-59 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card is-selected">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Khalid Naciri</span>
+                </div>
+                <div class="candidate-experience">9 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Responsable maintenance</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#GMAO</span>
+                <span class="candidate-tag">#Préventif</span>
+                <span class="candidate-tag">#Élec</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 02-14 mars</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>55-62 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Pauline Roche</span>
+                </div>
+                <div class="candidate-experience">4 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Analyste financier</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Analyse</span>
+                <span class="candidate-tag">#Modélisation</span>
+                <span class="candidate-tag">#KPI</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>34-41 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Othmane Sefrioui</span>
+                </div>
+                <div class="candidate-experience">11 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Consultant SAP</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#SAP</span>
+                <span class="candidate-tag">#FI</span>
+                <span class="candidate-tag">#MM</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 08-24 juil.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>37-44 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Clara Vidal</span>
+                </div>
+                <div class="candidate-experience">6 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-working">En poste</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Ingénieur méthodes</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Méthodes</span>
+                <span class="candidate-tag">#Temps</span>
+                <span class="candidate-tag">#Process</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 15-30 août</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>40-47 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Ayoub Lahlou</span>
+                </div>
+                <div class="candidate-experience">13 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Responsable QHSE</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#QHSE</span>
+                <span class="candidate-tag">#ISO45001</span>
+                <span class="candidate-tag">#Risques</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>43-50 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Nina Caron</span>
+                </div>
+                <div class="candidate-experience">8 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-discussing">En discussion</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Technico-commercial</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Vente</span>
+                <span class="candidate-tag">#Technique</span>
+                <span class="candidate-tag">#Terrain</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 03-15 nov.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>46-53 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Soufiane Drissi</span>
+                </div>
+                <div class="candidate-experience">15 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Développeur mobile</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#iOS</span>
+                <span class="candidate-tag">#Android</span>
+                <span class="candidate-tag">#Flutter</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 01-10 oct.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>49-56 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Lina Mercier</span>
+                </div>
+                <div class="candidate-experience">10 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Scrum Master</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Scrum</span>
+                <span class="candidate-tag">#Kanban</span>
+                <span class="candidate-tag">#Coaching</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 12-26 sept.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>52-59 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Tarik Belkadi</span>
+                </div>
+                <div class="candidate-experience">5 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Responsable production</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Production</span>
+                <span class="candidate-tag">#OEE</span>
+                <span class="candidate-tag">#Maintenance</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>55-62 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Élise Robin</span>
+                </div>
+                <div class="candidate-experience">12 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-working">En poste</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Auditeur interne</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Audit</span>
+                <span class="candidate-tag">#Contrôle</span>
+                <span class="candidate-tag">#Conformité</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 05-20 déc.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>34-41 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Mounir Haddad</span>
+                </div>
+                <div class="candidate-experience">7 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Ingénieur R&D</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#R&D</span>
+                <span class="candidate-tag">#Innovation</span>
+                <span class="candidate-tag">#Proto</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 18-29 fév.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>37-44 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Justine Faure</span>
+                </div>
+                <div class="candidate-experience">14 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-discussing">En discussion</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Responsable de magasin</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Retail</span>
+                <span class="candidate-tag">#Stock</span>
+                <span class="candidate-tag">#Équipe</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>40-47 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Bilal Squalli</span>
+                </div>
+                <div class="candidate-experience">9 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Chef de chantier</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#BTP</span>
+                <span class="candidate-tag">#Planning</span>
+                <span class="candidate-tag">#Sécurité</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 02-14 mars</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>43-50 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Audrey Noël</span>
+                </div>
+                <div class="candidate-experience">4 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Pharmacien industriel</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Pharma</span>
+                <span class="candidate-tag">#GMP</span>
+                <span class="candidate-tag">#Qualité</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>46-53 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Hicham Berrada</span>
+                </div>
+                <div class="candidate-experience">11 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Responsable export</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Export</span>
+                <span class="candidate-tag">#Incoterms</span>
+                <span class="candidate-tag">#International</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 08-24 juil.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>49-56 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Romain Colin</span>
+                </div>
+                <div class="candidate-experience">6 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-working">En poste</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Ingénieur électrique</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Élec</span>
+                <span class="candidate-tag">#Automatisme</span>
+                <span class="candidate-tag">#PLC</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 15-30 août</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>52-59 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Salma Benjelloun</span>
+                </div>
+                <div class="candidate-experience">13 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Business Analyst</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#BA</span>
+                <span class="candidate-tag">#Process</span>
+                <span class="candidate-tag">#Specs</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>55-62 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Maxime Henry</span>
+                </div>
+                <div class="candidate-experience">8 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-discussing">En discussion</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Responsable formation</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Formation</span>
+                <span class="candidate-tag">#Pédagogie</span>
+                <span class="candidate-tag">#LMS</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 03-15 nov.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>34-41 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Walid Chraibi</span>
+                </div>
+                <div class="candidate-experience">15 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Chargé d'affaires</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Affaires</span>
+                <span class="candidate-tag">#Devis</span>
+                <span class="candidate-tag">#Suivi</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 01-10 oct.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>37-44 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Océane Marchand</span>
+                </div>
+                <div class="candidate-experience">10 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Ingénieur biomédical</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Biomed</span>
+                <span class="candidate-tag">#Dispositifs</span>
+                <span class="candidate-tag">#Normes</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 12-26 sept.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>40-47 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Zakaria Amrani</span>
+                </div>
+                <div class="candidate-experience">5 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-badge candidate-verified">Profil vérifié</span>
+                <span class="status-pill candidate-status is-available">Disponible</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Responsable transport</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#Transport</span>
+                <span class="candidate-tag">#TMS</span>
+                <span class="candidate-tag">#Flotte</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>Au Maroc</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>43-50 k€ / an</strong></span>
+            </footer>
+          </article>
+
+          <article class="candidate-card">
+            <header class="candidate-header">
+              <div class="candidate-avatar" aria-hidden="true"><img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&amp;fit=crop&amp;w=160&amp;q=80" alt="" loading="lazy" /></div>
+              <div class="candidate-heading">
+                <div class="candidate-identity">
+                  <span class="identity-protected">Thomas Leroy</span>
+                </div>
+                <div class="candidate-experience">12 ans exp.</div>
+              </div>
+              <div class="candidate-badges">
+                <span class="candidate-verified" aria-hidden="true"></span>
+                <span class="status-pill candidate-status is-working">En poste</span>
+              </div>
+            </header>
+
+            <div class="candidate-body">
+              <h2 class="candidate-title">Data Engineer</h2>
+              <div class="candidate-skills">
+                <span class="candidate-tag">#ETL</span>
+                <span class="candidate-tag">#Spark</span>
+                <span class="candidate-tag">#DataLake</span>
+              </div>
+            </div>
+
+            <footer class="candidate-footer">
+              <span class="candidate-presence"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></svg><span>Maroc : 05-20 déc.</span></span>
+              <span class="candidate-compensation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" /></svg><strong>46-53 k€ / an</strong></span>
+            </footer>
+          </article>
+        </section>
+
+      <!-- Console contextuelle -->
+      <section class="console relative z-20 row-start-2 col-start-1 overflow-hidden rounded-lg bg-surface" id="console" data-mode="normal" aria-label="Console contextuelle">
+        <button
+          class="console-focus"
+          id="focusToggle"
+          type="button"
+          aria-pressed="false"
+          aria-label="Activer le mode Focus"
+          title="Mode Focus"
+        >
+          <svg class="focus-collapse" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m7 20 5-5 5 5" />
+            <path d="m7 4 5 5 5-5" />
+          </svg>
+          <svg class="focus-expand" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2v20" />
+            <path d="m8 18 4 4 4-4" />
+            <path d="m8 6 4-4 4 4" />
+          </svg>
+        </button>
+
+        <header class="console-header" id="consoleToggle" aria-label="Synthèse et mode de la console">
+          <!-- 📊 Vue d'ensemble : synthèse des résultats filtrés -->
+          <div class="console-overview" id="consoleOverview" aria-label="Vue d'ensemble des résultats">
+            <button class="overview-item is-total" type="button" title="Tout afficher (réinitialiser les filtres)"><strong>33</strong>&nbsp;profils sur <strong>45</strong></button>
+            <button class="overview-item is-available is-on" type="button" aria-pressed="true"><strong>30</strong>&nbsp;disponibles</button>
+            <button class="overview-item is-revealed" type="button" aria-pressed="false"><strong>6</strong>&nbsp;dévoilés</button>
+            <button class="overview-item is-new" type="button" aria-pressed="false"><strong>5</strong>&nbsp;nouveaux</button>
+            <button class="overview-item is-morocco" type="button" aria-pressed="false"><strong>13</strong>&nbsp;bientôt au Maroc</button>
+          </div>
+
+          <!-- Contrôles défilement + mode déplacés au-dessus de la grille (cf. .grid-toolbar) -->
+        </header>
+
+        <div class="console-body" id="consoleBody" aria-label="Widgets de la console">
+          <div class="console-widgets">
+            <!-- Widget : Recherche -->
+            <section class="widget widget-search" aria-label="Recherche">
+              <div class="widget-head">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+                Recherche
+              </div>
+              <div class="search-row">
+                <div class="search-input">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+                  <input type="search" placeholder="Recherche simple…" aria-label="Recherche libre" />
+                </div>
+                <button class="verified-filter" id="verifiedFilter" type="button" aria-pressed="false" title="N'afficher que les profils vérifiés">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg>
+                  Vérifiés <span class="verified-count" id="verifiedCount">0</span>
+                </button>
+                <button class="search-filters" type="button">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18" /><path d="M6 12h12" /><path d="M10 19h4" /></svg>
+                  Filtres
+                </button>
+              </div>
+            </section>
+
+            <!-- Widget : Recherches enregistrées (visible dans les 2 modes) -->
+            <section class="widget widget-saved" aria-label="Recherches enregistrées">
+              <div class="widget-head">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
+                Enregistrées
+              </div>
+              <div class="saved-row">
+                <button class="saved-chip" type="button">Tech · Casablanca</button>
+                <button class="saved-chip" type="button">Finance · Senior</button>
+                <button class="saved-chip" type="button">Dispo immédiate</button>
+                <button class="saved-add-mini" type="button" aria-label="Enregistrer la recherche"><svg viewBox="0 0 24 24"><path d="M12 5v14" /><path d="M5 12h14" /></svg></button>
+              </div>
+            </section>
+
+            <!-- Widget : Sélection (mode Sélection uniquement) -->
+            <section class="widget widget-selection show-select" aria-label="Sélection">
+              <div class="widget-head">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /></svg>
+                Sélection <span class="widget-badge" id="selectionBadge">0</span>
+              </div>
+              <div class="widget-selection-body">
+                <strong class="selection-title" id="selectionTitle">Aucun profil</strong>
+                <span class="selection-sub" id="selectionSub">Sur quoi vais-je agir ?</span>
+              </div>
+            </section>
+
+            <!-- Widget : Actions (mode Sélection uniquement) -->
+            <section class="widget widget-actions show-select" aria-label="Actions">
+              <div class="widget-head">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7z" /></svg>
+                Actions
+              </div>
+              <div class="actions-row">
+                <button class="console-action is-primary" type="button" title="Dévoiler" aria-label="Dévoiler">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7" /><circle cx="12" cy="12" r="3" /></svg>
+                  <span class="action-label">Dévoiler</span>
+                </button>
+                <button class="console-action" type="button" title="Short list" aria-label="Short list">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" /></svg>
+                  <span class="action-label">Short list</span>
+                </button>
+                <button class="console-action" type="button" title="Assigner" aria-label="Assigner">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M19 8v6M22 11h-6" /></svg>
+                  <span class="action-label">Assigner</span>
+                </button>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <footer class="console-context">
+          <!-- 🔔 Notifications temps réel : cliquable → déplie le panneau qui recouvre le body -->
+          <button class="console-notify" id="notifyToggle" type="button" aria-expanded="false" aria-controls="notifyPanel" aria-label="Ouvrir les notifications">
+            <span class="notify-dot" aria-hidden="true"></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+            <span class="notify-text"><strong>2 profils</strong> viennent d'arriver sur « Supply Chain · Présent au Maroc »</span>
+          </button>
+
+          <span class="flex-none whitespace-nowrap text-[11px] text-muted">Dernière mise à jour : il y a 2 min</span>
+        </footer>
+
+        <!-- Panneau notifications : recouvre la zone body quand déplié -->
+        <div class="notify-panel" id="notifyPanel" aria-label="Notifications temps réel" aria-hidden="true">
+          <header class="notify-panel-head">
+            <span class="inline-flex items-center gap-1.5">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+              Notifications temps réel
+            </span>
+            <button class="notify-panel-close" id="notifyClose" type="button" aria-label="Fermer les notifications">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+            </button>
+          </header>
+          <div class="notify-panel-body">
+            <article class="notify-item">
+              <span class="notify-dot" aria-hidden="true"></span>
+              <div>
+                <strong>2 profils</strong> viennent d'arriver et correspondent à votre alerte « Supply Chain · Présent au Maroc » : un Responsable Supply Chain (9 ans d'exp., disponible, présent au Maroc du 8 au 24 juillet) et un Ingénieur logistique (6 ans d'exp., préavis 1 mois). Pensez à les dévoiler avant qu'un autre recruteur de l'équipe ne le fasse — il vous reste 12 crédits de dévoilement ce mois-ci.
+                <span class="notify-time">il y a 2 min</span>
+              </div>
+            </article>
+            <article class="notify-item">
+              <span class="notify-dot" aria-hidden="true"></span>
+              <div>
+                <strong>Sophie Martin</strong> a assigné le profil « Data Scientist · Zurich » à <strong>Julien</strong>.
+                <span class="notify-time">il y a 18 min</span>
+              </div>
+            </article>
+            <article class="notify-item">
+              <span class="notify-dot" aria-hidden="true"></span>
+              <div>
+                Votre recherche enregistrée <strong>« Finance · Senior »</strong> compte 3 nouveaux profils correspondants.
+                <span class="notify-time">il y a 1 h</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const html = document.documentElement;
+    const themeButton = document.getElementById('themeButton');
+    const consoleEl = document.getElementById('console');
+    const consolePanel = document.getElementById('consolePanel');
+    const consoleToggle = document.getElementById('consoleToggle');
+    const candidateGrid = document.getElementById('candidateGrid');
+    const selectionTitle = document.getElementById('selectionTitle');
+    const selectionSub = document.getElementById('selectionSub');
+    const selectionBadge = document.getElementById('selectionBadge');
+
+    function setTheme(theme) {
+      html.dataset.theme = theme;
+    }
+
+    themeButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      setTheme(html.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+
+    /* ----- Panneau contextuel (ouvert / fermé) ----- */
+    const setConsoleOpen = (isOpen) => {
+      consoleEl.classList.toggle('is-open', isOpen);
+      consolePanel?.classList.toggle('is-open', isOpen);
+      consolePanel?.setAttribute('aria-hidden', String(!isOpen));
+      consoleToggle.setAttribute('aria-expanded', String(isOpen));
+      consoleToggle.setAttribute('aria-label', isOpen ? 'Fermer le panneau contextuel' : 'Ouvrir le panneau contextuel');
+    };
+
+    consoleToggle.addEventListener('click', () => {
+      setConsoleOpen(!consoleEl.classList.contains('is-open'));
+    });
+
+    consoleToggle.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') {
+        return;
+      }
+      event.preventDefault();
+      setConsoleOpen(!consoleEl.classList.contains('is-open'));
+    });
+
+    document.getElementById('panelClose')?.addEventListener('click', () => setConsoleOpen(false));
+    document.getElementById('savedTrigger')?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      setConsoleOpen(true);
+    });
+
+    /* ----- Mode Normal / Sélection ----- */
+    const updateSelectionCount = () => {
+      const count = candidateGrid.querySelectorAll('.candidate-card.is-selected').length;
+      selectionBadge.textContent = count;
+      if (count === 0) {
+        selectionTitle.textContent = 'Aucun profil';
+        selectionSub.textContent = 'Sur quoi vais-je agir ?';
+        return;
+      }
+      const plural = count > 1 ? 's' : '';
+      selectionTitle.textContent = `${count} profil${plural} sélectionné${plural}`;
+      selectionSub.textContent = 'Prêt pour Dévoiler · Short list · Assigner';
+    };
+
+    const setMode = (mode) => {
+      consoleEl.dataset.mode = mode;
+      candidateGrid.classList.toggle('is-selecting', mode === 'select');
+      document.querySelectorAll('.console-mode').forEach((btn) => {
+        const isOn = btn.dataset.mode === mode;
+        btn.classList.toggle('is-active', isOn);
+        btn.setAttribute('aria-pressed', String(isOn));
+      });
+      if (mode === 'select') {
+        updateSelectionCount();
+      }
+    };
+
+    document.querySelectorAll('.console-mode').forEach((btn) => {
+      btn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        setMode(btn.dataset.mode);
+      });
+    });
+
+    /* ----- Sélection des cartes (mode Sélection) ----- */
+    candidateGrid.addEventListener('click', (event) => {
+      if (consoleEl.dataset.mode !== 'select') {
+        return;
+      }
+      const card = event.target.closest('.candidate-card');
+      if (!card) {
+        return;
+      }
+      card.classList.toggle('is-selected');
+      updateSelectionCount();
+    });
+
+    document.getElementById('selectionClear')?.addEventListener('click', () => {
+      candidateGrid.querySelectorAll('.candidate-card.is-selected')
+        .forEach((card) => card.classList.remove('is-selected'));
+      updateSelectionCount();
+    });
+
+    updateSelectionCount();
+
+    /* ----- Profils vérifiés : marquage des cartes + filtre direct ----- */
+    const verifiedCards = [...candidateGrid.querySelectorAll('.candidate-card')]
+      .filter((card) => card.querySelector('.candidate-badge.candidate-verified'));
+    verifiedCards.forEach((card) => card.classList.add('is-verified'));
+
+    const verifiedFilter = document.getElementById('verifiedFilter');
+    document.getElementById('verifiedCount').textContent = verifiedCards.length;
+
+    const setVerifiedOnly = (isOn) => {
+      candidateGrid.classList.toggle('is-verified-only', isOn);
+      verifiedFilter.classList.toggle('is-on', isOn);
+      verifiedFilter.setAttribute('aria-pressed', String(isOn));
+    };
+
+    verifiedFilter.addEventListener('click', (event) => {
+      event.stopPropagation();
+      setVerifiedOnly(!candidateGrid.classList.contains('is-verified-only'));
+    });
+
+    /* ----- Vue d'ensemble : compteurs cliquables (raccourcis de filtre) ----- */
+    const overview = document.getElementById('consoleOverview');
+    overview.querySelectorAll('.overview-item').forEach((item) => {
+      item.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (item.classList.contains('is-total')) {
+          overview.querySelectorAll('.overview-item.is-on').forEach((on) => {
+            on.classList.remove('is-on');
+            on.setAttribute('aria-pressed', 'false');
+          });
+          return;
+        }
+        const willBeOn = !item.classList.contains('is-on');
+        // Un seul filtre actif à la fois : on désactive les autres compteurs
+        overview.querySelectorAll('.overview-item.is-on').forEach((on) => {
+          on.classList.remove('is-on');
+          on.setAttribute('aria-pressed', 'false');
+        });
+        item.classList.toggle('is-on', willBeOn);
+        item.setAttribute('aria-pressed', String(willBeOn));
+      });
+    });
+
+    /* ----- Retrait d'un filtre actif ----- */
+    document.querySelectorAll('.chip-remove').forEach((btn) => {
+      btn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        btn.closest('.filter-chip').remove();
+      });
+    });
+
+    /* ----- Toggle alerte (recherches enregistrées) ----- */
+    document.querySelectorAll('.saved-btn[aria-pressed]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const on = btn.getAttribute('aria-pressed') === 'true';
+        btn.setAttribute('aria-pressed', String(!on));
+        btn.classList.toggle('is-on', !on);
+        btn.title = on ? 'Activer l’alerte' : 'Alerte activée';
+      });
+    });
+
+    /* ----- Navigation principale ----- */
+    const navItems = [...document.querySelectorAll('.topbar-tab')];
+    navItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        navItems.forEach((other) => other.classList.remove('is-active'));
+        item.classList.add('is-active');
+      });
+    });
+
+    /* ----- Notifications : déplie un panneau qui recouvre le body ----- */
+    const notifyToggle = document.getElementById('notifyToggle');
+    const notifyPanel = document.getElementById('notifyPanel');
+
+    const setNotifyOpen = (isOpen) => {
+      consoleEl.classList.toggle('is-notify-open', isOpen);
+      notifyToggle.setAttribute('aria-expanded', String(isOpen));
+      notifyToggle.setAttribute('aria-label', isOpen ? 'Fermer les notifications' : 'Ouvrir les notifications');
+      notifyPanel.setAttribute('aria-hidden', String(!isOpen));
+    };
+
+    notifyToggle.addEventListener('click', () => {
+      setNotifyOpen(!consoleEl.classList.contains('is-notify-open'));
+    });
+
+    document.getElementById('notifyClose').addEventListener('click', () => setNotifyOpen(false));
+
+    /* ----- Sens de défilement des cartes (UI seulement) ----- */
+    const scrollButtons = [...document.querySelectorAll('.scroll-btn')];
+    scrollButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        scrollButtons.forEach((other) => {
+          other.classList.remove('is-active');
+          other.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-pressed', 'true');
+        // TODO : appliquer le sens de défilement (btn.dataset.scroll) — branché plus tard
+      });
+    });
+
+    /* ----- Mode Focus (console repliée) ----- */
+    const focusToggle = document.getElementById('focusToggle');
+    const setFocus = (isFocus) => {
+      consoleEl.classList.toggle('is-focus', isFocus);
+      focusToggle.setAttribute('aria-pressed', String(isFocus));
+      focusToggle.setAttribute('aria-label', isFocus ? 'Quitter le mode Focus' : 'Activer le mode Focus');
+    };
+
+    focusToggle.addEventListener('click', () => {
+      setFocus(!consoleEl.classList.contains('is-focus'));
+    });
+
+    /* ----- Échap : ferme le panneau ouvert ----- */
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+      if (consoleEl.classList.contains('is-notify-open')) {
+        setNotifyOpen(false);
+        notifyToggle.focus();
+      }
+      if (consoleEl.classList.contains('is-open')) {
+        setConsoleOpen(false);
+        consoleToggle.focus();
+      }
+    });
+  </script>
+</body>
+</html>

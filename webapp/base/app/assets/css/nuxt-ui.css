@@ -1,0 +1,130 @@
+/* Nuxt UI utilise les mêmes échelles et tokens que les composants Ui*. */
+
+:root {
+  --ui-color-primary-50: var(--color-blue-50);
+  --ui-color-primary-100: var(--color-blue-100);
+  --ui-color-primary-200: var(--color-blue-200);
+  --ui-color-primary-300: var(--color-blue-300);
+  --ui-color-primary-400: var(--color-blue-400);
+  --ui-color-primary-500: var(--color-blue-500);
+  --ui-color-primary-600: var(--color-blue-600);
+  --ui-color-primary-700: var(--color-blue-700);
+  --ui-color-primary-800: var(--color-blue-800);
+  --ui-color-primary-900: var(--color-blue-900);
+  --ui-color-primary-950: var(--color-blue-950);
+  --ui-color-neutral-50: var(--color-slate-50);
+  --ui-color-neutral-100: var(--color-slate-100);
+  --ui-color-neutral-200: var(--color-slate-200);
+  --ui-color-neutral-300: var(--color-slate-300);
+  --ui-color-neutral-400: var(--color-slate-400);
+  --ui-color-neutral-500: var(--color-slate-500);
+  --ui-color-neutral-600: var(--color-slate-600);
+  --ui-color-neutral-700: var(--color-slate-700);
+  --ui-color-neutral-800: var(--color-slate-800);
+  --ui-color-neutral-900: var(--color-slate-900);
+  --ui-color-neutral-950: var(--color-slate-950);
+  /* rounded-lg = 12 px ; rounded-xl = 18 px. */
+  --ui-radius: 0.375rem;
+}
+
+/* ── Tokens sémantiques : ils dérivent de `themes.css`, PAS des échelles ci-dessus ───────────── */
+
+/* Les arbitrages de contraste (accent choisi par thème, encre sur aplat, filets discrets) vivent dans
+   `themes.css` et nulle part ailleurs. Un token Nuxt UI qui piocherait dans l'échelle les
+   contournerait : `--ui-color-primary-500` n'est pas l'accent du thème clair, c'est le 700 qui l'est. */
+:root,
+.dark {
+  /* ⚠️ Ces noms ne font pas que se brancher : ils INTERCEPTENT les nôtres. Nuxt UI expose des
+     utilitaires `bg-muted` et `border-muted` qui gagnent sur ceux que le kit dérive de
+     `--color-muted`, et rendent donc `--surface-soft` et `--line` là où l'auteur visait le gris de
+     texte. Mesuré, et silencieux : le nom demandé existe et répond autre chose. La règle
+     `app-no-ambiguous-kit-class` refuse ces deux écritures ; `text-muted` reste juste, puisqu'il
+     est remappé sur `--muted` quelques lignes plus bas. */
+  --ui-bg: var(--bg);
+  --ui-bg-muted: var(--surface-soft);
+  --ui-bg-elevated: var(--surface);
+  --ui-bg-accented: var(--surface-soft);
+  --ui-bg-inverted: var(--accent);
+
+  --ui-text-dimmed: var(--muted);
+  --ui-text-muted: var(--muted);
+  --ui-text-toned: var(--text);
+  --ui-text: var(--text);
+  --ui-text-highlighted: var(--text);
+  --ui-text-inverted: var(--on-accent);
+
+  --ui-border: var(--line);
+  --ui-border-muted: var(--line);
+  --ui-border-accented: var(--line);
+  --ui-border-inverted: var(--accent);
+
+  --ui-primary: var(--accent);
+  --ui-error: var(--alert);
+}
+
+/* ── Le TRAIT des champs : Nuxt UI prend celui du kit ───────────────────────────────────────────
+
+   Les couleurs étaient déjà partagées ; la FORME ne l'était pas. Un champ Nuxt UI arrive encadré,
+   un champ maison (`UiInlineInput`, `UiInlineSelect`) est un simple filet souligné. Posés dans la
+   même carte, les deux se lisaient comme deux produits — c'est ce que la refonte du formulaire de
+   recherche a rendu visible.
+
+   C'est le trait MAISON qui l'emporte, et pas l'inverse : il est plus sobre, il porte la
+   trait discret des champs en ligne décrit dans le guide de marque, et le basculer aurait
+   demandé de réécrire tous les formulaires au lieu de restyler une famille de composants.
+
+   Portée volontairement étroite : `.field-inline`, posé par l'appelant. Un restyle global des
+   `U*` toucherait des écrans que personne n'a relus. */
+
+.field-inline :where(input, button[role='combobox'], [role='combobox'] > input) {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  padding-inline: 0.12em;
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.field-inline :where(input, button[role='combobox']):hover {
+  border-bottom-color: color-mix(in srgb, var(--text) 40%, transparent);
+}
+
+/* `:focus-visible` seul ne suffit pas : le combobox garde le focus pendant que le panneau est
+   ouvert, et l'anneau doit rester tant que la saisie est active. */
+.field-inline :where(input, button[role='combobox']):is(:focus, :focus-visible) {
+  outline: none;
+  border-bottom-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
+/* ── Menus déroulants : un panneau POSÉ, pas un bloc cerné ──────────────────────────────────────
+
+   Les menus se séparent de la page par leur surface et leur ombre. Les panneaux flottants
+   MAISON suivent cette règle — le menu du compte, les notifications, le sélecteur d'étiquettes
+   n'ont aucune bordure. Les menus de Nuxt UI faisaient exception ; ils s'alignent ici.
+
+   Deux choses, et l'ordre compte. Ce qui cerne le menu n'est PAS une bordure — `border` vaut 0 —
+   mais un ANNEAU glissé dans la liste des ombres (`0 0 0 1px`) : le retirer se fait donc en
+   réécrivant `box-shadow`, pas en touchant `border`. Et il ne peut se retirer qu'une fois le fond
+   changé : `--ui-bg` suit le fond de PAGE, mesuré identique au menu dans les deux thèmes, si bien
+   que l'anneau était la seule chose qui séparait le panneau de ce qu'il recouvrait.
+
+   `--dropdown-bg` existait déjà pour ça, et son commentaire dans `themes.css` le dit — un menu suit
+   `--surface`, il ne reprend pas le fond de page. Il n'était simplement pas branché ici.
+
+   Portée : `[role='menu']` seul. Les listes de sélection (`role="listbox"`) et les fenêtres
+   (`role="dialog"`) partagent le même `data-slot`, et leur cas se juge en les regardant. */
+
+[data-slot='content'][role='menu'] {
+  background: var(--dropdown-bg);
+  box-shadow: var(--overlay-shadow);
+
+  /* Le survol d'une entrée se lit SUR le panneau, plus sur la page — et Nuxt UI le peint avec
+     `--surface`, qui vaut la MÊME couleur que `--dropdown-bg` en thème sombre. Mesuré : le repère
+     clavier y devenait invisible, alors qu'il tenait avant ce changement. Le panneau monte donc
+     lui-même d'un cran l'échelle d'élévation, dans les deux thèmes. */
+  --ui-bg-elevated: var(--surface-soft);
+}

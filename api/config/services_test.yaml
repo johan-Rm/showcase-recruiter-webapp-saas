@@ -1,0 +1,21 @@
+# Surcharges de l'environnement de test uniquement.
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # Le social login est vérifié contre une clé de TEST, pas contre Google : on substitue le JWKS
+    # HTTP par un stub qui publie la clé de test, et on aligne émetteur / audience du verifier sur les
+    # valeurs que les tests signent. Aucun appel réseau, résultat déterministe.
+    App\Tests\Support\TestSocialJwks: ~
+    App\Domain\Auth\SocialJwks: '@App\Tests\Support\TestSocialJwks'
+
+    App\Domain\Auth\SocialIdentityVerifier:
+        arguments:
+            $providers:
+                google:
+                    issuer: 'https://accounts.google.com'
+                    audience: 'test-client-id'
+                linkedin:
+                    issuer: 'https://www.linkedin.com/oauth'
+                    audience: 'test-linkedin-client'

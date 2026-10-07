@@ -1,0 +1,38 @@
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+# Fiche de formes de tableau régénérée à chaque réchauffement de cache, et dont le contenu dépend
+# de l'ENVIRONNEMENT : les bundles réservés à `test` n'y figurent pas quand le cache est réchauffé
+# en `dev`. Versionnée, elle oscillait donc entre deux versions et salissait l'arbre à chaque
+# démarrage de stack. Elle reste sur le disque et sert toujours l'analyse statique et l'IDE.
+/config/reference.php
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
+
+###> deptrac/deptrac ###
+/.deptrac.cache
+###< deptrac/deptrac ###
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###

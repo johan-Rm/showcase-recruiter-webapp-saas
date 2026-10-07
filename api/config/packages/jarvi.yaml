@@ -1,0 +1,41 @@
+# Intégration Jarvi — client HTTP scopé pour l'ingestion du périmètre (tâche 020).
+# La clé privée vit UNIQUEMENT côté api/ (jamais exposée au webapp) et n'est jamais committée :
+# elle est renseignée dans api/.env.dev (local, non versionné). Défauts vides ci-dessous pour
+# que le conteneur démarre même sans clé (tests = MockHttpClient).
+parameters:
+    env(JARVI_API_BASE_URL): 'https://functions.prod.jarvi.tech/v1/public-api/rest/v2/'
+    env(JARVI_GRAPHQL_URL): 'https://functions.prod.jarvi.tech/v1/public-api/graphql'
+    env(JARVI_API_KEY): ''
+    env(JARVI_SHOWCASE_RECRUITER_WEBAPP_SAAS_PROJECT_ID): '00000000-0000-4000-8000-000000000001'
+    env(JARVI_COMPANY_SYNC_ENABLED): 'false'
+    env(JARVI_RECRUITER_PROJECT_ID): '00000000-0000-4000-8000-000000000003'
+    # Enrichissement asynchrone d'un applicant (tâche 090). Le délai (~4 min observé, n=1) est un
+    # ordre de grandeur : tentatives bornées et espacées, jamais un SLA.
+    env(JARVI_APPLICANT_REFRESH_DELAY_MS): '240000'
+    env(JARVI_APPLICANT_REFRESH_MAX_ATTEMPTS): '5'
+
+    jarvi.showcase_recruiter_webapp_saas_project_id: '%env(string:JARVI_SHOWCASE_RECRUITER_WEBAPP_SAAS_PROJECT_ID)%'
+    jarvi.company_sync.enabled: '%env(bool:JARVI_COMPANY_SYNC_ENABLED)%'
+    jarvi.recruiter_project_id: '%env(string:JARVI_RECRUITER_PROJECT_ID)%'
+    jarvi.applicant_refresh.delay_ms: '%env(int:JARVI_APPLICANT_REFRESH_DELAY_MS)%'
+    jarvi.applicant_refresh.max_attempts: '%env(int:JARVI_APPLICANT_REFRESH_MAX_ATTEMPTS)%'
+
+framework:
+    http_client:
+        scoped_clients:
+            # Autowiring : injecter via `HttpClientInterface $jarviClient`.
+            jarvi.client:
+                base_uri: '%env(JARVI_API_BASE_URL)%'
+                headers:
+                    X-API-KEY: '%env(JARVI_API_KEY)%'
+                    # Jarvi attend un User-Agent identifiant (cf. validation API 2026-06).
+                    User-Agent: 'showcase-recruiter-webapp-saas-api'
+            jarvi.graphql_client:
+                base_uri: '%env(JARVI_GRAPHQL_URL)%'
+                headers:
+                    X-API-KEY: '%env(JARVI_API_KEY)%'
+                    User-Agent: 'showcase-recruiter-webapp-saas-api'
+
+when@test:
+    parameters:
+        jarvi.company_sync.enabled: false

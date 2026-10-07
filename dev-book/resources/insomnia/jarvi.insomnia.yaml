@@ -1,0 +1,469 @@
+type: collection.insomnia.rest/5.0
+name: API Jarvi
+meta:
+  id: wrk_75398692975044b9a4e90e839eb7b3d2
+  created: 1781521405261
+  modified: 1782152617178
+  description: ""
+collection:
+  - url: "{{ _.url_api }}/profiles"
+    name: Profiles — List (GET)
+    meta:
+      id: req_05bad90349274b6c8ca3cce22d1592d5
+      created: 1781521431618
+      modified: 1782899906191
+      isPrivate: false
+      description: Liste des profils. Non paginé (renvoie tout), pas de plein-texte.
+        Filtres via where (JSON GraphQL), orderBy, updatedAfter. limit défaut
+        100 / max 1000, offset. Clé PRIVÉE.
+      sortKey: -1781521431618
+    method: GET
+    parameters:
+      - id: pair_44e54c43f599410cb6f14e8a110179cf
+        name: where
+        value: '{"associations":{"projectId":{"_eq":"00000000-0000-4000-8000-000000000001"}}}'
+        description: ""
+        disabled: false
+        type: text
+        multiline: false
+      - id: pair_23bcc23522f44865aa5b6b75bdfa180b
+        name: orderBy
+        value: '{"updatedAt":"desc"}'
+        description: ""
+        disabled: false
+      - id: pair_988be726f7ac41de84357289503a69f4
+        name: where
+        value: '{"emailAddresses":{"email":{"_eq":"demo+entreprise-2@showcase-recruiter-webapp-saas.test"}}}'
+        description: ""
+        disabled: true
+    headers:
+      - name: User-Agent
+        value: insomnia/11.2.0
+    authentication:
+      type: apikey
+      key: X-API-KEY
+      value: "{{ _.x_api_key }}"
+      disabled: false
+      addTo: header
+    scripts:
+      preRequest: ""
+      afterResponse: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.url_graphql }}"
+    name: Profiles — Project sorted (GraphQL)
+    meta:
+      id: req_f5f0a5b18e0f4a8d9d2b0b7353caa3e2
+      created: 1782901400000
+      modified: 1782901400000
+      isPrivate: false
+      description: "Liste les profils d'un projet avec un tri fiable via GraphQL.
+        Le REST /profiles accepte orderBy mais le tri observe n'est pas strict avec
+        le filtre projectId. Changer order_by selon le besoin : updatedAt, createdAt
+        ou passer par profiles_associations pour trier par date d'ajout au projet.
+        Clé PRIVÉE."
+      sortKey: -1781521431617.5
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "query": "query ProfilesByProject($projectId: uuid!, $limit: Int!, $offset: Int!) { profiles(where: { associations: { projectId: { _eq: $projectId } } }, order_by: { updatedAt: desc }, limit: $limit, offset: $offset) { id createdAt updatedAt firstName lastName headline profileUrl associations(where: { projectId: { _eq: $projectId } }) { id createdAt updatedAt status { id title } projectId } } profiles_aggregate(where: { associations: { projectId: { _eq: $projectId } } }) { aggregate { count } } }",
+          "variables": {
+            "projectId": "{{ _.showcase_recruiter_webapp_saas_project_uuid }}",
+            "limit": 100,
+            "offset": 0
+          }
+        }
+    headers:
+      - name: User-Agent
+        value: insomnia/11.2.0
+      - name: Content-Type
+        value: application/json
+    authentication:
+      type: apikey
+      key: X-API-KEY
+      value: "{{ _.x_api_key }}"
+      disabled: false
+      addTo: header
+    scripts:
+      preRequest: ""
+      afterResponse: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.url_graphql }}"
+    name: Profiles — Project association sorted (GraphQL)
+    meta:
+      id: req_7c58db7c7b5d4d9c9e4e448116cf3917
+      created: 1782901400001
+      modified: 1782901400001
+      isPrivate: false
+      description: "Trie les profils par date d'association au projet. Utiliser
+        profiles_associations.createdAt pour la date d'ajout au projet, et
+        profiles_associations.updatedAt pour la date de changement dans ce projet.
+        Clé PRIVÉE."
+      sortKey: -1781521431617.4
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "query": "query ProjectProfilesByAssociation($projectId: uuid!, $limit: Int!, $offset: Int!) { profiles_associations(where: { projectId: { _eq: $projectId } }, order_by: { createdAt: desc }, limit: $limit, offset: $offset) { id createdAt updatedAt status { id title } profile { id createdAt updatedAt firstName lastName headline profileUrl } } profiles_associations_aggregate(where: { projectId: { _eq: $projectId } }) { aggregate { count } } }",
+          "variables": {
+            "projectId": "{{ _.showcase_recruiter_webapp_saas_project_uuid }}",
+            "limit": 100,
+            "offset": 0
+          }
+        }
+    headers:
+      - name: User-Agent
+        value: insomnia/11.2.0
+      - name: Content-Type
+        value: application/json
+    authentication:
+      type: apikey
+      key: X-API-KEY
+      value: "{{ _.x_api_key }}"
+      disabled: false
+      addTo: header
+    scripts:
+      preRequest: ""
+      afterResponse: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.url_api }}/profiles"
+    name: Profiles — Create or update (POST)
+    meta:
+      id: req_331a3f89542d45afaad86570554ba79b
+      created: 1782121600000
+      modified: 1782121600000
+      isPrivate: false
+      description: "Upsert profil Jarvi ponctuel (création initiale si profil absent, pas de sync
+        montante des données maîtres showcase-recruiter-webapp-saas). Unicité : id (uuid Jarvi) →
+        externalId (Person.uuid) → sinon création. Réponse { message, taskId,
+        profileId }. Clé PRIVÉE."
+      sortKey: -1781521431617
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "externalId": "{{ _.person_uuid }}",
+          "firstName": "Jane",
+          "lastName": "Doe",
+          "emailAddresses": "jane.doe@example.com",
+          "phoneNumbers": "+33600000000",
+          "linkedinUrl": "https://www.linkedin.com/in/jane-doe",
+          "headline": "Directrice Financière",
+          "location": "Paris, France"
+        }
+    headers:
+      - name: User-Agent
+        value: insomnia/11.2.0
+      - name: Content-Type
+        value: application/json
+    authentication:
+      type: apikey
+      key: X-API-KEY
+      value: "{{ _.x_api_key }}"
+      disabled: false
+      addTo: header
+    scripts:
+      preRequest: ""
+      afterResponse: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.url_api }}/companies"
+    name: Companies — List (GET)
+    meta:
+      id: req_149f24f310a94d5e86fffee2738a8478
+      created: 1782121600001
+      modified: 1782754485265
+      isPrivate: false
+      description: Liste des entreprises. Filtres where/orderBy/updatedAfter, limit
+        (100/1000), offset. Clé PRIVÉE.
+      sortKey: -1781521431616
+    method: GET
+    parameters:
+      - id: pair_7a7cd884dc8a4d7b931e574ad4629bad
+        name: where
+        value: '{"fieldsValues":{"fieldValueId":{"_eq":"a51f950a-90f7-46ad-bf10-a48ae213b402"}}}'
+        description: ""
+        disabled: true
+      - id: pair_ebb070c9f12a4d5a959efe5946bc8742
+        name: where
+        value: '{"projects":{"id":{"_eq":"00000000-0000-4000-8000-000000000003"}}}'
+        description: ""
+        disabled: true
+      - id: pair_c51f71d262db4edfb7bf17926510e40f
+        name: orderBy
+        value: '{"updatedAt":"desc"}'
+        description: ""
+        disabled: false
+    headers:
+      - name: User-Agent
+        value: insomnia/11.2.0
+    authentication:
+      type: apikey
+      key: X-API-KEY
+      value: "{{ _.x_api_key }}"
+      disabled: false
+      addTo: header
+    scripts:
+      preRequest: ""
+      afterResponse: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.url_api }}/companies"
+    name: Companies — Create or update (POST)
+    meta:
+      id: req_a05eaed024b24fe9a30efe03ee82f30a
+      created: 1782121600002
+      modified: 1782121600002
+      isPrivate: false
+      description: "Upsert entreprise. Champs : name, description, linkedinUrl,
+        companyId (update), externalId, assignees, statusId. Clé PRIVÉE."
+      sortKey: -1781521431615
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "ACME Maroc",
+          "externalId": "{{ _.company_uuid }}",
+          "description": "Entreprise marocaine",
+          "linkedinUrl": "https://www.linkedin.com/company/acme"
+        }
+    headers:
+      - name: User-Agent
+        value: insomnia/11.2.0
+      - name: Content-Type
+        value: application/json
+    authentication:
+      type: apikey
+      key: X-API-KEY
+      value: "{{ _.x_api_key }}"
+      disabled: false
+      addTo: header
+    scripts:
+      preRequest: ""
+      afterResponse: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.url_api }}/projects"
+    name: Projects — List (GET)
+    meta:
+      id: req_55073ab920bf49e1b8c7d996c2737148
+      created: 1782121600003
+      modified: 1782414844521
+      isPrivate: false
+      description: Liste des projets (missions/jobs). Filtres
+        where/orderBy/updatedAfter, limit (100/1000), offset. Clé PRIVÉE. Mettre
+        en cache localement (quota 500 req/j).
+      sortKey: -1781521431614
+    method: GET
+    parameters:
+      - id: pair_095d161877d64314ba8dcc021d9b474a
+        name: where
+        value: '{"id":{"_in":["00000000-0000-4000-8000-000000000002","00000000-0000-4000-8000-000000000003"]}}'
+        description: ""
+        disabled: false
+    headers:
+      - name: User-Agent
+        value: insomnia/11.2.0
+    authentication:
+      type: apikey
+      key: X-API-KEY
+      value: "{{ _.x_api_key }}"
+      disabled: false
+      addTo: header
+    scripts:
+      preRequest: ""
+      afterResponse: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.url_api }}/projects"
+    name: Projects — Create or update (POST)
+    meta:
+      id: req_4702905b500b40a58912ae01e57b8c60
+      created: 1782121600004
+      modified: 1782121600004
+      isPrivate: false
+      description: "Upsert projet. Champs : name, projectId (update), externalId,
+        assignees, statusId, companyId, customFieldsValues. Réponse 201 {
+        projectId, taskId }. Clé PRIVÉE."
+      sortKey: -1781521431613
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Recrutement Directeur Industriel Casablanca",
+          "externalId": "{{ _.project_uuid }}"
+        }
+    headers:
+      - name: User-Agent
+        value: insomnia/11.2.0
+      - name: Content-Type
+        value: application/json
+    authentication:
+      type: apikey
+      key: X-API-KEY
+      value: "{{ _.x_api_key }}"
+      disabled: false
+      addTo: header
+    scripts:
+      preRequest: ""
+      afterResponse: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.url_api }}/offers"
+    name: Offers — List (GET)
+    meta:
+      id: req_ed148677567944dd85110fd58ad6f96c
+      created: 1782121600005
+      modified: 1782155433447
+      isPrivate: false
+      description: "Liste des offres. Params : limit (100/1000), offset, where. ⚠️ Clé
+        PUBLIQUE attendue."
+      sortKey: -1781521431612
+    method: GET
+    parameters:
+      - id: pair_7b7e793bc8e1454ca3111538694a84df
+        name: ""
+        value: ""
+        description: ""
+        disabled: false
+    headers:
+      - name: User-Agent
+        value: insomnia/11.2.0
+    authentication:
+      type: apikey
+      key: X-API-KEY
+      value: "{{ _.x_api_key }}"
+      disabled: false
+      addTo: header
+    scripts:
+      preRequest: ""
+      afterResponse: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.url_api }}/applicants"
+    name: Applicants — Create or update (POST)
+    meta:
+      id: req_f18cae6560904a56875fc46e5eaf83b0
+      created: 1782121600006
+      modified: 1782121600006
+      isPrivate: false
+      description: "Crée/maj un profil + une candidature (rattachement à un projet).
+        Champs : infos candidat, resumesFiles (base64), projectId/referenceId.
+        ⚠️ Clé PUBLIQUE (création autorisée)."
+      sortKey: -1781521431611
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "externalId": "{{ _.person_uuid }}",
+          "firstName": "Jane",
+          "lastName": "Doe",
+          "emailAddresses": "jane.doe@example.com",
+          "phoneNumbers": "+33600000000",
+          "linkedinUrl": "https://www.linkedin.com/in/jane-doe",
+          "projectId": "{{ _.project_uuid }}"
+        }
+    headers:
+      - name: User-Agent
+        value: insomnia/11.2.0
+      - name: Content-Type
+        value: application/json
+    authentication:
+      type: apikey
+      key: X-API-KEY
+      value: "{{ _.x_api_key_public }}"
+      disabled: false
+      addTo: header
+    scripts:
+      preRequest: ""
+      afterResponse: ""
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_a8f32ecbe6b7b2839cbc8ed06912f92794bcde83
+    created: 1781521405283
+    modified: 1781521405283
+environments:
+  name: Base Environment
+  meta:
+    id: env_a8f32ecbe6b7b2839cbc8ed06912f92794bcde83
+    created: 1781521405272
+    modified: 1782408289169
+    isPrivate: false
+  data:
+    url_api: https://functions.prod.jarvi.tech/v1/public-api/rest/v2
+    url_graphql: https://functions.prod.jarvi.tech/v1/public-api/graphql
+    x_api_key: REMPLACER_PAR_CLE_PRIVEE
+    showcase_recruiter_webapp_saas_project_uuid: 00000000-0000-4000-8000-000000000001
+    project_uuid: 00000000-0000-4000-8000-000000000002

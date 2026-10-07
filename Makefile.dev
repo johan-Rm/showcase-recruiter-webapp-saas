@@ -1,0 +1,143 @@
+# ─── DEV ──────────────────────────────────────────────────────────────────
+TAIL ?= 200
+
+# Étape de démarrage de `dev-setup`. Une stack de worktree la remplace par sa variante à un seul
+# espace (cf. Makefile.worktree).
+SETUP_UP ?= dev-up-build
+
+.PHONY: dev-up dev-up-build dev-reinstall dev-down dev-stop dev-restart dev-webapp-restart dev-webapp-recreate dev-clean dev-status dev-logs
+dev-up: ## Démarrer le dev (db + api + les 4 espaces derrière Caddy)
+	$(COMPOSE_DEV) up -d
+
+dev-up-build: ## Démarrer le dev avec rebuild
+	$(COMPOSE_DEV) up -d --build
+
+dev-reinstall: ## Rebuild webapp + renouvelle node_modules (après un changement de deps JS)
+	$(COMPOSE_DEV) up -d --build -V $(WEBAPP_SERVICES)
+
+dev-down: ## Arrêter et supprimer les containers dev
+	$(COMPOSE_DEV) down
+
+dev-stop: ## Stopper les containers dev (sans supprimer)
+	$(COMPOSE_DEV) stop
+
+dev-restart: ## Redémarrer les services dev
+	$(COMPOSE_DEV) restart
+
+dev-webapp-restart: ## Redémarrer un espace webapp (défaut : $(WEBAPP_SERVICE) ; ex. WEBAPP_SERVICE=webapp-admin)
+	$(COMPOSE_DEV) restart $(WEBAPP_SERVICE)
+
+dev-webapp-recreate: ## Recréer un espace webapp (jette le conteneur + son .nuxt). Défaut : $(WEBAPP_SERVICE)
+	$(COMPOSE_DEV) up -d --force-recreate $(WEBAPP_SERVICE)
+
+dev-clean: ## Reset complet dev (supprime les volumes — efface la BDD dev)
+	$(COMPOSE_DEV) down -v
+
+dev-status: ## État des services dev
+	$(COMPOSE_DEV) ps
+
+dev-logs: ## Suivre les logs dev
+	$(COMPOSE_DEV) logs -f --tail=$(TAIL)
+
+.PHONY: dev-docs dev-docs-stop dev-docs-logs
+dev-docs: ## Lancer les 3 docs Docus en arrière-plan (logs : $(DOCS_RUN_DIR)/*.log)
+	@mkdir -p $(DOCS_RUN_DIR)
+	@setsid bun run --cwd docs dev:showcase-recruiter-webapp-saas -- --host $(DOCS_HOST) --port $(DOCS_SHOWCASE_RECRUITER_WEBAPP_SAAS_PORT) >> $(DOCS_RUN_DIR)/showcase-recruiter-webapp-saas.log 2>&1 < /dev/null &
+	@setsid bun run --cwd docs dev:api -- --host $(DOCS_HOST) --port $(DOCS_API_PORT) >> $(DOCS_RUN_DIR)/api.log 2>&1 < /dev/null &
+	@setsid bun run --cwd docs dev:dev-book -- --host $(DOCS_HOST) --port $(DOCS_DEV_BOOK_PORT) >> $(DOCS_RUN_DIR)/dev-book.log 2>&1 < /dev/null &
+	@echo "→ docs projet : http://localhost:$(DOCS_SHOWCASE_RECRUITER_WEBAPP_SAAS_PORT)"
+	@echo "→ swagger     : http://localhost:$(DOCS_API_PORT)"
+	@echo "→ dev-book    : http://localhost:$(DOCS_DEV_BOOK_PORT)"
+
+dev-docs-stop: ## Stopper les 3 docs lancées par dev-docs
+	@fuser -k $(DOCS_SHOWCASE_RECRUITER_WEBAPP_SAAS_PORT)/tcp $(DOCS_API_PORT)/tcp $(DOCS_DEV_BOOK_PORT)/tcp 2>/dev/null || true
+	@echo "→ docs stoppées"
+
+dev-docs-logs: ## Suivre les logs des 3 docs en arrière-plan
+	tail -n $(TAIL) -f $(DOCS_RUN_DIR)/*.log
+
+.PHONY: dev-docs-showcase-recruiter-webapp-saas dev-docs-api dev-docs-dev-book dev-docs-generate-api dev-docs-build
+dev-docs-showcase-recruiter-webapp-saas: ## Lancer la documentation projet Docus en dev
+	bun run --cwd docs dev:showcase-recruiter-webapp-saas -- --host $(DOCS_HOST) --port $(DOCS_SHOWCASE_RECRUITER_WEBAPP_SAAS_PORT)
+
+dev-docs-api: ## Lancer la documentation API Docus en dev
+	bun run --cwd docs dev:api -- --host $(DOCS_HOST) --port $(DOCS_API_PORT)
+
+dev-docs-dev-book: ## Lancer la documentation dev-book Docus en dev
+	bun run --cwd docs dev:dev-book -- --host $(DOCS_HOST) --port $(DOCS_DEV_BOOK_PORT)
+
+dev-docs-generate-api: ## Régénérer les fichiers Markdown API depuis docs.json
+	bun run --cwd docs generate:api-docs
+
+dev-docs-build: ## Builder les 3 documentations Docus localement
+	bun run --cwd docs build
+
+.PHONY: dev-shell-api dev-shell-webapp dev-api dev-webapp dev-composer
+dev-shell-api: ## Shell dans le container api
+	$(EXEC_API) sh
+
+dev-shell-webapp: ## Shell dans le container webapp
+	$(EXEC_WEBAPP) sh
+
+dev-api: ## Console Symfony. Usage: make dev-api CMD="debug:router"
+	$(EXEC_API) php bin/console $(CMD)
+
+# La reprojection ferme la boucle : sans elle, le dictionnaire chargé ne déplace aucun profil et la
+# correction reste invisible jusqu'à la prochaine ingestion complète (task API-035).
+dev-vocabulary-refresh: ## Vocabulaire (dev) : enrichit taxonomy.json (LLM), le charge en base, puis rejoue le dictionnaire sur le vivier
+	$(EXEC_API) php bin/console app:vocabulary:enrich
+	$(EXEC_API) php bin/console app:vocabulary:import
+	$(EXEC_API) php bin/console app:vocabulary:reproject
+
+dev-composer: ## Composer dans api. Usage: make dev-composer CMD="require foo/bar"
+	$(EXEC_API) composer $(CMD)
+
+dev-webapp: ## Commande webapp. Usage: make dev-webapp CMD="add @nuxt/image"
+	$(EXEC_WEBAPP) $(CMD)
+
+.PHONY: dev-env dev-schema dev-search-index dev-messenger-setup dev-messenger-failed dev-fixtures dev-jwt dev-test-db dev-setup
+dev-env: ## Créer les .env manquants depuis les .env*.example
+	@[ -f .env ] || { cp .env.example .env && echo "→ .env créé"; }
+	@[ -f api/.env ] || { cp api/.env.example api/.env && echo "→ api/.env créé"; }
+	@[ -f api/.env.test ] || { cp api/.env.test.example api/.env.test && echo "→ api/.env.test créé"; }
+
+dev-schema: ## (Re)créer le schéma dev depuis le mapping Doctrine (migrations différées à la prod)
+	$(EXEC_API) php bin/console doctrine:schema:drop --full-database --force
+	$(EXEC_API) php bin/console doctrine:schema:create
+	$(MAKE) dev-messenger-setup
+	$(MAKE) dev-search-index
+
+dev-search-index: ## Extension pg_trgm + index trigrammes de la recherche (idempotent)
+	$(EXEC_API) php bin/console app:search:index
+
+dev-messenger-setup: ## Créer les tables des transports Messenger (hors mapping Doctrine)
+	$(EXEC_API) php bin/console messenger:setup-transports
+
+dev-messenger-failed: ## Lister les e-mails en échec (rejeu : messenger:failed:retry)
+	$(EXEC_API) php bin/console messenger:failed:show
+
+dev-fixtures: ## Charger les fixtures de démo (dev)
+	$(EXEC_API) php bin/console doctrine:fixtures:load --no-interaction
+
+dev-openapi: ## Régénérer le contrat api/openapi.json (source de vérité des types du front)
+	$(EXEC_API) php bin/console api:openapi:export --output=/app/openapi.json
+
+dev-seed-team: ## Comptes de recette (candidat/entreprise/admin). Options : PASSWORD=... CREDITS=...
+	$(EXEC_API) php bin/console app:accounts:seed-team \
+		--password=$(if $(PASSWORD),$(PASSWORD),password) $(if $(CREDITS),--credits=$(CREDITS),)
+
+dev-jwt: ## Générer le keypair JWT s'il manque (dev)
+	$(EXEC_API) php bin/console lexik:jwt:generate-keypair --skip-if-exists
+
+dev-test-db: ## Créer la base de test (showcase-recruiter-webapp-saas_test) pour phpunit
+	$(EXEC_API_T) php bin/console doctrine:database:create --env=test --if-not-exists
+
+dev-setup: ## Bootstrap local : .env → up+build → install → JWT → schéma → fixtures → comptes équipe → base de test
+	$(MAKE) dev-env
+	$(MAKE) $(SETUP_UP)
+	$(EXEC_API) composer install
+	$(MAKE) dev-jwt
+	$(MAKE) dev-schema
+	$(MAKE) dev-fixtures
+	$(MAKE) dev-seed-team
+	$(MAKE) dev-test-db

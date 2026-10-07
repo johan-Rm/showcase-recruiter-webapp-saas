@@ -1,0 +1,44 @@
+rules:
+  - name: pages-native-root
+    readme: base/app/pages/README.md — « Modèle de page lisible d'un coup d'œil »
+    scope:
+      - spaces/entreprise/app/pages/index.vue
+      - spaces/entreprise/app/pages/credits.vue
+      - spaces/entreprise/app/pages/l-entreprise.vue
+      - spaces/entreprise/app/pages/l-equipe.vue
+      - spaces/entreprise/app/pages/mon-compte.vue
+      - spaces/entreprise/app/pages/mon-profil.vue
+    check: pages-native-root
+    message: Une page expose sa composition derrière une racine HTML réelle.
+
+  - name: pages-root-marker
+    readme: base/app/pages/README.md — « Marqueurs structurels »
+    scope:
+      - spaces/entreprise/app/pages/index.vue
+      - spaces/entreprise/app/pages/credits.vue
+      - spaces/entreprise/app/pages/l-entreprise.vue
+      - spaces/entreprise/app/pages/l-equipe.vue
+      - spaces/entreprise/app/pages/mon-compte.vue
+      - spaces/entreprise/app/pages/mon-profil.vue
+    check: pages-root-marker
+    message: La racine d'une page porte data-page avec le nom dérivé de son chemin.
+
+  - name: layouts-root-marker
+    readme: base/app/layouts/README.md — « Marqueurs structurels »
+    scope:
+      - spaces/entreprise/app/layouts/cockpit.vue
+    check: layouts-root-marker
+    message: La racine d'un layout porte data-layout avec le nom dérivé de son chemin.
+
+  - name: structure-section-semantics
+    readme: base/app/pages/README.md — « Marqueurs structurels »
+    scope:
+      - spaces/entreprise/app/layouts/cockpit.vue
+      - spaces/entreprise/app/pages/index.vue
+      - spaces/entreprise/app/pages/credits.vue
+      - spaces/entreprise/app/pages/l-entreprise.vue
+      - spaces/entreprise/app/pages/l-equipe.vue
+      - spaces/entreprise/app/pages/mon-compte.vue
+      - spaces/entreprise/app/pages/mon-profil.vue
+    check: structure-section-semantics
+    message: data-section décrit une grande zone stable de l'architecture DOM, statique, unique et en kebab-case.

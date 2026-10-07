@@ -1,0 +1,18 @@
+# Dépendances & artefacts (réinstallés/regénérés dans l'image)
+/vendor/
+/var/
+/public/bundles/
+
+# Secrets & env locaux
+.env.local
+.env.*.local
+/config/jwt/*.pem
+
+# Outils & dev
+/.github/
+/tests/
+.phpunit.result.cache
+.php-cs-fixer.cache
+/.idea/
+/.vscode/
+*.md

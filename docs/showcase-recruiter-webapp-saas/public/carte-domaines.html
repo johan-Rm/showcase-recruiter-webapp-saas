@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>showcase-recruiter-webapp-saas — Carte des domaines</title>
+<!-- Aucune police distante : la doc est servie en statique, et une requête vers un tiers à chaque
+     affichage dégraderait la page hors ligne. Les fontes de marque sont Sora (titres) et Geist
+     (interface) ; à défaut, la pile système prend le relais sans casser la mise en page. -->
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Geist', system-ui, sans-serif;
+    background: #f8f6f0;
+    height: 100vh;
+    display: flex; flex-direction: column;
+    padding: clamp(0.75rem, 2.5vh, 1.75rem) clamp(1rem, 3vw, 2.5rem);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 1rem; flex-wrap: wrap; flex: 0 0 auto;
+  }
+  .brand {
+    font-family: 'Sora', system-ui, sans-serif; font-weight: 300;
+    font-size: clamp(1.5rem, 3vw, 2.1rem); letter-spacing: 0.05em; color: #0d0d0d; line-height: 1;
+  }
+  .brand em { font-style: italic; color: #dc8260; }
+  .brand .sub { font-family: 'Geist', system-ui, sans-serif; font-size: 0.85rem; color: #8b8578; margin-left: 0.55rem; letter-spacing: 0; }
+  .hint { font-size: 0.8rem; color: #9a8f7c; }
+
+  .stage { flex: 1; min-height: 0; display: grid; place-items: center; }
+  svg { width: 100%; height: 100%; max-height: 100%; }
+
+  /* Texte SVG */
+  .dom  { font: 700 15px 'Geist', ui-monospace, monospace; fill: #0d0d0d; }
+  .app  { font: 600 13.5px 'Geist', system-ui, sans-serif; }
+  .role { font: 400 11px 'Geist', system-ui, sans-serif; fill: #6b6f7e; }
+  .cat  { font: 600 11px 'Geist', system-ui, sans-serif; letter-spacing: 0.15em; fill: #b3a88f; }
+  .hubname  { font: 700 17px 'Geist', system-ui, sans-serif; fill: #0d0d0d; }
+  .hubsub   { font: 400 10.5px 'Geist', system-ui, sans-serif; fill: #8b8578; }
+  .hubbrand { font: italic 300 13px 'Sora', system-ui, sans-serif; fill: #dc8260; letter-spacing: 0.14em; }
+  .foot { font: 400 11px 'Geist', system-ui, sans-serif; fill: #9a8f7c; }
+
+  .node { transition: transform 200ms ease; transform-box: fill-box; transform-origin: center; }
+  .node:hover { transform: translateY(-3px); }
+
+  @media print { body { overflow: visible; height: auto; } }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">Shortlist<span class="sub">carte des domaines</span></div>
+    <div class="hint">Un domaine, plusieurs portes d'entrée</div>
+  </header>
+
+  <div class="stage">
+  <svg viewBox="0 0 1120 700" preserveAspectRatio="xMidYMid meet" role="img"
+       aria-label="Carte radiale des domaines showcase-recruiter-webapp-saas : showcase-recruiter-webapp-saas.example au centre, sous-domaines autour.">
+
+    <defs>
+      <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#c9a06f" flood-opacity="0.12"/>
+      </filter>
+    </defs>
+
+    <!-- Orbite d'ambiance -->
+    <ellipse cx="560" cy="382" rx="405" ry="270" fill="none" stroke="#e7ddc9" stroke-width="1.5" stroke-dasharray="2 9"/>
+
+    <!-- Rayons (hub -> noeuds) -->
+    <g stroke="#d3c3a3" stroke-width="2" opacity="0.7">
+      <line x1="560" y1="382" x2="560" y2="96"/>
+      <line x1="560" y1="382" x2="220" y2="190"/>
+      <line x1="560" y1="382" x2="165" y2="382"/>
+      <line x1="560" y1="382" x2="220" y2="574"/>
+      <line x1="560" y1="382" x2="900" y2="190"/>
+      <line x1="560" y1="382" x2="955" y2="382"/>
+      <line x1="560" y1="382" x2="900" y2="574"/>
+    </g>
+
+    <!-- Étiquettes de familles -->
+    <text class="cat" x="48"   y="120" text-anchor="start">ESPACES PRIVÉS</text>
+    <text class="cat" x="1072" y="120" text-anchor="end">COULISSES · ÉQUIPE</text>
+    <text class="cat" x="560"  y="44"  text-anchor="middle">LE MOTEUR</text>
+
+    <!-- ============ NŒUD : API ============ -->
+    <g class="node">
+      <rect x="435" y="58" width="250" height="76" rx="15" fill="#fff" filter="url(#soft)"/>
+      <rect x="435" y="58" width="6" height="76" rx="3" fill="#55b8c6"/>
+      <rect x="448" y="79" width="34" height="34" rx="9" fill="#55b8c6" fill-opacity="0.16"/>
+      <g transform="translate(455,86) scale(0.8)" fill="none" stroke="#2f8b98" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><line x1="7" y1="7" x2="7.01" y2="7"/><line x1="7" y1="17" x2="7.01" y2="17"/>
+      </g>
+      <text class="dom" x="491" y="83">api.showcase-recruiter-webapp-saas.example</text>
+      <text class="app" x="491" y="101" fill="#2f8b98">API — le moteur</text>
+      <text class="role" x="491" y="118">données · sécurité · Jarvi</text>
+    </g>
+
+    <!-- ============ NŒUD : CANDIDAT ============ -->
+    <g class="node">
+      <rect x="95" y="152" width="250" height="76" rx="15" fill="#fff" filter="url(#soft)"/>
+      <rect x="95" y="152" width="6" height="76" rx="3" fill="#dc8260"/>
+      <rect x="108" y="173" width="34" height="34" rx="9" fill="#dc8260" fill-opacity="0.16"/>
+      <g transform="translate(115,180) scale(0.8)" fill="none" stroke="#c15e3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/>
+      </g>
+      <text class="dom" x="151" y="177">candidat.showcase-recruiter-webapp-saas.example</text>
+      <text class="app" x="151" y="195" fill="#c15e3c">Espace candidat</text>
+      <text class="role" x="151" y="212">profil · disponibilité Maroc</text>
+    </g>
+
+    <!-- ============ NŒUD : ENTREPRISE ============ -->
+    <g class="node">
+      <rect x="40" y="344" width="250" height="76" rx="15" fill="#fff" filter="url(#soft)"/>
+      <rect x="40" y="344" width="6" height="76" rx="3" fill="#f5ac3f"/>
+      <rect x="53" y="365" width="34" height="34" rx="9" fill="#f5ac3f" fill-opacity="0.18"/>
+      <g transform="translate(60,372) scale(0.8)" fill="none" stroke="#b9791f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="5" y="3" width="14" height="18" rx="1.5"/><line x1="9" y1="7" x2="9.01" y2="7"/><line x1="15" y1="7" x2="15.01" y2="7"/><line x1="9" y1="11" x2="9.01" y2="11"/><line x1="15" y1="11" x2="15.01" y2="11"/><line x1="10" y1="21" x2="14" y2="21"/>
+      </g>
+      <text class="dom" x="96" y="369">entreprise.showcase-recruiter-webapp-saas.example</text>
+      <text class="app" x="96" y="387" fill="#b9791f">Espace entreprise</text>
+      <text class="role" x="96" y="404">recherche · recrutement</text>
+    </g>
+
+    <!-- ============ NŒUD : ADMIN ============ -->
+    <g class="node">
+      <rect x="95" y="536" width="250" height="76" rx="15" fill="#fff" filter="url(#soft)"/>
+      <rect x="95" y="536" width="6" height="76" rx="3" fill="#6ab3e4"/>
+      <rect x="108" y="557" width="34" height="34" rx="9" fill="#6ab3e4" fill-opacity="0.16"/>
+      <g transform="translate(115,564) scale(0.8)" fill="none" stroke="#3f8bc4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3l7 3v5c0 4.2-3 7.2-7 8-4-0.8-7-3.8-7-8V6z"/><path d="M9 12l2 2 4-4"/>
+      </g>
+      <text class="dom" x="151" y="561">admin.showcase-recruiter-webapp-saas.example</text>
+      <text class="app" x="151" y="579" fill="#3f8bc4">Administration</text>
+      <text class="role" x="151" y="596">pilotage interne showcase-recruiter-webapp-saas</text>
+    </g>
+
+    <!-- ============ NŒUD : DOCS ============ -->
+    <g class="node">
+      <rect x="775" y="152" width="250" height="76" rx="15" fill="#fff" filter="url(#soft)"/>
+      <rect x="1019" y="152" width="6" height="76" rx="3" fill="#c08dd9"/>
+      <rect x="789" y="173" width="34" height="34" rx="9" fill="#c08dd9" fill-opacity="0.16"/>
+      <g transform="translate(796,180) scale(0.8)" fill="none" stroke="#9c62bb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="14" y2="17"/>
+      </g>
+      <text class="dom" x="832" y="177">docs.showcase-recruiter-webapp-saas.example</text>
+      <text class="app" x="832" y="195" fill="#9c62bb">Docs</text>
+      <text class="role" x="832" y="212">doc produit &amp; technique</text>
+    </g>
+
+    <!-- ============ NŒUD : SWAGGER ============ -->
+    <g class="node">
+      <rect x="830" y="344" width="250" height="76" rx="15" fill="#fff" filter="url(#soft)"/>
+      <rect x="1074" y="344" width="6" height="76" rx="3" fill="#b2b760"/>
+      <rect x="844" y="365" width="34" height="34" rx="9" fill="#b2b760" fill-opacity="0.20"/>
+      <g transform="translate(851,372) scale(0.8)" fill="none" stroke="#82863f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 6l-4 6 4 6"/><path d="M16 6l4 6-4 6"/>
+      </g>
+      <text class="dom" x="887" y="369">swagger.showcase-recruiter-webapp-saas.example</text>
+      <text class="app" x="887" y="387" fill="#82863f">Swagger</text>
+      <text class="role" x="887" y="404">catalogue de l'API</text>
+    </g>
+
+    <!-- ============ NŒUD : DEV-BOOK ============ -->
+    <g class="node">
+      <rect x="775" y="536" width="250" height="76" rx="15" fill="#fff" filter="url(#soft)"/>
+      <rect x="1019" y="536" width="6" height="76" rx="3" fill="#d98cae"/>
+      <rect x="789" y="557" width="34" height="34" rx="9" fill="#d98cae" fill-opacity="0.18"/>
+      <g transform="translate(796,564) scale(0.8)" fill="none" stroke="#c76d8c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 4a2 2 0 0 1 2-2h12v18H7a2 2 0 0 0-2 2z"/><path d="M5 4v16"/><line x1="9" y1="7" x2="15" y2="7"/>
+      </g>
+      <text class="dom" x="832" y="561">dev-book.showcase-recruiter-webapp-saas.example</text>
+      <text class="app" x="832" y="579" fill="#c76d8c">Dev-book</text>
+      <text class="role" x="832" y="596">cadrage produit &amp; fonctionnel</text>
+    </g>
+
+    <!-- ============ HUB CENTRAL ============ -->
+    <circle cx="560" cy="382" r="94" fill="none" stroke="#dc8260" stroke-width="1.5" stroke-opacity="0.45" stroke-dasharray="1 7"/>
+    <circle cx="560" cy="382" r="82" fill="#fff" stroke="#ece1cc" stroke-width="2" filter="url(#soft)"/>
+    <text class="hubbrand" x="560" y="356" text-anchor="middle">showcase-recruiter-webapp-saas</text>
+    <text class="hubname"  x="560" y="382" text-anchor="middle">showcase-recruiter-webapp-saas.example</text>
+    <text class="hubsub"   x="560" y="400" text-anchor="middle">racine · site public</text>
+    <text class="hubsub"   x="560" y="414" text-anchor="middle">(sans compte)</text>
+
+    <!-- Pied -->
+    <text class="foot" x="560" y="688" text-anchor="middle">Domaine unique — TLS wildcard automatique sur *.showcase-recruiter-webapp-saas.example</text>
+  </svg>
+  </div>
+
+</body>
+</html>

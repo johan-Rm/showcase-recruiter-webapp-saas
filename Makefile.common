@@ -1,0 +1,54 @@
+# ─── Cibles env-agnostiques : qualité & tests (api + webapp) ───────────────
+# S'exécutent dans les conteneurs dev. À compléter au scaffold (scripts réels).
+
+.PHONY: quality quality-fast api-quality webapp-quality
+quality: api-quality webapp-quality ## Qualité complète (api + webapp)
+
+quality-fast: ## Contrôles rapides non destructifs (api + webapp)
+	$(EXEC_API_T) composer quality:fast
+	$(EXEC_WEBAPP) bun run quality-check
+
+api-quality: ## Qualité api : phpstan, cs, deptrac, phpunit
+	$(EXEC_API_T) composer quality
+
+webapp-quality: ## Qualité webapp : lint, format, type-check
+	$(EXEC_WEBAPP) bun run quality-check
+
+# ─── CI : bring-up minimal + préparation, puis délègue à `api-quality` ─────────
+# Sert la même qualité que le dev (parité local ↔ CI). On ne monte que db + api
+# (webapp pas encore scaffoldé) ; le schéma de test est (re)créé par les fixtures.
+.PHONY: ci-up ci-setup ci-api-quality
+ci-up: ## CI : build + démarrage de db + api uniquement
+	$(COMPOSE_DEV) up -d --build $(DB_SERVICE) $(API_SERVICE)
+
+ci-setup: ## CI : dépendances + keypair JWT + base de test
+	$(EXEC_API_T) composer install --no-interaction --no-progress
+	$(EXEC_API_T) php bin/console lexik:jwt:generate-keypair --skip-if-exists
+	$(MAKE) dev-test-db
+
+ci-api-quality: ## CI : pipeline api complet (bring-up → setup → quality)
+	$(MAKE) ci-up
+	$(MAKE) ci-setup
+	$(MAKE) api-quality
+
+.PHONY: test api-test webapp-test
+test: api-test webapp-test ## Tous les tests (api + webapp)
+
+api-test: ## Tests PHPUnit (api)
+	$(EXEC_API_T) php bin/phpunit
+
+webapp-test: ## Tests vitest (webapp)
+	$(EXEC_WEBAPP) bun run test
+
+.PHONY: deptrac analyse type-check contracts-drift
+analyse: ## PHPStan (api)
+	$(EXEC_API_T) composer analyse
+
+deptrac: ## Frontières d'architecture (api)
+	$(EXEC_API_T) composer deptrac
+
+type-check: ## Type-check webapp (vue-tsc)
+	$(EXEC_WEBAPP) bun run quality-type-check
+
+contracts-drift: ## Vérifie que les types TS générés == OpenAPI courant
+	$(EXEC_WEBAPP) bun run contracts:check

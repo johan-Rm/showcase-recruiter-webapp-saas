@@ -1,0 +1,60 @@
+name: webapp-quality
+
+# Gate de pré-merge BLOQUANT pour la webapp (cf. docs/showcase-recruiter-webapp-saas/content/3.quality/testing-and-ci.md).
+# Mêmes scripts qu'en local (`bun run quality-check` = lint + format + type-check),
+# exécutés directement avec Bun — pas besoin de conteneur pour la qualité front.
+on:
+  pull_request:
+    branches: [develop, main]
+    paths:
+      - 'webapp/**'
+      - 'api/openapi.json'
+      - '.github/workflows/webapp-quality.yml'
+  workflow_dispatch: {}
+
+concurrency:
+  group: webapp-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  webapp-quality:
+    name: webapp — lint, format, type-check, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: webapp
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Installer les dépendances
+        run: bun install --frozen-lockfile
+
+      - name: Lint (ESLint)
+        run: bun run quality-lint-check
+
+      - name: Format (Prettier)
+        run: bun run quality-format-check
+
+      - name: Type-check (vue-tsc)
+        run: bun run quality-type-check
+
+      - name: Conventions d'architecture
+        run: bun run quality-conventions-check
+
+      - name: Tests (Vitest)
+        run: bun run quality-test
+
+      # Dérive de contrat : régénère les types depuis api/openapi.json et échoue si le
+      # résultat diffère du code commité. Aucune API n'est requise — l'artefact suffit.
+      - name: Contrat — types en phase avec l'OpenAPI
+        run: bun run quality-contracts-check
+
+      - name: Build SSR (sanity)
+        run: bun run build

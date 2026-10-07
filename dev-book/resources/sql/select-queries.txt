@@ -1,0 +1,90 @@
+showcase-recruiter-webapp-saas - Requetes SELECT simples
+
+Base locale : showcase-recruiter-webapp-saas
+Schema : public
+
+-- Requetes simples, une par table.
+
+-- Table app_user : compte applicatif d'authentification, roles et statut.
+SELECT * FROM app_user;
+
+-- Table candidate : profil candidat metier, disponibilite, mobilite, salaire et lien Jarvi.
+SELECT * FROM candidate;
+
+-- Table candidate_language : association candidat/langue avec niveau declare.
+SELECT * FROM candidate_language;
+
+-- Table candidate_option : options payantes ou mises en avant souscrites par un candidat.
+SELECT * FROM candidate_option;
+
+-- Table candidate_skill : association candidat/competence issue des codes de categorie.
+SELECT * FROM candidate_skill;
+
+-- Table category_code : referentiel de codes metier reutilisable (secteurs, fonctions, competences).
+SELECT * FROM category_code;
+
+-- Table category_code_translation : libelles localises des codes de categorie.
+SELECT * FROM category_code_translation;
+
+-- Table organization : entreprise cliente/recruteuse et donnees de facturation.
+SELECT * FROM organization;
+
+-- Table credit_transaction : journal des mouvements de credits d'une entreprise.
+SELECT * FROM credit_transaction;
+
+-- Table credit_wallet : solde courant de credits par entreprise.
+SELECT * FROM credit_wallet;
+
+-- Table doctrine_migration_versions : historique technique des migrations Doctrine appliquees.
+SELECT * FROM doctrine_migration_versions;
+
+-- Table education : formations rattachees a un profil candidat.
+SELECT * FROM education;
+
+-- Table favorite : candidats sauvegardes en favoris par une entreprise.
+SELECT * FROM favorite;
+
+-- Table invitation : invitations de collaborateurs dans une entreprise.
+SELECT * FROM invitation;
+
+-- Table language : referentiel des langues disponibles.
+SELECT * FROM language;
+
+-- Table notification : notifications in-app/email rattachees a une personne et a un contexte metier.
+SELECT * FROM notification;
+
+-- Table person : identite civile et coordonnees partagees par candidats, recruteurs et utilisateurs.
+SELECT * FROM person;
+
+-- Table presence_period : periodes ou le candidat sera physiquement present au Maroc.
+SELECT * FROM presence_period;
+
+-- Table profile_note : notes internes d'une entreprise sur un candidat.
+SELECT * FROM profile_note;
+
+-- Table profile_view : historique des consultations de profils candidats par entreprise/recruteur.
+SELECT * FROM profile_view;
+
+-- Table recruiter : membre recruteur rattache a une entreprise.
+SELECT * FROM recruiter;
+
+-- Table refresh_tokens : jetons de rafraichissement JWT actifs.
+SELECT * FROM refresh_tokens;
+
+-- Table revealed_profile : profils candidats devoiles a une entreprise apres debit de credits.
+SELECT * FROM revealed_profile;
+
+-- Table saved_search : recherches sauvegardees et alertes d'une entreprise.
+SELECT * FROM saved_search;
+
+-- Table star_profile_card : cartes editoriales de profils candidats mis en avant.
+SELECT * FROM star_profile_card;
+
+-- Table star_profile_card_translation : contenus localises des cartes star profile.
+SELECT * FROM star_profile_card_translation;
+
+-- Table subscription : abonnement et statut de paiement d'une entreprise.
+SELECT * FROM subscription;
+
+-- Table work_experience : experiences professionnelles rattachees a un candidat.
+SELECT * FROM work_experience;

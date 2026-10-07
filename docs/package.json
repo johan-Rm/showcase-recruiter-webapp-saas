@@ -1,0 +1,22 @@
+{
+  "name": "showcase-recruiter-webapp-saas-docs-sites",
+  "description": "Bun workspace for showcase-recruiter-webapp-saas Docus documentation sites.",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "showcase-recruiter-webapp-saas",
+    "api",
+    "dev-book"
+  ],
+  "scripts": {
+    "generate:api-docs": "bun run scripts/generate-api-docs.ts",
+    "dev:showcase-recruiter-webapp-saas": "bun run --cwd showcase-recruiter-webapp-saas dev",
+    "dev:api": "bun run --cwd api dev",
+    "dev:dev-book": "bun run --cwd dev-book dev",
+    "build:showcase-recruiter-webapp-saas": "bun run --cwd showcase-recruiter-webapp-saas build",
+    "build:api": "bun run --cwd api build",
+    "build:dev-book": "bun run --cwd dev-book build",
+    "build": "bun run build:showcase-recruiter-webapp-saas && bun run build:api && bun run build:dev-book"
+  },
+  "packageManager": "bun@1.2.22"
+}

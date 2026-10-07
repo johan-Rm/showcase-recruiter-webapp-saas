@@ -1,0 +1,206 @@
+{#
+  Gabarit unique des e-mails transactionnels (lien magique, mot de passe, invitation).
+
+  Les valeurs sont recopiées de `webapp/base/app/assets/css/{palette,themes}.css` — un e-mail ne peut
+  pas les importer : Gmail et Outlook ignorent les variables CSS, et une feuille externe n'arrive
+  jamais. C'est la seule duplication assumée du kit ; elle est nommée ci-dessous pour être
+  re-vérifiable contre la source.
+
+  Le reste des contraintes vient du support, pas d'un goût : tables imbriquées (Outlook ne met pas en
+  page une div), styles en ligne (les <style> sautent chez certains clients), et un <style> réservé
+  au thème sombre et au responsive, qui n'ont pas d'équivalent en ligne.
+
+  Les boutons utilisent le bleu en clair et le bleu pâle en sombre ; l'encre suit le contraste.
+
+  Paramètres : preheader, heading, paragraphs[], cta{label,url}, note, footer_note.
+#}
+{% set c = {
+    bg:          '#f8fafc',
+    surface:     '#ffffff',
+    text:        '#0f172a',
+    muted:       '#475569',
+    line:        '#dddee1',
+    accent:      '#1d4ed8',
+    on_accent:   '#ffffff',
+} %}
+{% set font_title = "'Geist', Arial, Helvetica, sans-serif" %}
+{% set font_ui = "'Geist', Arial, Helvetica, sans-serif" %}
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>{{ heading }}</title>
+<style>
+  /* Copie du thème sombre de themes.css ; les clients mail ignorent les variables CSS. */
+  @media (prefers-color-scheme: dark) {
+    .brand-page    { background-color: #020617 !important; }
+    .brand-card    { background-color: #0f172a !important; }
+    .brand-text    { color: #f8fafc !important; }
+    .brand-muted   { color: #94a3b8 !important; }
+    .brand-accent  { color: #93c5fd !important; }
+    .brand-line    { border-color: #343b4c !important; }
+    .brand-btn     { background-color: #93c5fd !important; }
+    .brand-btn a   { color: #020617 !important; }
+  }
+  @media only screen and (max-width: 620px) {
+    .brand-card  { padding: 28px 20px !important; }
+    .brand-gutter { padding-left: 16px !important; padding-right: 16px !important; }
+  }
+</style>
+</head>
+<body class="brand-page" style="margin:0; padding:0; width:100%; background-color:{{ c.bg }};">
+  {# Ligne d'aperçu des boîtes de réception : lue par le client, jamais affichée. Les entités qui
+     suivent la poussent au-delà du texte du corps, sinon le client complète l'aperçu avec le début
+     du message. #}
+  <div style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:{{ c.bg }};">
+    {{ preheader|default(heading) }}
+    &#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="brand-page" style="background-color:{{ c.bg }};">
+    <tr>
+      <td align="center" class="brand-gutter" style="padding:32px 24px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%; max-width:600px;">
+
+          <tr>
+            <td class="brand-text" style="padding:0 0 24px 4px; font-family:{{ font_title }}; font-size:18px; font-weight:700; color:{{ c.text }};">
+              Shortlist
+            </td>
+          </tr>
+
+          {# La surface blanche et le rayon commun structurent le message. #}
+          <tr>
+            <td class="brand-card" style="background-color:{{ c.surface }}; border-radius:12px; padding:40px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="brand-text" style="font-family:{{ font_title }}; font-size:24px; line-height:1.3; font-weight:700; color:{{ c.text }}; padding-bottom:20px;">
+                    {{ heading }}
+                  </td>
+                </tr>
+                {% for paragraph in paragraphs %}
+                  <tr>
+                    <td class="brand-text" style="font-family:{{ font_ui }}; font-size:15px; line-height:1.6; color:{{ c.text }}; padding-bottom:16px;">
+                      {{ paragraph }}
+                    </td>
+                  </tr>
+                {% endfor %}
+
+                {# Ce que la livraison apporte. Une table plutôt qu'un <ul> : les clients de
+                   messagerie appliquent au premier des marges qui leur sont propres, et la puce
+                   sautait de place d'un lecteur à l'autre. La puce est donc une cellule à elle,
+                   alignée en haut pour tenir sous un intitulé qui passe à la ligne. #}
+                {% if changes is defined and changes|length > 0 %}
+                  <tr>
+                    <td class="brand-text" style="font-family:{{ font_title }}; font-size:15px; line-height:1.4; font-weight:700; color:{{ c.text }}; padding:8px 0 10px;">
+                      Ce qui change
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-bottom:8px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        {% for change in changes %}
+                          <tr>
+                            <td class="brand-accent" valign="top" style="font-family:{{ font_ui }}; font-size:15px; line-height:1.6; color:{{ c.accent }}; width:18px; padding-bottom:6px;">&bull;</td>
+                            <td class="brand-text" style="font-family:{{ font_ui }}; font-size:15px; line-height:1.6; color:{{ c.text }}; padding-bottom:6px;">{{ change }}</td>
+                          </tr>
+                        {% endfor %}
+                      </table>
+                    </td>
+                  </tr>
+                {% endif %}
+
+                {% if cta is defined and cta is not null %}
+                  <tr>
+                    <td style="padding:12px 0 8px;">
+                      {# Bouton primaire : accent plein, texte en `--on-accent`. Table plutôt que <a>
+                         seul — Outlook ignore le padding d'un lien, le bouton s'effondrerait sur son
+                         libellé. #}
+                      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td class="brand-btn" bgcolor="{{ c.accent }}" style="background-color:{{ c.accent }}; border-radius:12px;">
+                            <a href="{{ cta.url }}" style="display:inline-block; padding:14px 28px; font-family:{{ font_ui }}; font-size:15px; font-weight:600; line-height:1; color:{{ c.on_accent }}; text-decoration:none;">
+                              {{ cta.label }}
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    {# Repli du bouton : les clients en texte brut, les liens réécrits et les images
+                       bloquées laissent parfois le bouton inutilisable. L'URL doit rester copiable. #}
+                    <td class="brand-muted" style="font-family:{{ font_ui }}; font-size:13px; line-height:1.6; color:{{ c.muted }}; padding-top:16px; word-break:break-all;">
+                      Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br>
+                      <a href="{{ cta.url }}" class="brand-muted" style="color:{{ c.muted }}; text-decoration:underline;">{{ cta.url }}</a>
+                    </td>
+                  </tr>
+                {% endif %}
+
+                {# Accès de recette. Rendu UNIQUEMENT si l'appelant en fournit : ce gabarit sert cinq
+                   émetteurs qui n'en veulent pas, et un bloc qui apparaîtrait de lui-même serait une
+                   fuite de mots de passe. Le garde-fou d'environnement, lui, n'est pas ici — il vit
+                   là où l'on sait sur quel environnement on tourne (cf. `OPS-035`). #}
+                {% if accesses is defined and accesses|length > 0 %}
+                  <tr>
+                    <td class="brand-line" style="border-top:1px solid {{ c.line }}; padding-top:20px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td class="brand-text" style="font-family:{{ font_title }}; font-size:15px; line-height:1.4; font-weight:700; color:{{ c.text }}; padding-bottom:12px;">
+                            Vos accès
+                          </td>
+                        </tr>
+                        {% for access in accesses %}
+                          <tr>
+                            <td style="padding-bottom:14px;">
+                              <span class="brand-text" style="font-family:{{ font_ui }}; font-size:14px; line-height:1.5; font-weight:600; color:{{ c.text }};">{{ access.label }}</span><br>
+                              <a href="{{ access.url }}" class="brand-muted" style="font-family:{{ font_ui }}; font-size:13px; line-height:1.6; color:{{ c.muted }}; text-decoration:underline; word-break:break-all;">{{ access.url }}</a><br>
+                              {# Deux lignes étiquetées, et non deux valeurs séparées par un point :
+                                 sur « Shortlist · change-me-demo-password », rien ne dit lequel est lequel, et un
+                                 mot de passe recopié à la place d'un identifiant produit un refus de
+                                 connexion que le lecteur attribue au site. Les mots sont ceux du
+                                 formulaire de connexion, pour lui épargner la traduction. #}
+                              <span class="brand-muted" style="font-family:{{ font_ui }}; font-size:13px; line-height:1.6; color:{{ c.muted }};">login : {{ access.login }}</span><br>
+                              <span class="brand-muted" style="font-family:{{ font_ui }}; font-size:13px; line-height:1.6; color:{{ c.muted }};">mot de passe : {{ access.password }}</span>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      </table>
+                    </td>
+                  </tr>
+                {% endif %}
+
+                {% if note is defined and note is not null %}
+                  <tr>
+                    <td class="brand-line" style="border-top:1px solid {{ c.line }}; padding-top:20px; margin-top:8px;">
+                      <span class="brand-muted" style="font-family:{{ font_ui }}; font-size:13px; line-height:1.6; color:{{ c.muted }};">{{ note }}</span>
+                    </td>
+                  </tr>
+                {% endif %}
+              </table>
+            </td>
+          </tr>
+
+          {# Signature de marque, constante aux quatre e-mails : la tagline fait partie de l'identité
+             (cf. wording §0), elle n'a pas à être recopiée dans chaque émetteur. Le `footer_note`,
+             lui, est propre au message (l'anti-hameçonnage du magic link, l'absence de note ailleurs). #}
+          <tr>
+            <td class="brand-muted" style="font-family:{{ font_ui }}; font-size:12px; line-height:1.6; color:{{ c.muted }}; padding:24px 4px 0;">
+              {% if footer_note is defined and footer_note is not null %}
+                {{ footer_note }}<br><br>
+              {% endif %}
+              L'équipe Shortlist<br>
+              Le pont entre les talents d'Europe et les entreprises du Maroc.<br>
+              E-mail automatique, merci de ne pas y répondre.
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -1,0 +1,52 @@
+# Secrets / env — seuls les templates *.example sont versionnés
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Exports Insomnia « last » : contiennent la clé privée Jarvi en clair, jamais versionnés
+# (les collections/templates jarvi.* sans « last » restent suivis). Cf. tâche 093.
+dev-book/resources/insomnia/jarvi.last.*
+
+# Dépendances
+**/node_modules
+**/vendor
+
+# Build / cache
+**/.nuxt
+**/.output
+**/dist
+api/var
+webapp/.data
+
+# Docker / runtime
+caddy_data/
+caddy_config/
+docs/.dev/
+
+# Dossiers de travail des autres espaces (`make worktree-add`). Ils contiennent du code versionné,
+# mais suivi par LEUR worktree et sur une autre branche — jamais par celui-ci. `.claude/worktrees/`
+# est l'emplacement qu'utilise `claude --worktree`, et il tombe sous un dossier déjà versionné.
+worktree/
+.claude/worktrees/
+
+# OS / éditeurs
+.DS_Store
+*.log
+*:Zone.Identifier
+
+# Itérations de maquettes : `draft/` est l'atelier de génération, il grossit sans plafond (32
+# versions du seul écran cockpit, 13 Mo). Seuls les écrans ARBITRÉS entrent dans l'historique —
+# ils vivent dans `ui-ux-design/validate/`, versionné. Cf. ui-ux-design/CLAUDE.md.
+ui-ux-design/draft/
+
+# Captures / aperçus temporaires de cadrage
+.showcase-recruiter-webapp-saas-*.png
+docus/
+Search_Candidates-*.json
+# Projets vidéo HyperFrames (hors périmètre repo pour le moment)
+videos/
+
+# Mémoire du dernier envoi de la notification de déploiement (task OPS-035) : elle décrit
+# l'état de CETTE machine, pas le code.
+.deploy-notified-*

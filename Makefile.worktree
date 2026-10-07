@@ -1,0 +1,38 @@
+# ─── WORKTREES — une stack par espace, en parallèle ───────────────────────────
+# Un espace = une branche = un dossier de travail = un bloc de ports = une stack Docker.
+# Cf. docs/showcase-recruiter-webapp-saas/content/1.getting-started/parallel-work.md
+
+# Espace Nuxt de CETTE stack, lu dans le `.env` du dossier courant (vide dans l'arbre principal,
+# qui sert les quatre). Une seule clé extraite, pas d'inclusion du `.env` : les autres valeurs
+# contiennent des caractères que Make interpréterait.
+DEV_SPACE ?= $(shell sed -n 's/^DEV_SPACE=//p' .env 2>/dev/null | head -1)
+SPACE     ?= $(DEV_SPACE)
+
+# Services communs à toute stack — tout sauf les serveurs Nuxt.
+SOCLE_SERVICES ?= $(DB_SERVICE) $(API_SERVICE) $(WORKER_SERVICE) mailpit caddy
+
+# Une stack de worktree n'installe qu'un espace : `dev-setup` y démarre donc le socle + un seul
+# serveur Nuxt, là où l'arbre principal les monte tous les quatre.
+ifneq ($(strip $(DEV_SPACE)),)
+SETUP_UP := dev-up-space-build
+endif
+
+.PHONY: worktree-add worktree-remove worktree-list dev-up-space dev-up-space-build
+worktree-add: ## Préparer le dossier de travail d'un espace (ESPACE=api) : worktree + .env + ports
+	@[ -n "$(ESPACE)" ] || { echo "ESPACE=<espace> requis (api, entreprise, candidat, admin, public, socle-webapp, outillage)"; exit 2; }
+	@bash scripts/worktree-init.sh $(ESPACE)
+
+worktree-remove: ## Démonter la stack d'un espace et supprimer son dossier (ESPACE=api)
+	@[ -n "$(ESPACE)" ] || { echo "ESPACE=<espace> requis"; exit 2; }
+	@bash scripts/worktree-remove.sh $(ESPACE)
+
+worktree-list: ## Qui travaille où — dossiers de travail et branches associées
+	@git worktree list
+
+dev-up-space: ## Démarrer le socle + UN espace (SPACE=entreprise ; défaut : DEV_SPACE du .env)
+	@[ -n "$(SPACE)" ] || { echo "SPACE=<espace> requis, ou DEV_SPACE dans le .env"; exit 2; }
+	$(COMPOSE_DEV) up -d $(SOCLE_SERVICES) webapp-$(SPACE)
+
+dev-up-space-build: ## Idem avec rebuild des images
+	@[ -n "$(SPACE)" ] || { echo "SPACE=<espace> requis, ou DEV_SPACE dans le .env"; exit 2; }
+	$(COMPOSE_DEV) up -d --build $(SOCLE_SERVICES) webapp-$(SPACE)

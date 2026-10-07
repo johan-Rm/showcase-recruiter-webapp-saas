@@ -1,0 +1,15 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Enum;
+
+enum NotificationType: string
+{
+    case PROFILE_REVEALED = 'PROFILE_REVEALED';
+    case PROFILE_IN_SEARCHES = 'PROFILE_IN_SEARCHES';
+    case PROFILE_RECOMMENDED = 'PROFILE_RECOMMENDED';
+    case PROFILE_VIEWED_OFTEN = 'PROFILE_VIEWED_OFTEN';
+    case NEW_QUALIFIED_PROFILE = 'NEW_QUALIFIED_PROFILE';
+    case CREDITS_LOW = 'CREDITS_LOW';
+}

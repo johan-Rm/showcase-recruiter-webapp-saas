@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Shortlist — aperçu de marque</title><style>
+/* Nuancier de la marque : ardoise pour les surfaces, bleu pour les actions.
+   Les composants emploient les tokens sémantiques de themes.css. */
+
+:root {
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-200: #bfdbfe;
+  --color-blue-300: #93c5fd;
+  --color-blue-400: #60a5fa;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1d4ed8;
+  --color-blue-800: #1e40af;
+  --color-blue-900: #1e3a8a;
+  --color-blue-950: #172554;
+}
+
+/* Tokens sémantiques de la marque. Les deux thèmes partagent les échelles
+   ardoise et bleu ; leurs niveaux s'adaptent au contraste et à l'élévation. */
+
+:root {
+  --bg: var(--color-slate-50);
+  --surface: #ffffff;
+  --surface-soft: var(--color-slate-100);
+  --dropdown-bg: #ffffff;
+  --text: var(--color-slate-900);
+  --muted: var(--color-slate-600);
+  --line: color-mix(in srgb, var(--text) 14%, transparent);
+  --overlay-shadow: 0 12px 28px -8px rgb(15 23 42 / 0.14), 0 2px 6px -2px rgb(15 23 42 / 0.08);
+
+  --accent: var(--color-blue-700);
+  --on-accent: #ffffff;
+  --accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
+  --sl-hover: color-mix(in srgb, var(--accent) 6%, transparent);
+  --sl-press: color-mix(in srgb, var(--accent) 12%, transparent);
+  --scrim: rgb(2 6 23 / 0.55);
+  --alert: #b91c1c;
+
+  /* Les états restent reconnaissables par leur libellé et leur icône.
+     Leur teinte colore le badge, sans teinter la ligne de données. */
+  --state-met: #8b5cf6;
+  --state-available: #10b981;
+  --state-new: #0ea5e9;
+  --state-morocco: #f59e0b;
+  --verdict-met: #047857;
+  --verdict-missed: #b45309;
+  --tint-fill: 18%;
+}
+
+.dark {
+  --bg: var(--color-slate-950);
+  --surface: var(--color-slate-900);
+  --surface-soft: var(--color-slate-800);
+  --dropdown-bg: var(--color-slate-900);
+  --text: var(--color-slate-50);
+  --muted: var(--color-slate-400);
+  --line: color-mix(in srgb, var(--text) 16%, transparent);
+  --overlay-shadow: 0 16px 32px -12px rgb(0 0 0 / 0.55), 0 2px 8px -4px rgb(0 0 0 / 0.4);
+
+  --accent: var(--color-blue-300);
+  --on-accent: var(--color-slate-950);
+  /* Déclarer les tokens dérivés ici aussi : .dark peut être un îlot dans une page claire. */
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
+  --sl-hover: color-mix(in srgb, var(--accent) 8%, transparent);
+  --sl-press: color-mix(in srgb, var(--accent) 14%, transparent);
+  --scrim: rgb(2 6 23 / 0.65);
+  --alert: #fca5a5;
+  --verdict-met: #6ee7b7;
+  --verdict-missed: #fcd34d;
+  --tint-fill: 22%;
+}
+/* woff2 dans base/public/fonts/ (servis à /fonts/). unicode-range : le navigateur
+   ne télécharge que le sous-ensemble utile (latin / latin-ext). */
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../webapp/base/public/fonts/geist-400-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../webapp/base/public/fonts/geist-400-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../../webapp/base/public/fonts/geist-500-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../../webapp/base/public/fonts/geist-500-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../../webapp/base/public/fonts/geist-600-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../../webapp/base/public/fonts/geist-600-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 Geist,Arial,sans-serif}button,a{font:inherit}button{cursor:pointer}a{color:inherit}.wrap{max-width:1180px;margin:auto;padding:32px}.brand{display:flex;gap:12px;align-items:center;font-size:27px;line-height:1;font-weight:600;letter-spacing:-.8px}svg{display:block;width:100%;height:100%}.brand svg{width:32px;height:32px}.top{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-bottom:28px;border-bottom:1px solid var(--line)}.top p{font-size:13px;color:var(--muted);margin:12px 0 0}.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:12px;padding:11px 18px;font-weight:600;background:var(--accent);color:var(--on-accent);text-decoration:none}.btn.secondary{background:var(--surface-soft);color:var(--accent)}.btn:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:4px}.hero{padding:40px 0}.eyebrow{color:var(--accent);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}h1,h2,h3{font-weight:600;letter-spacing:-.025em;line-height:1.2}h1{font-size:clamp(32px,4vw,48px);max-width:640px;margin:12px 0}h2{font-size:24px;margin:0 0 8px}h3{font-size:19px;margin:0 0 8px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:1.55fr 1fr;gap:24px}.card{border:1px solid var(--line);border-radius:18px;background:var(--surface);padding:28px}.row{display:flex;align-items:center;gap:16px}.space{justify-content:space-between;flex-wrap:wrap}.avatar{height:54px;width:54px;border-radius:16px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:20px;font-weight:600;flex:none}.pill{display:inline-flex;border-radius:12px;padding:4px 10px;background:var(--surface-soft);color:var(--muted);font-size:12px;font-weight:600}.pill.available{color:var(--verdict-met)}.details{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:24px 0}.details span{display:block;font-size:12px;color:var(--muted)}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.actions{display:flex;gap:12px;flex-wrap:wrap;padding-top:24px;border-top:1px solid var(--line)}.number{font-size:42px;font-weight:600;line-height:1.2}.search{margin-top:24px;background:var(--surface-soft);padding:18px;border-radius:12px}.search input{display:block;width:100%;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;margin-top:10px}.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px}.swatch{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}.swatch .fill{height:64px}.swatch p{margin:12px;font-size:12px}.font-demo{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}.footer{margin-top:32px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}@media(max-width:760px){.wrap{padding:20px}.grid,.font-demo{grid-template-columns:1fr}.hero{padding:28px 0}.card{padding:22px}.swatches{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.top p{max-width:220px}.details{grid-template-columns:1fr 1fr}}
+</style></head><body><main class="wrap">
+<header class="top"><div><div class="brand"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="26" height="26" rx="7"/><path d="M9 10h14M9 16h9M9 22h5M19 21l2 2 4-5"/></g></svg><span>Shortlist</span></div><p>Identité visuelle · showcase-recruiter-webapp-saas</p></div><button class="btn secondary" id="theme" type="button" aria-pressed="false">Thème sombre</button></header>
+<section class="hero"><div class="eyebrow">Recruter avec clarté</div><h1>Les bons profils,<br>au bon endroit.</h1><p class="muted">Un aperçu du nouveau kit : ardoise, bleu et une typographie commune.</p></section>
+<div class="grid"><article class="card"><div class="row space"><div class="row"><div class="avatar" aria-hidden="true">AM</div><div><h2>Alice Martin</h2><div class="muted">Product designer · Lyon</div></div></div><span class="pill available">✓ Disponible</span></div><div class="details"><div><span>Expérience</span>6 ans</div><div><span>Disponibilité</span>Immédiate</div><div><span>Mobilité</span>À distance</div></div><p class="muted">Conçoit des produits utiles, des parcours simples et des interfaces accessibles.</p><div class="chips"><span class="pill">Design produit</span><span class="pill">Figma</span><span class="pill">Recherche UX</span></div><div class="actions"><button class="btn" type="button">✓ Retenir le profil</button><button class="btn secondary" type="button">Voir le parcours</button></div></article>
+<aside class="card"><div class="eyebrow">Votre recherche</div><h3 style="margin-top:12px">Product designer</h3><p class="muted">Les profils correspondant à vos critères.</p><div class="number">24 <span class="muted" style="font-size:15px;font-weight:400">profils</span></div><div class="search"><label for="keyword">Affiner les résultats</label><input id="keyword" placeholder="Compétence, métier, mot-clé…"></div><p class="muted" style="font-size:12px;margin-bottom:0">Données fictives pour présenter les composants.</p></aside></div>
+<section class="swatches" aria-label="Couleurs de marque"><div class="swatch"><div class="fill" style="background:var(--bg)"></div><p>Fond · <code>--bg</code></p></div><div class="swatch"><div class="fill" style="background:var(--surface)"></div><p>Carte · <code>--surface</code></p></div><div class="swatch"><div class="fill" style="background:var(--accent)"></div><p>Action · <code>--accent</code></p></div><div class="swatch"><div class="fill" style="background:var(--text)"></div><p>Encre · <code>--text</code></p></div></section>
+<section class="font-demo"><div class="card"><div class="eyebrow">Geist · 600</div><h2 style="margin-top:12px">Une hiérarchie nette.</h2><p class="muted">Même famille pour les titres et le texte courant. Des angles doux et un filet discret séparent les groupes.</p></div><div class="card"><div class="eyebrow">Signe de marque</div><div class="row" style="color:var(--accent);margin:16px 0"><div style="width:56px;height:56px"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="26" height="26" rx="7"/><path d="M9 10h14M9 16h9M9 22h5M19 21l2 2 4-5"/></g></svg></div><div class="brand"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="26" height="26" rx="7"/><path d="M9 10h14M9 16h9M9 22h5M19 21l2 2 4-5"/></g></svg><span>Shortlist</span></div></div><p class="muted">Une liste et une coche : le passage de la recherche à la sélection.</p></div></section>
+<footer class="footer">Aperçu visuel autonome. Le bouton de thème et le champ sont interactifs ; les actions de profil sont des exemples. Valeurs reprises des tokens du projet au moment de sa génération.</footer>
+</main><script>const button=document.getElementById('theme');button.addEventListener('click',()=>{const dark=document.documentElement.classList.toggle('dark');button.textContent=dark?'Thème clair':'Thème sombre';button.setAttribute('aria-pressed',String(dark))});</script></body></html>

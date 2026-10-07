@@ -1,0 +1,1088 @@
+<!doctype html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>showcase-recruiter-webapp-saas — Brand Layout Template</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+ <style>
+    :root {
+      --radius: 8px;
+      --gap: 8px;
+      --topbar-height: 54px;
+      --console-height: 154px;
+
+      --font-title: "Exo 2", sans-serif;
+      --font-ui: "Manrope", sans-serif;
+
+      --bg: #f6f5f1;
+      --surface: #faf7f2;
+      --surface-soft: #efede5;
+      --text: #111111;
+      --muted: #6f6a61;
+      --accent: #dc8260;
+      --accent-soft: rgba(220, 130, 96, .14);
+      --dropdown-bg: #ffffff;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #111111;
+      --surface: #1a1a1a;
+      --surface-soft: #222944;
+      --text: #ffffff;
+      --muted: #a9a9ad;
+      --accent: #dc8260;
+      --accent-soft: rgba(220, 130, 96, .18);
+      --dropdown-bg: #1f1f21;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+    }
+
+    .font-title {
+      font-family: var(--font-title);
+    }
+
+    .font-ui {
+      font-family: var(--font-ui);
+    }
+
+    .views h1,
+    .console-header h2 {
+      font-family: var(--font-title);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
+      width: 100vw;
+      height: 100dvh;
+      max-height: 100dvh;
+      padding: var(--gap);
+      display: grid;
+      grid-template-rows: var(--topbar-height) minmax(0, 1fr) auto;
+      gap: var(--gap);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .topbar,
+    .views,
+    .console {
+      border: 0;
+      box-shadow: none;
+      border-radius: var(--radius);
+    }
+
+    .topbar,
+    .console {
+      background: var(--surface);
+    }
+
+    .topbar {
+      grid-row: 1;
+      grid-column: 1;
+      min-width: 0;
+      overflow: visible;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--gap);
+      padding: 0 12px;
+      position: relative;
+      z-index: 20;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 21px;
+      letter-spacing: -.08em;
+      flex: 0 0 auto;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+
+    .brand-name span {
+      color: var(--accent);
+    }
+
+    .brand-baseline {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    /* Navigation principale : Profils · Favoris · Offres · Équipe */
+    .topbar-center {
+      display: flex;
+      gap: 6px;
+      padding: 4px;
+      border-radius: var(--radius);
+      background: var(--bg);
+    }
+
+    .topbar-tab {
+      border: 0;
+      border-radius: 7px;
+      padding: 8px 10px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background .16s ease, color .16s ease;
+    }
+
+    .topbar-tab:hover {
+      color: var(--text);
+    }
+
+    .topbar-tab.is-active {
+      background: var(--accent);
+      color: #111;
+    }
+
+    .topbar-tab:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .account {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      position: relative;
+      min-width: 0;
+    }
+
+    .account-button {
+      height: 38px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 0 0 8px;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .account-copy {
+      text-align: right;
+      line-height: 1.15;
+    }
+
+    .account-name {
+      display: block;
+      font-weight: 700;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .account-role {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      background: var(--accent);
+      color: #111111;
+      font-weight: 800;
+      font-size: 13px;
+      flex: 0 0 auto;
+    }
+
+    .chevron {
+      width: 15px;
+      height: 15px;
+      color: var(--muted);
+      transition: transform .16s ease;
+      flex: 0 0 auto;
+    }
+
+    .account:hover .chevron,
+    .account:focus-within .chevron {
+      transform: rotate(180deg);
+    }
+
+    .account-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      width: 232px;
+      padding: 6px;
+      border-radius: var(--radius);
+      background: var(--dropdown-bg);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-4px);
+      transition: opacity .16s ease, transform .16s ease;
+    }
+
+    .account:hover .account-dropdown,
+    .account:focus-within .account-dropdown {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .dropdown-item {
+      width: 100%;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 9px;
+      border: 0;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      text-align: left;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .dropdown-separator {
+      height: 1px;
+      margin: 5px;
+      background: color-mix(in srgb, var(--muted) 20%, transparent);
+    }
+
+    /* Ligne informative : 👁 X profils restants (non cliquable) */
+    .dropdown-credits {
+      color: var(--text);
+      cursor: default;
+    }
+
+    .dropdown-credits:hover {
+      background: transparent;
+      color: var(--text);
+    }
+
+    .dropdown-credits-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+    }
+
+    .credits-eye {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .credits-count {
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .theme-toggle {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      transition: background .16s ease, color .16s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      display: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    html[data-theme="dark"] .icon-moon {
+      display: block;
+    }
+
+    html[data-theme="light"] .icon-sun {
+      display: block;
+    }
+
+    .views {
+      grid-row: 2;
+      grid-column: 1;
+      min-height: 0;
+      overflow: hidden;
+      padding: clamp(10px, 1.8vw, 18px);
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .views h1 {
+      margin: 0;
+      font-family: var(--font-title);
+      font-size: clamp(44px, 6vw, 84px);
+      line-height: .92;
+      font-weight: 300;
+      font-style: italic;
+      letter-spacing: -.04em;
+    }
+
+    .views p {
+      margin: 10px 0 0;
+      max-width: 560px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .view-types {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .view-pill {
+      padding: 7px 10px;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--surface-soft);
+      color: var(--muted);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .16s ease, color .16s ease;
+    }
+
+    .view-pill:hover {
+      background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+      color: var(--accent);
+    }
+
+    .view-pill[aria-selected="true"] {
+      background: var(--accent);
+      color: #111111;
+    }
+
+
+
+    .view-pill:focus-visible,
+    .console-header:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .console {
+      grid-row: 3;
+      grid-column: 1;
+      min-height: 0;
+      overflow: hidden;
+      padding: 0;
+      display: grid;
+      grid-template-rows: auto 64px auto;
+      z-index: 20;
+      position: relative;
+      transition: grid-template-rows .24s ease;
+    }
+
+    /* Mode Focus : seule l'en-tête de la console reste visible */
+    .console.is-focus {
+      grid-template-rows: auto 0 0;
+    }
+
+    .console-body,
+    .console-context {
+      transition: opacity .18s ease, padding .24s ease;
+    }
+
+    .console.is-focus .console-body,
+    .console.is-focus .console-context {
+      overflow: hidden;
+      padding-top: 0;
+      padding-bottom: 0;
+      border: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .console-focus {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--muted);
+      cursor: pointer;
+      z-index: 25;
+      transition: background .16s ease, color .16s ease;
+    }
+
+    .console-focus:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .console-focus:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .console-focus svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Console ouverte → icône « replier » ; en Focus → icône « déployer » */
+    .console-focus .focus-expand {
+      display: none;
+    }
+
+    .console.is-focus .console-focus .focus-collapse {
+      display: none;
+    }
+
+    .console.is-focus .console-focus .focus-expand {
+      display: block;
+    }
+
+    .console-header {
+      min-height: 52px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--gap);
+      background: var(--dropdown-bg);
+      cursor: pointer;
+    }
+
+    .console-heading {
+      min-width: 0;
+    }
+
+    .console-heading-row {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .console-header h2 {
+      margin: 0;
+      font-family: var(--font-title);
+      font-size: 26px;
+      line-height: 1;
+      font-weight: 400;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .console-chevron {
+      width: 18px;
+      height: 18px;
+      color: var(--accent);
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform .16s ease;
+      flex: 0 0 auto;
+    }
+
+    .console.is-open .console-chevron {
+      transform: rotate(180deg);
+    }
+
+    .console-body {
+      min-height: 0;
+      padding: 16px;
+      display: grid;
+      place-items: center;
+      overflow: auto;
+      background: var(--surface);
+    }
+
+    .console-body-description {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .console-context {
+      min-height: 38px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--gap);
+      border-top: 1px solid color-mix(in srgb, var(--muted) 18%, transparent);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .console-context span:first-child {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .console-context span:last-child {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    .console-panel {
+      grid-row: 2;
+      grid-column: 1;
+      min-width: 0;
+      min-height: 0;
+      padding: clamp(16px, 2vw, 24px);
+      border-radius: var(--radius);
+      background: var(--surface);
+      display: grid;
+      place-items: center;
+      z-index: 15;
+      visibility: hidden;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(48px);
+      transition:
+        opacity .22s ease,
+        transform .22s ease,
+        visibility 0s linear .22s;
+      will-change: opacity, transform;
+    }
+
+    html[data-theme="dark"] .console-panel {
+      background: var(--dropdown-bg);
+    }
+
+    .console-panel.is-open {
+      visibility: visible;
+      pointer-events: auto;
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0s;
+    }
+
+    .console-panel p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .console-panel,
+      .console,
+      .console-body,
+      .console-context {
+        transition: none;
+      }
+    }
+
+    @media (max-width: 840px) {
+      :root {
+        --gap: 7px;
+        --topbar-height: 52px;
+        --console-height: 154px;
+      }
+
+      .topbar {
+        padding: 0 9px;
+      }
+
+      .topbar-center {
+        display: none;
+      }
+
+      .brand-mark {
+        width: 32px;
+        height: 32px;
+      }
+
+      .brand-name {
+        font-size: 16px;
+      }
+
+      .brand-baseline {
+        display: none;
+      }
+
+      .account-copy {
+        display: none;
+      }
+
+      .avatar {
+        width: 34px;
+        height: 32px;
+      }
+
+      .chevron {
+        display: none;
+      }
+
+      .views h1 {
+        font-size: clamp(42px, 14vw, 72px);
+      }
+
+      .views p {
+        font-size: 13px;
+      }
+
+      .console-header {
+        padding: 10px 12px;
+      }
+
+      .console-header h2 {
+        font-size: 24px;
+      }
+
+    }
+
+    @media (max-width: 520px) {
+      :root {
+        --gap: 7px;
+        --topbar-height: 50px;
+        --console-height: 154px;
+      }
+
+      .view-pill {
+        padding: 6px 9px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar" aria-label="Navigation principale">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">N</div>
+        <div>
+          <p class="brand-name font-title">Shortlist</p>
+          <div class="brand-baseline">Europe ⇄ Maroc</div>
+        </div>
+      </div>
+
+      <nav class="topbar-center" aria-label="Navigation espace entreprise">
+        <button class="topbar-tab is-active" type="button">Le Vivier</button>
+        <button class="topbar-tab" type="button">Les Offres</button>
+        <button class="topbar-tab" type="button">L'Équipe</button>
+      </nav>
+
+      <div class="account">
+        <button class="account-button" type="button" aria-label="Compte utilisateur">
+          <span class="account-copy">
+            <span class="account-name">Julien Martin</span>
+            <span class="account-role">Recruteur · NextGen Industries</span>
+          </span>
+          <span class="avatar" aria-hidden="true">JM</span>
+          <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="m6 9 6 6 6-6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+
+        <div class="account-dropdown" role="menu">
+          <button class="dropdown-item" type="button" role="menuitem">
+            <span>Mon profil</span>
+          </button>
+
+          <div class="dropdown-separator" aria-hidden="true"></div>
+
+          <div class="dropdown-item dropdown-credits">
+            <span class="dropdown-credits-label">
+              <svg class="credits-eye" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              Profils restants
+            </span>
+            <span class="credits-count" id="creditsCount">12</span>
+          </div>
+
+          <div class="dropdown-separator" aria-hidden="true"></div>
+
+          <div class="dropdown-item" role="menuitem">
+            <span>Apparence</span>
+            <button
+              class="theme-toggle"
+              id="themeButton"
+              type="button"
+              aria-label="Changer le mode couleur"
+            >
+              <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+              </svg>
+              <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="4" />
+                <path
+                  d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <div class="dropdown-separator" aria-hidden="true"></div>
+
+          <button class="dropdown-item" type="button" role="menuitem">
+            <span>Déconnexion</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="views" id="viewPanel" role="tabpanel" aria-labelledby="viewTable">
+      <div aria-live="polite">
+        <h1 id="viewTitle">La table</h1>
+        <p id="viewDescription">
+          Explorer rapidement de nombreux profils ou offres : parcourir, trier et comparer en un coup d'œil.
+        </p>
+
+        <div class="view-types" role="tablist" aria-label="Vues disponibles">
+          <button
+            class="view-pill"
+            id="viewTable"
+            type="button"
+            role="tab"
+            aria-controls="viewPanel"
+            aria-selected="true"
+            data-view="table"
+          >La table</button>
+          <button
+            class="view-pill"
+            id="viewViewer"
+            type="button"
+            role="tab"
+            aria-controls="viewPanel"
+            aria-selected="false"
+            tabindex="-1"
+            data-view="viewer"
+          >La visionneuse</button>
+          <button
+            class="view-pill"
+            id="viewWriter"
+            type="button"
+            role="tab"
+            aria-controls="viewPanel"
+            aria-selected="false"
+            tabindex="-1"
+            data-view="writer"
+          >Le rédacteur</button>
+        </div>
+      </div>
+    </main>
+
+    <section
+      class="console-panel"
+      id="consolePanel"
+      aria-label="Panneau contextuel"
+      aria-hidden="true"
+    >
+      <p id="consolePanelDescription">Panneau contextuel de la table.</p>
+    </section>
+
+    <section class="console" id="console" aria-label="Console extensible">
+      <button
+        class="console-focus"
+        id="focusToggle"
+        type="button"
+        aria-pressed="false"
+        aria-label="Activer le mode Focus"
+        title="Mode Focus"
+      >
+        <svg class="focus-collapse" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m7 20 5-5 5 5" />
+          <path d="m7 4 5 5 5-5" />
+        </svg>
+        <svg class="focus-expand" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2v20" />
+          <path d="m8 18 4 4 4-4" />
+          <path d="m8 6 4-4 4 4" />
+        </svg>
+      </button>
+
+      <header
+        class="console-header"
+        id="consoleToggle"
+        role="button"
+        tabindex="0"
+        aria-controls="consolePanel"
+        aria-expanded="false"
+        aria-label="Ouvrir la console"
+      >
+        <div class="console-heading">
+          <div class="console-heading-row">
+            <h2 id="consoleTitle">Console contextuelle</h2>
+            <svg class="console-chevron" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m6 15 6-6 6 6" />
+            </svg>
+          </div>
+        </div>
+      </header>
+
+      <div class="console-body" id="consoleBody" aria-label="Zone contextuelle">
+        <p class="console-body-description" id="consoleBodyDescription">
+          Les outils contextuels de la table apparaîtront dans cette zone.
+        </p>
+      </div>
+
+      <footer class="console-context">
+        <span id="consoleDescription">Filtres, tris, colonnes et actions groupées.</span>
+        <span id="consoleContextEnd">Résultats • Pagination</span>
+      </footer>
+    </section>
+  </div>
+
+  <script>
+    const html = document.documentElement;
+    const themeButton = document.getElementById('themeButton');
+    const viewPanel = document.getElementById('viewPanel');
+    const viewTitle = document.getElementById('viewTitle');
+    const viewDescription = document.getElementById('viewDescription');
+    const console = document.getElementById('console');
+    const consolePanel = document.getElementById('consolePanel');
+    const consolePanelDescription = document.getElementById('consolePanelDescription');
+    const consoleTitle = document.getElementById('consoleTitle');
+    const consoleDescription = document.getElementById('consoleDescription');
+    const consoleBodyDescription = document.getElementById('consoleBodyDescription');
+    const consoleContextEnd = document.getElementById('consoleContextEnd');
+    const consoleToggle = document.getElementById('consoleToggle');
+    const viewTabs = [...document.querySelectorAll('[role="tab"]')];
+
+    const views = {
+      table: {
+        title: 'La table',
+        description: 'Explorer rapidement de nombreux profils ou offres : parcourir, trier et comparer en un coup d’œil.',
+        consoleTitle: 'Console de la table',
+        consoleDescription: 'Filtres, tris, colonnes et actions groupées.',
+        consoleBodyDescription: 'Les outils contextuels de la table apparaîtront dans cette zone.',
+        consolePanelDescription: 'Panneau contextuel de la table.',
+        consoleContextEnd: 'Résultats • Pagination',
+      },
+      viewer: {
+        title: 'La visionneuse',
+        description: 'Se concentrer sur un seul élément — un candidat, une offre… — dans une présentation riche, immersive et sans distraction.',
+        consoleTitle: 'Console de la visionneuse',
+        consoleDescription: 'Navigation, affichage et actions sur l’élément consulté.',
+        consoleBodyDescription: 'Les outils contextuels de la visionneuse apparaîtront dans cette zone.',
+        consolePanelDescription: 'Panneau contextuel de la visionneuse.',
+        consoleContextEnd: 'Position • Navigation',
+      },
+      writer: {
+        title: 'Le rédacteur',
+        description: 'Créer ou modifier du contenu — offre d’emploi, note interne, message, fiche… — dans un environnement dédié à l’édition.',
+        consoleTitle: 'Console du rédacteur',
+        consoleDescription: 'Mise en forme, insertion et actions liées au contenu.',
+        consoleBodyDescription: 'Les outils contextuels du rédacteur apparaîtront dans cette zone.',
+        consolePanelDescription: 'Panneau contextuel du rédacteur.',
+        consoleContextEnd: 'État • Navigation',
+      },
+    };
+
+    function setTheme(theme) {
+      html.dataset.theme = theme;
+    }
+
+    themeButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      setTheme(html.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+
+    const selectView = (tab) => {
+      const view = views[tab.dataset.view];
+
+      if (!view) {
+        return;
+      }
+
+      viewTabs.forEach((viewTab) => {
+        const isSelected = viewTab === tab;
+        viewTab.setAttribute('aria-selected', String(isSelected));
+        viewTab.tabIndex = isSelected ? 0 : -1;
+      });
+
+      viewPanel.setAttribute('aria-labelledby', tab.id);
+      viewTitle.textContent = view.title;
+      viewDescription.textContent = view.description;
+      consoleDescription.textContent = view.consoleDescription;
+      consoleBodyDescription.textContent = view.consoleBodyDescription;
+      consolePanelDescription.textContent = view.consolePanelDescription;
+      consoleContextEnd.textContent = view.consoleContextEnd;
+    };
+
+    viewTabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => selectView(tab));
+      tab.addEventListener('keydown', (event) => {
+        const previousIndex = (index - 1 + viewTabs.length) % viewTabs.length;
+        const nextIndex = (index + 1) % viewTabs.length;
+        const targetIndex = {
+          ArrowLeft: previousIndex,
+          ArrowRight: nextIndex,
+          Home: 0,
+          End: viewTabs.length - 1,
+        }[event.key];
+
+        if (targetIndex === undefined) {
+          return;
+        }
+
+        event.preventDefault();
+        viewTabs[targetIndex].focus();
+        selectView(viewTabs[targetIndex]);
+      });
+    });
+
+    const setConsoleOpen = (isOpen) => {
+      console.classList.toggle('is-open', isOpen);
+      consolePanel.classList.toggle('is-open', isOpen);
+      consolePanel.setAttribute('aria-hidden', String(!isOpen));
+      consoleToggle.setAttribute('aria-expanded', String(isOpen));
+      consoleToggle.setAttribute('aria-label', isOpen ? 'Fermer la console' : 'Ouvrir la console');
+    };
+
+    consoleToggle.addEventListener('click', () => {
+      setConsoleOpen(!console.classList.contains('is-open'));
+    });
+
+    consoleToggle.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') {
+        return;
+      }
+
+      event.preventDefault();
+      setConsoleOpen(!console.classList.contains('is-open'));
+    });
+
+    const navItems = [...document.querySelectorAll('.topbar-tab')];
+    navItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        navItems.forEach((other) => other.classList.remove('is-active'));
+        item.classList.add('is-active');
+      });
+    });
+
+    const focusToggle = document.getElementById('focusToggle');
+
+    const setFocus = (isFocus) => {
+      console.classList.toggle('is-focus', isFocus);
+      focusToggle.setAttribute('aria-pressed', String(isFocus));
+      focusToggle.setAttribute('aria-label', isFocus ? 'Quitter le mode Focus' : 'Activer le mode Focus');
+    };
+
+    focusToggle.addEventListener('click', () => {
+      setFocus(!console.classList.contains('is-focus'));
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && console.classList.contains('is-open')) {
+        setConsoleOpen(false);
+        consoleToggle.focus();
+      }
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+# Caddy de DÉV (compose : docker-compose.dev.yml) — HTTP seul, pas de TLS.
+# Reproduit localement le routage par host de la prod : un espace = un host = une build Nuxt.
+# Les navigateurs résolvent *.localhost en 127.0.0.1 : aucun /etc/hosts à toucher.
+#
+# `DEV_BASE_DOMAIN` vaut `localhost` dans l'arbre principal, et `wt-<espace>.localhost` dans une
+# stack de worktree — les hosts deviennent alors `entreprise.wt-api.localhost`, etc. Un domaine
+# distinct et pas seulement un port : les cookies de session ignorent le port, deux stacks servant
+# le même espace se déconnecteraient mutuellement. Cf. parallel-work.md § stack par worktree.
+
+{
+	auto_https off
+}
+
+# Vitrine publique (apex)
+http://{$DEV_BASE_DOMAIN:localhost} {
+	reverse_proxy webapp-public:3000
+}
+
+http://candidat.{$DEV_BASE_DOMAIN:localhost} {
+	reverse_proxy webapp-candidat:3000
+}
+
+http://entreprise.{$DEV_BASE_DOMAIN:localhost} {
+	reverse_proxy webapp-entreprise:3000
+}
+
+# MÊME espace entreprise, second accès sur l'hôte LITTÉRAL `localhost`. Raison unique : les
+# fournisseurs OAuth (Google, LinkedIn) n'acceptent le HTTP en clair que sur `localhost` ou
+# `127.0.0.1` et refusent tout sous-domaine — `entreprise.localhost` est rejeté, faute de TLD
+# public. Un port dédié car `http://localhost` (8080) sert déjà la vitrine.
+# Sert UNIQUEMENT à tester le social login en local ; le reste du dev passe par le host normal.
+http://localhost:{$DEV_OAUTH_PORT:8082} {
+	reverse_proxy webapp-entreprise:3000
+}
+
+http://admin.{$DEV_BASE_DOMAIN:localhost} {
+	reverse_proxy webapp-admin:3000
+}
+
+# L'API reste jointe en direct par le BFF (réseau Docker) ; ce host sert aux appels manuels
+# (curl, Insomnia) et évite d'avoir à retenir le port exposé.
+http://api.{$DEV_BASE_DOMAIN:localhost} {
+	reverse_proxy api:80
+}

@@ -1,0 +1,38 @@
+# Enrichissement du vocabulaire (tâche 096) — client HTTP scopé vers l'API Anthropic.
+# La clé vit UNIQUEMENT côté api/ (jamais exposée au webapp) et n'est jamais committée : renseignée
+# dans api/.env.dev (local, non versionné). Défaut vide ci-dessous pour que le conteneur démarre sans
+# clé (le LLM ne tourne que dans app:vocabulary:enrich, jamais dans le pipeline harvest + import ;
+# en test on injecte un MockHttpClient).
+parameters:
+    env(ANTHROPIC_API_KEY): ''
+    env(ANTHROPIC_VOCABULARY_MODEL): 'claude-opus-4-8'
+    env(VOCABULARY_ENRICH_MIN_FREQUENCY): '3'
+    env(VOCABULARY_ENRICH_BATCH_SIZE): '80'
+    # Classification entreprise → secteur (tâche 105). Seuil 1 = on classe tout (option A) ; les
+    # entreprises sont trop dispersées pour un « head » utile.
+    env(VOCABULARY_SECTOR_MIN_FREQUENCY): '1'
+    env(VOCABULARY_SECTOR_BATCH_SIZE): '100'
+    # Regroupement des écoles (tâche 115) : DÉSACTIVÉ tant que la valeur produit n'est pas confirmée.
+    env(SCHOOL_GROUPING_ENABLED): '0'
+    env(VOCABULARY_SCHOOL_MIN_FREQUENCY): '1'
+    env(VOCABULARY_SCHOOL_BATCH_SIZE): '100'
+
+    anthropic.vocabulary_model: '%env(string:ANTHROPIC_VOCABULARY_MODEL)%'
+    vocabulary.enrich.min_frequency: '%env(int:VOCABULARY_ENRICH_MIN_FREQUENCY)%'
+    vocabulary.enrich.batch_size: '%env(int:VOCABULARY_ENRICH_BATCH_SIZE)%'
+    vocabulary.sector.min_frequency: '%env(int:VOCABULARY_SECTOR_MIN_FREQUENCY)%'
+    vocabulary.sector.batch_size: '%env(int:VOCABULARY_SECTOR_BATCH_SIZE)%'
+    vocabulary.school.grouping_enabled: '%env(bool:SCHOOL_GROUPING_ENABLED)%'
+    vocabulary.school.min_frequency: '%env(int:VOCABULARY_SCHOOL_MIN_FREQUENCY)%'
+    vocabulary.school.batch_size: '%env(int:VOCABULARY_SCHOOL_BATCH_SIZE)%'
+
+framework:
+    http_client:
+        scoped_clients:
+            # Autowiring : injecter via `HttpClientInterface $anthropicClient`.
+            anthropic.client:
+                base_uri: 'https://api.anthropic.com/'
+                headers:
+                    x-api-key: '%env(ANTHROPIC_API_KEY)%'
+                    anthropic-version: '2023-06-01'
+                    content-type: 'application/json'

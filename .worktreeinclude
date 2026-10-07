@@ -1,0 +1,15 @@
+# Fichiers non versionnés à recopier dans un worktree créé par `claude --worktree`.
+# Sans eux, la stack du worktree ne démarre pas : ni base, ni JWT, ni mailer.
+#
+# ⚠️ Le `.env` recopié porte les ports de l'arbre principal — deux stacks ne peuvent pas les
+# partager. Enchaîner avec `scripts/worktree-init.sh <espace> <chemin>` pour poser le bloc de
+# ports et le domaine de l'espace. Le chemin normal du projet (`make worktree-add`) fait les deux.
+#
+# `api/vendor` et `webapp/node_modules` sont volontairement absents : trop lourds, réinstallés par
+# `make dev-setup`, et node_modules vit dans un volume Docker.
+
+.env
+api/.env
+api/.env.test
+api/config/jwt/private.pem
+api/config/jwt/public.pem

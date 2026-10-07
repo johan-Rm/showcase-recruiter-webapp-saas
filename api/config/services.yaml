@@ -1,0 +1,165 @@
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+# See also https://symfony.com/doc/current/service_container/import.html
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    # Une build par espace = un host par espace : le lien d'un candidat n'a rien à faire sur le
+    # sous-domaine entreprise. APP_BASE_URL reste l'espace entreprise (mot de passe recruteur).
+    env(APP_BASE_URL): 'http://entreprise.localhost:8080'
+    env(APP_CANDIDATE_BASE_URL): 'http://candidat.localhost:8080'
+    env(APP_COMPANY_BASE_URL): 'http://entreprise.localhost:8080'
+    env(MAGIC_LINK_TTL_MINUTES): '30'
+    # Une recherche que plus personne ne touche se clôt d'elle-même — réouvrable d'un geste.
+    # En jours : la mesure du produit est « ça fait deux semaines que je n'y suis pas retourné ».
+    env(SEARCH_INACTIVITY_DAYS): '15'
+    env(PASSWORD_RESET_TTL_MINUTES): '30'
+    # Social login (OIDC) : SEUL le client_id (= audience attendue de l'id_token) est un secret, posé
+    # par environnement. Émetteur et JWKS sont des constantes publiques du fournisseur, câblées plus
+    # bas. Vide par défaut → le fournisseur est « non configuré » : tout id_token échoue à l'audience,
+    # donc 401, tant qu'aucun client_id réel n'est fourni.
+    env(GOOGLE_OIDC_CLIENT_ID): ''
+    env(LINKEDIN_OIDC_CLIENT_ID): ''
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    # Enrichissement vocabulaire (tâche 096) : le port de clustering résout vers l'adaptateur LLM.
+    # Seule cette commande interroge Anthropic ; harvest et import n'en dépendent jamais.
+    App\Domain\Vocabulary\VocabularyClusteringClient: '@App\Domain\Vocabulary\AnthropicVocabularyClusteringClient'
+
+    App\Domain\Vocabulary\AnthropicVocabularyClusteringClient:
+        arguments:
+            $model: '%anthropic.vocabulary_model%'
+
+    App\Domain\Vocabulary\VocabularyEnricher:
+        arguments:
+            $minFrequency: '%vocabulary.enrich.min_frequency%'
+            $batchSize: '%vocabulary.enrich.batch_size%'
+
+    # Concepts proches (tâche 111) : déterministe, aucun LLM.
+    App\Command\VocabularySimilarityCommand:
+        arguments:
+            $minCooccurrences: '%vocabulary.similarity.min_cooccurrences%'
+            $minNpmi: '%vocabulary.similarity.min_npmi%'
+
+    # Classification entreprise → secteur (tâche 105) : port résout vers l'adaptateur LLM.
+    App\Domain\Vocabulary\CompanySectorClient: '@App\Domain\Vocabulary\AnthropicCompanySectorClient'
+
+    App\Domain\Vocabulary\AnthropicCompanySectorClient:
+        arguments:
+            $model: '%anthropic.vocabulary_model%'
+
+    App\Domain\Vocabulary\CompanySectorClassifier:
+        arguments:
+            $minFrequency: '%vocabulary.sector.min_frequency%'
+            $batchSize: '%vocabulary.sector.batch_size%'
+
+    # Regroupement sémantique des écoles (tâche 115, chaîne D) — DÉSACTIVÉ par défaut.
+    App\Domain\Vocabulary\SchoolGroupingClient: '@App\Domain\Vocabulary\AnthropicSchoolGroupingClient'
+
+    App\Domain\Vocabulary\AnthropicSchoolGroupingClient:
+        arguments:
+            $model: '%anthropic.vocabulary_model%'
+
+    App\Domain\Vocabulary\SchoolGrouper:
+        arguments:
+            $minFrequency: '%vocabulary.school.min_frequency%'
+            $batchSize: '%vocabulary.school.batch_size%'
+
+    App\Command\SchoolGroupCommand:
+        arguments:
+            $enabled: '%vocabulary.school.grouping_enabled%'
+
+    # Ingestion Jarvi (tâche 020) : résout l'interface vers l'implémentation HTTP.
+    App\Domain\Jarvi\JarviClientInterface: '@App\Domain\Jarvi\JarviClient'
+
+    # Écriture Jarvi profil réservée aux cas explicites : création initiale d'un profil absent
+    # ou contact déclarant entreprise. Les différenciants candidat ne sont jamais poussés vers Jarvi.
+    App\Domain\Jarvi\JarviProfileWriterInterface: '@App\Domain\Jarvi\JarviProfileWriter'
+    App\Domain\Jarvi\JarviCompanyWriterInterface: '@App\Domain\Jarvi\JarviCompanyWriter'
+    # Canal `/applicants` (tâche 088) : seul chemin d'extraction Jarvi (LinkedIn + CV).
+    App\Domain\Jarvi\JarviApplicantWriterInterface: '@App\Domain\Jarvi\JarviApplicantWriter'
+
+    App\Domain\Jarvi\JarviClient:
+        arguments:
+            $jarviGraphqlClient: '@jarvi.graphql_client'
+            $projectId: '%jarvi.showcase_recruiter_webapp_saas_project_id%'
+
+    # Remontée candidat → Jarvi, asynchrone (tâches 089/090).
+    App\MessageHandler\SubmitCandidateToJarviHandler:
+        arguments:
+            $showcaseRecruiterWebappSaasProjectId: '%jarvi.showcase_recruiter_webapp_saas_project_id%'
+            $refreshDelayMs: '%jarvi.applicant_refresh.delay_ms%'
+
+    App\MessageHandler\RefreshCandidateFromJarviHandler:
+        arguments:
+            $maxAttempts: '%jarvi.applicant_refresh.max_attempts%'
+            $delayMs: '%jarvi.applicant_refresh.delay_ms%'
+
+    App\Domain\Organization\OrganizationJarviCompanySynchronizer:
+        arguments:
+            $enabled: '%jarvi.company_sync.enabled%'
+            $recruiterProjectId: '%jarvi.recruiter_project_id%'
+
+    App\Domain\Search\InactiveSearchCloser:
+        arguments:
+            $inactivityDays: '%env(int:SEARCH_INACTIVITY_DAYS)%'
+
+    App\Domain\Auth\MagicLinkIssuer:
+        arguments:
+            $candidateBaseUrl: '%env(string:APP_CANDIDATE_BASE_URL)%'
+            $companyBaseUrl: '%env(string:APP_COMPANY_BASE_URL)%'
+            $ttlMinutes: '%env(int:MAGIC_LINK_TTL_MINUTES)%'
+
+    # L'interface JWKS pointe sur l'implémentation HTTP + cache. Les URLs de JWKS sont des points
+    # publics et stables des fournisseurs (elles ne sont pas des secrets).
+    App\Domain\Auth\SocialJwks: '@App\Domain\Auth\HttpSocialJwks'
+    App\Domain\Auth\HttpSocialJwks:
+        arguments:
+            $jwksUris:
+                google: 'https://www.googleapis.com/oauth2/v3/certs'
+                linkedin: 'https://www.linkedin.com/oauth/openid/jwks'
+
+    App\Domain\Auth\SocialIdentityVerifier:
+        arguments:
+            # Émetteur = constante publique du fournisseur ; audience = notre client_id (secret par env).
+            $providers:
+                google:
+                    issuer: 'https://accounts.google.com'
+                    audience: '%env(string:GOOGLE_OIDC_CLIENT_ID)%'
+                linkedin:
+                    issuer: 'https://www.linkedin.com/oauth'
+                    audience: '%env(string:LINKEDIN_OIDC_CLIENT_ID)%'
+
+    App\Domain\Auth\PasswordSetupIssuer:
+        arguments:
+            $appBaseUrl: '%env(string:APP_BASE_URL)%'
+            $ttlMinutes: '%env(int:MAGIC_LINK_TTL_MINUTES)%'
+
+    App\Domain\Auth\PasswordResetIssuer:
+        arguments:
+            $appBaseUrl: '%env(string:APP_BASE_URL)%'
+            $ttlMinutes: '%env(int:PASSWORD_RESET_TTL_MINUTES)%'
+
+    App\Domain\Organization\InvitationEmailSender:
+        arguments:
+            $appBaseUrl: '%env(string:APP_BASE_URL)%'
+
+    App\Command\JarviIngestCommand:
+        arguments:
+            $environment: '%kernel.environment%'

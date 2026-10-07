@@ -1,0 +1,10 @@
+# Artefacts générés — jamais formatés.
+node_modules/
+.nuxt/
+.output/
+dist/
+bun.lock
+
+# Types générés depuis l'OpenAPI (quality-generate-schemas) — jamais formatés à la main.
+shared/types/api.ts
+shared/types/organization-constraints.ts

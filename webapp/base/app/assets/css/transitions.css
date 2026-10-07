@@ -1,0 +1,145 @@
+/* Transitions showcase-recruiter-webapp-saas — toutes les transitions CSS de l'app vivent ici
+   (durées/courbes centralisées, aucune transition inline dans les composants). */
+
+:root {
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+  /* Courbe à DÉPASSEMENT : l'échelle franchit sa cible avant d'y revenir, d'où le rebond. Elle
+     porte sa durée comme les autres tokens — un `cubic-bezier` accolé à `--transition-slow`
+     produirait « 400ms ease cubic-bezier(…) », une déclaration invalide. */
+  --transition-bounce: 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Bascule de thème clair/sombre sans flash brutal. */
+body,
+a,
+button {
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    color var(--transition-base);
+}
+
+/* Transitions de pages Nuxt (<NuxtPage transition>). */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity var(--transition-fast);
+}
+
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+}
+
+/* Passage d'une étape à l'autre (onboarding inscription). Utilisée en `mode="out-in"` : Vue attend
+   la fin de la SORTIE avant de jouer l'entrée — sans règle de sortie, il n'attendait rien et la
+   bascule sautait.
+   L'ancienne sortait vers le haut, la nouvelle descend : c'est le « slide down » qui suit la voix,
+   et le sens du mouvement dit qu'on avance. */
+.reveal-enter-active,
+.reveal-leave-active {
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base);
+}
+
+.reveal-enter-from {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+}
+
+.reveal-leave-to {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+}
+
+/* Écran d'auth : fondu du contenu du formulaire quand il bascule connexion ↔ inscription. Le
+   panneau de marque, lui, glisse (cf. layouts/auth.vue) — les deux se jouent en même temps, d'où
+   un fondu court : il doit être fini quand l'image arrive, pas la concurrencer. */
+.auth-pane-enter-active,
+.auth-pane-leave-active {
+  transition: opacity var(--transition-fast);
+}
+
+.auth-pane-enter-from,
+.auth-pane-leave-to {
+  opacity: 0;
+}
+
+/* Transitions de layouts Nuxt (<NuxtLayout transition>) : jouent quand la navigation change de
+   coque, là où `.page-*` ne suffit pas. Fondu seul, sans déplacement — l'app est bilingue LTR/RTL
+   (AR) et un glissement horizontal partirait du mauvais côté selon la locale. */
+.layout-enter-active,
+.layout-leave-active {
+  transition: opacity var(--transition-fast);
+}
+
+.layout-enter-from,
+.layout-leave-to {
+  opacity: 0;
+}
+
+/* Apparition d'un bloc qui PREND LA PLACE d'un autre (moteur de recherche ↔ liste des recherches).
+   Zoom avec léger dépassement : le rebond dit qu'un contenu a remplacé l'autre, là où un simple
+   fondu laisserait croire à un chargement. La sortie, elle, est brève et sans rebond — rebondir en
+   partant ferait hésiter l'élément au lieu de le laisser filer. */
+.zoom-enter-active {
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-bounce);
+}
+
+.zoom-leave-active {
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.zoom-enter-from,
+.zoom-leave-to {
+  opacity: 0;
+  transform: scale(0.92);
+}
+
+/* Passage d'un ÉCRAN à l'écran suivant DANS LA MÊME COQUE — la zone de contenu glisse, les bandes
+   qui l'entourent ne bougent pas. Employé quand la recherche naît : le contenu de la création s'en
+   va vers l'arrière, celui de la Visionneuse entre par l'avant, et la barre haute qui porte le nom
+   reste en place — c'est elle qui fait le lien entre les deux moments.
+
+   Le sens suit la LECTURE et non la gauche : en arabe, « l'avant » est à gauche, et un glissement
+   figé en `translateX` remonterait le temps à l'envers. */
+.slide-enter-active,
+.slide-leave-active {
+  transition:
+    opacity var(--transition-fast),
+    translate var(--transition-base);
+}
+
+.slide-enter-from {
+  opacity: 0;
+  translate: 6% 0;
+}
+
+.slide-leave-to {
+  opacity: 0;
+  translate: -6% 0;
+}
+
+[dir='rtl'] .slide-enter-from {
+  translate: -6% 0;
+}
+
+[dir='rtl'] .slide-leave-to {
+  translate: 6% 0;
+}
+
+/* Accessibilité : respecter la préférence utilisateur. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

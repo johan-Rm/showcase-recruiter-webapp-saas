@@ -1,0 +1,17 @@
+when@dev:
+    web_profiler:
+        # API JSON : pas de toolbar HTML injectée dans les réponses.
+        toolbar: false
+
+    framework:
+        profiler: true
+
+# NB : le collecteur serializer capture tout le payload normalisé ; sur les très grosses
+# collections (search ?view=full&perPage≥~1000), l'écriture de la trace peut dépasser
+# memory_limit (OOM constaté dans FileProfilerStorage). Profiler ces calls avec un
+# perPage plus petit — la structure (nb SQL, N+1) reste représentative.
+
+when@test:
+    framework:
+        profiler:
+            collect: false

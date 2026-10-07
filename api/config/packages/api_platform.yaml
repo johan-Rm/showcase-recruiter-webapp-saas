@@ -1,0 +1,25 @@
+api_platform:
+    title: showcase-recruiter-webapp-saas API
+    version: 0.1.0
+    # Ressources = DTO en src/ApiResource (découplés des entités Doctrine).
+    # Cf. docs/showcase-recruiter-webapp-saas/content/2.architecture/api-structure.md.
+    mapping:
+        paths:
+            - '%kernel.project_dir%/src/ApiResource'
+    # Réponses « à plat » : JSON simple par défaut (pas de JSON-LD/Hydra dans l'app —
+    # le SEO/JSON-LD est géré par le webapp). Cf. docs/showcase-recruiter-webapp-saas/content/2.architecture/api-conventions.md.
+    formats:
+        json: ['application/json']
+    # Réponses d'erreur : problem+json (RFC 7807) puis json — pas de jsonld (désactivé),
+    # sinon une requête sans Accept (*/*) tente de sérialiser l'erreur en jsonld → 500.
+    error_formats:
+        jsonproblem: ['application/problem+json']
+        json: ['application/json']
+    docs_formats:
+        json: ['application/json']
+        jsonopenapi: ['application/vnd.openapi+json']
+        html: ['text/html']
+    defaults:
+        stateless: true
+        cache_headers:
+            vary: ['Content-Type', 'Authorization', 'Origin']

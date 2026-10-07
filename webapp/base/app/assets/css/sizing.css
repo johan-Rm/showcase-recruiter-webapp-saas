@@ -1,0 +1,161 @@
+/* Tokens de TAILLE — même discipline que les couleurs : une valeur n'existe qu'à un seul
+   endroit, jamais de `clamp()` ni de `min-[…px]:` réécrits à la main dans les composants.
+
+   Tout est FLUIDE (interpolation `clamp(min, base + vw, max)`) et SOBRE : la croissance entre
+   petit et grand écran est volontairement retenue. Deux archétypes de page :
+   · LECTURE (public, formulaires, auth) → largeur contrainte, le vide latéral est voulu.
+   · OUTIL   (cockpit, dashboard)        → pleine largeur, BORNÉE (`--container-shell`) puis
+                                            centrée : au-delà, l'espace devient marge. */
+
+@theme {
+  /* Palier grand écran nommé → variante `xwide:` (remplace les `min-[1920px]:`). */
+  --breakpoint-xwide: 120rem;
+
+  /* Échelle typographique FERMÉE (8 niveaux). Body ne descend jamais sous 16px (zoom iOS).
+     Chaque niveau apparie son interlignage. */
+
+  /* LIBELLÉ — le seul niveau qui apparie aussi graisse et interlettrage, parce qu'il ne nomme pas
+     une taille mais un RÔLE : l'étiquette d'une section. Un petit corps gras et espacé se lit comme
+     une étiquette ; le même texte au corps courant se lit comme du contenu, et la section perd sa
+     tête. C'est ce que les trois attributs produisent ENSEMBLE — les dissocier revient à écrire
+     `text-caption uppercase`, qui ne hiérarchise rien.
+     Les capitales et le correctif d'écriture cursive sont sous le bloc `@theme` : Tailwind n'expose
+     pas `text-transform` dans cette famille de tokens. */
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.35;
+  --text-label--font-weight: 800;
+  --text-label--letter-spacing: 0.06em;
+
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.4;
+  --text-small: clamp(0.875rem, 0.86rem + 0.08vw, 0.9375rem);
+  --text-small--line-height: 1.5;
+  --text-body: clamp(1rem, 0.99rem + 0.1vw, 1.0625rem);
+  --text-body--line-height: 1.6;
+  --text-h3: clamp(1.125rem, 1.09rem + 0.2vw, 1.3125rem);
+  --text-h3--line-height: 1.3;
+  --text-h2: clamp(1.375rem, 1.3rem + 0.4vw, 1.75rem);
+  --text-h2--line-height: 1.25;
+  --text-h1: clamp(1.75rem, 1.6rem + 0.8vw, 2.375rem);
+  --text-h1--line-height: 1.2;
+  --text-display: clamp(2.25rem, 2rem + 1.4vw, 3.25rem);
+  --text-display--line-height: 1.1;
+
+  /* Rythme d'espacement SÉMANTIQUE (4 paliers + gouttière), fluide et sobre.
+     → utilitaires `gap-block`, `p-section`, `px-gutter`, etc. Espacer par le conteneur (gap),
+       pas par des marges individuelles. */
+  --spacing-element: clamp(0.5rem, 0.48rem + 0.1vw, 0.625rem);
+  --spacing-block: clamp(1rem, 0.9rem + 0.3vw, 1.375rem);
+  /* Le souffle INTÉRIEUR d'un panneau qui se suffit à lui-même — plus large qu'un écart entre
+     blocs, moins qu'une coupure de section. Ajouté par WEB-011 : l'écran de connexion vivait dans
+     le trou entre `block` (plafond 22 px) et `section` (plancher 28 px), et y tenait par un
+     `py-6 sm:py-8` écrit à la main. Combler le trou était la seule issue conforme — `design-system.md`
+     prescrit d'ajouter un palier plutôt que d'improviser, et le rabattre sur `block` aurait retiré
+     dix pixels de respiration au premier écran que voit un utilisateur.
+     Ne pas confondre avec `--container-panel`, qui est une LARGEUR : les deux ne se croisent pas
+     dans les utilitaires (`p-pane` vient d'ici, `max-w-panel` de là-bas). */
+  --spacing-pane: clamp(1.5rem, 1.25rem + 0.75vw, 2rem);
+  --spacing-section: clamp(1.75rem, 1.4rem + 1vw, 3rem);
+  --spacing-gutter: clamp(1rem, 0.7rem + 1.2vw, 2rem);
+
+  /* Rythme d'une CELLULE de tableau → `px-cell-x`, `py-cell-y`. Plus serré que `--spacing-element`,
+     et pour une raison qui n'est pas esthétique : un tableau sert à COMPARER, et chaque ligne
+     gagnée à l'écran est une comparaison de plus faite sans défiler. L'écart entre les deux axes
+     est voulu — c'est la hauteur de ligne qui coûte, pas la largeur de colonne.
+     Le corps, lui, n'a pas besoin d'un palier : `text-caption` est déjà le bon. */
+  --spacing-cell-x: clamp(0.625rem, 0.6rem + 0.1vw, 0.75rem);
+  --spacing-cell-y: clamp(0.375rem, 0.35rem + 0.1vw, 0.5rem);
+
+  /* Largeurs de gabarit → `max-w-readable`, `max-w-form`, `max-w-shell`, `max-w-panel`, `w-nav`. */
+  --container-readable: 72ch; /* texte courant : ~65–75 caractères */
+  --container-form: 32rem; /* formulaires une colonne */
+  --container-shell: 160rem; /* borne des outils pleine largeur */
+  /* Une PHRASE qu'on complète, et non un texte qu'on lit : sa largeur n'est pas un confort de
+     lecture mais une contrainte de grammaire. « Je cherche un profil de … avec … d'expérience »
+     doit tenir d'un trait, sans quoi la proposition se coupe en son milieu et la phrase se
+     réorganise à chaque caractère tapé. Mesuré à ~983 px de texte, plus le souffle de la carte.
+     Distinct de `--container-readable`, qui borne pour ne pas fatiguer l'œil : ici on borne pour ne
+     pas casser une phrase, et les deux ne tombent pas sur la même valeur. */
+  --container-sentence: 66rem;
+  /* Largeur de STRUCTURE, pas de contenu : un panneau de coque posé sur un fond plein écran.
+     Fluide comme le reste — figée en px, la zone de saisie gardait la même largeur utile sur un
+     1280 et sur un 4K. `vw` et non `%` : un token global ne peut pas dépendre du bloc qui le lit.
+     Le plafond est un arbitrage, pas une limite technique — au-delà c'est le fond qui est le sujet,
+     même logique que `--container-shell`. */
+  --container-panel: clamp(30rem, 45vw, 46rem);
+  /* LA COLONNE DE NAVIGATION d'une coque, dans ses deux états. Deux largeurs de STRUCTURE, comme
+     `--container-panel` juste au-dessus : ce qu'elles bornent n'est pas un contenu qu'on lit mais
+     une colonne qui tient le reste de l'écran.
+
+     Elles se consomment en `w-nav` / `w-nav-rail`, et non en `max-w-*` : une colonne de coque a une
+     largeur DÉFINIE, pas un plafond. Même écriture que `w-sheet` côté entreprise.
+
+     DÉPLIÉE : les bornes reprennent celles que la coque admin portait écrites à la main, pour que
+     rien ne bouge à l'écran. En rem et non en px : une largeur en pixels ignore la taille de texte
+     choisie par l'utilisateur, et une barre de navigation est faite de texte.
+
+     REPLIÉE : la place d'une icône et de son souffle, rien de plus. C'est un rail — il accompagne
+     son contenu, il ne s'élargit pas avec l'écran. */
+  --container-nav: clamp(13.75rem, 18vw, 17rem);
+  --container-nav-rail: clamp(4rem, 5vw, 4.75rem);
+
+  /* HAUTEURS DE BANDE → `min-h-(--band-gutter)`. La barre fine et FIXE d'une coque : elle ne défile
+     pas, porte un repère et une action, et tout ce qu'elle prend est pris à la zone de travail qui
+     vit dessous.
+
+     `vh` ET NON `vw`, contrairement à tout le reste de ce fichier — et c'est le point à ne pas
+     rater. Un corps de texte ou un rythme d'espacement suit la place HORIZONTALE ; une bande, elle,
+     coûte de la HAUTEUR. Calculée sur la largeur, elle reste grasse sur un écran bas — une fenêtre
+     de 600 px, un portable chargé de barres d'outils — pendant que le vertical manque. Calculée sur
+     la hauteur, elle se serre là où ça compte, et reste proportionnelle pour autant : 43 px dans un
+     corps de 986, 32 px dans un corps de 725, soit 4,4 % dans les deux cas.
+
+     Les deux bornes ne sont pas décoratives, et c'est ce qu'un pourcentage nu ne sait pas dire. Le
+     PLANCHER est ce qu'il faut pour une ligne de texte et un bouton : descendre en dessous casse le
+     contenu, pas seulement l'allure. Le PLAFOND est un arbitrage — au-delà, la bande n'est plus
+     qu'un vide autour de la même ligne de texte, puisque son contenu, lui, ne grandit pas avec
+     l'écran.
+
+     `min-height` au point d'usage, JAMAIS `height` : une bande à hauteur imposée rogne son contenu
+     en silence dès que le texte grandit — zoom du navigateur, traduction plus longue. Réservée, elle
+     grandit et prend sur ce qui défile en dessous, ce qui se voit et se corrige.
+
+     VEILLE : la bande garde sa place mais se réduit, faute de contenu à porter. Elle ne DISPARAÎT
+     pas, sans quoi l'écran perdrait son rythme vertical et ce qui revient déplacerait le reste.
+
+     Ne pas confondre avec `--spacing-gutter`, qui est un écart HORIZONTAL de page. Le produit
+     appelle « gouttière » ces deux choses distinctes ; c'est la famille qui les sépare — `--band-*`
+     est une hauteur, `--spacing-*` un écart.
+
+     Les deux barres HAUTES (coque admin, coque cockpit) portent encore leur `clamp` écrit à la main,
+     et avec deux valeurs différentes : elles rejoindront cette famille le jour où quelqu'un
+     tranchera laquelle des deux gagne. */
+  --band-gutter: clamp(32px, 4vh, 46px);
+  --band-gutter-standby: clamp(12px, 1.5vh, 18px);
+  /* La bande d'ACTIONS est plus haute que la gouttière, et l'écart est intentionnel : la gouttière
+     porte un guide et une action, celle-ci porte des contrôles qu'on manipule. Un contrôle demande
+     une cible cliquable, un texte de guide non. */
+  --band-action: clamp(44px, 5.5vh, 64px);
+}
+
+/* Les deux moitiés de `text-label` que `@theme` ne sait pas porter — la famille des tokens de corps
+   n'expose ni `text-transform`, ni de variante selon le sens de lecture.
+
+   LES CAPITALES appartiennent au palier. Laissées à l'appelant, elles manquent une fois sur cinq et
+   le libellé retombe dans le contenu — c'est justement ce que ce palier corrige.
+
+   L'INTERLETTRAGE, lui, TOMBE en écriture cursive. L'arabe lie ses lettres : les espacer brise les
+   liaisons et le mot cesse d'être lisible. Le correctif vit ici, dans le palier, et pas dans les
+   écrans — posé ailleurs, il faudrait y penser à chaque usage, donc le rater une fois. Les capitales
+   restent : elles sont sans effet sur une écriture qui n'en a pas.
+
+   Règles hors couche, donc prioritaires sur les utilitaires de Tailwind. Contrepartie à connaître :
+   un `normal-case` posé à côté de `text-label` ne reprendra pas la main. C'est voulu — un libellé de
+   section sans capitales n'est plus ce palier, il est `text-caption`. */
+.text-label {
+  text-transform: uppercase;
+}
+
+[dir='rtl'] .text-label {
+  letter-spacing: normal;
+}

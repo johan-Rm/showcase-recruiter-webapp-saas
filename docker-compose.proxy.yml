@@ -1,0 +1,36 @@
+# Caddy frontal UNIQUE du VPS (décision 2026-07-04) : route par domaine vers les
+# stacks prod (*.BASE_DOMAIN) et preprod (*.preprod.BASE_DOMAIN). Il vit dans son
+# propre projet compose : les deploys applicatifs ne le redémarrent jamais.
+# Il possède le réseau partagé `showcase-recruiter-webapp-saas_edge`, que les stacks rejoignent en
+# `external` avec des alias uniques (api-prod / api-preprod, …).
+# Réf : docs/showcase-recruiter-webapp-saas/content/2.architecture/docker-and-make.md § Organisation de la preprod.
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      BASE_DOMAIN: ${BASE_DOMAIN}
+      # Basic auth preprod (webapp + mailpit ; PAS l'API, protégée par JWT).
+      # Hash bcrypt généré avec : docker run --rm caddy:2-alpine caddy hash-password
+      PREPROD_BASIC_AUTH_USER: ${PREPROD_BASIC_AUTH_USER:-showcase-recruiter-webapp-saas}
+      PREPROD_BASIC_AUTH_HASH: ${PREPROD_BASIC_AUTH_HASH}
+      # Basic auth docs d'équipe (docs. / swagger. / dev-book., prod ET preprod).
+      DOCS_BASIC_AUTH_USER: ${DOCS_BASIC_AUTH_USER:-showcase-recruiter-webapp-saas-team}
+      DOCS_BASIC_AUTH_HASH: ${DOCS_BASIC_AUTH_HASH}
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [edge]
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  edge:
+    name: showcase-recruiter-webapp-saas_edge

@@ -1,0 +1,991 @@
+app:
+  name: Shortlist
+  tagline: The right people,{break}in the right place.
+  loading: Loading…
+  journey:
+    search: Search
+    select: Select
+    contact: Contact
+a11y:
+  moreInfo: More information
+space:
+  public: Public website
+  candidat: Candidate area
+  entreprise: Company area
+  admin: Admin area
+nav:
+  login: Sign in
+  logout: Sign out
+  home: Home
+  brandHome: '{app} — back to home'
+  theme: Theme
+  language: Language
+  toggleTheme: Toggle theme
+  main: Main navigation
+  breadcrumb: Breadcrumb
+  entreprise:
+    dashboard: Dashboard
+    searches: My searches
+    account: My account
+    credits: Credits
+    team: The team
+    company: The company
+    profile: My profile
+  admin:
+    pilotage: Manage
+    comptes: Accounts
+    supervision: Monitor
+    dashboard: Dashboard
+    entreprises: Companies
+    candidats: The talent pool
+    utilisateurs: Users
+    jarvi: Jarvi
+    referentiels: Qualified referentials
+    vivier: Database status
+    recherches: Overflowing searches
+    activite: Activity
+    compte: Account
+    openMenu: Open menu
+    collapseMenu: Collapse navigation
+    expandMenu: Expand navigation
+auth:
+  intro: Sign in to your {space}.
+  email: Email address
+  password: Password
+  submit: Sign in
+  invalidCredentials: Invalid credentials
+  accountSuspended: Your account is suspended. Get in touch to find out why and ask for another look.
+  sessionExpired: Your session has expired. Sign in again to get back to your space.
+  showPassword: Show password
+  hidePassword: Hide password
+  passwordRulesTitle: Your password must contain
+  passwordRule:
+    length: at least {n} characters
+    upper: an uppercase letter
+    lower: a lowercase letter
+    digit: a digit
+home:
+  public:
+    title: The only platform dedicated to Europe-based talent aiming for Morocco
+    candidateCta: I am a candidate
+    companyCta: I am hiring
+  candidat:
+    title: My dashboard
+  entreprise:
+    title: Smart Home
+  admin:
+    title: Control center
+demo:
+  loggedInAs: Signed in as {email}
+  spaceServedBy: This page is served by the “{space}” area
+page:
+  candidat:
+    projet: My return project
+  entreprise:
+    vivier: The talent pool
+    searches:
+      title: My searches
+    editSearch:
+      title: Edit search
+    newSearch:
+      title: New search
+    viewer:
+      title: Browse profiles
+      lead: One profile at a time, in full detail.
+      aside: Its context
+      criteria: Your criteria, adjustable without leaving your results
+    table:
+      title: My selection
+      empty: No profile in this search.
+      emptyRetained: No profile retained yet
+      emptyRetainedHint: >-
+        Browse this search and set aside the profiles you are interested in: they will
+        show up here.
+    account:
+      title: My account
+      lead: What administers your account, kept apart from what you search with.
+    credits:
+      title: Credits
+      lead: The balance and consumption log, shared across the company. Purchasing is reserved for the account owner.
+      error: Credits could not be loaded.
+      journal: Movements
+      empty: No movement yet.
+      wallet: 'Balance: {count} credit | Balance: {count} credits'
+      after: balance {count}
+      howTo: "To get credits, write to us: we adjust your company's balance within one business day."
+      type:
+        GRANT_FREE: Free credits
+        PURCHASE: Purchase
+        CONSUMPTION: Reveal
+        REFUND: Refund
+        ADJUSTMENT: Adjustment
+    team:
+      title: The team
+      lead: Company members, their invitations and their roles.
+      error: The team could not be loaded.
+      members: '{count} member | {count} members'
+      pending: '{count} pending invitation | {count} pending invitations'
+      expires: 'expires on {date}'
+      remove: 'Remove {name} from the team'
+      role:
+        ROLE_COMPANY_OWNER: Owner
+        ROLE_COMPANY_MEMBER: Member
+      invite:
+        label: Invite a colleague
+        hint: They will receive a link to join the company as a member. Only the owner administers the team.
+        placeholder: "first.last{'@'}company.com"
+        submit: Send the invitation
+        failed: This address is already a member of the company, or already invited.
+    company:
+      title: The company
+      lead: The company, billing and subscription.
+      error: The company details could not be loaded.
+      saved: Changes saved.
+      failed: Some values were rejected — check the website address and the sector.
+      submit: Save
+      sectorPlaceholder: Pick a sector
+    profile:
+      title: My profile
+      lead: Your identity, your preferences and your password.
+      error: 'The profile could not be loaded.'
+      identity: 'Identity'
+      name: 'Name'
+      email: 'Email address'
+      role: 'Role in the company'
+      jobTitle: 'Job title'
+      readOnly: 'These details cannot be edited from the app. Write to us to have them corrected.'
+      password: 'Password'
+      currentPassword: 'Current password'
+      newPassword: 'New password'
+      submit: 'Change the password'
+      saved: 'Password changed.'
+      failed: 'Change refused — check your current password.'
+  admin:
+    recherches: Overflowing searches
+    activite: Activity
+    entreprises: Companies — review queue
+    dashboard: Control center
+    candidats: The talent pool
+    utilisateurs: Users & permissions
+    jarvi: Jarvi ingestion
+    referentiels: Qualified referentials
+    vivier: Database status
+    compte: My account
+referentials:
+  subtitle: Review and validate the derived vocabulary. Until something is validated, search broadens without asserting.
+  loading: Loading…
+  previous: Previous
+  next: Next
+  filter:
+    all: All statuses
+  type:
+    METIER: Job titles
+    COMPETENCE: Skills
+  status:
+    CANDIDAT: To review
+    VALIDE: Validated
+    DEPRECIE: Deprecated
+  column:
+    concept: Concept
+    frequency: Frequency
+    coverage: Cumulative coverage
+    status: Status
+  action:
+    validate: Validate
+    deprecate: Deprecate
+  label:
+    exclude: Exclude this label from expansion
+    restore: Restore this label
+  selected: '{count} selected'
+  pagination: 'Page {page} of {total}'
+vivier:
+  subtitle: 'As of {at}. Same figures as the command-line report.'
+  loading: Loading…
+  empty: No data on this axis.
+  axis:
+    sectors: Top experience sectors
+    jobs: Top jobs held
+    languages: Top languages
+  gap:
+    open: '{metric}: see the {count} profiles this figure does not count'
+    count: '{count} profiles this figure does not count'
+    filter: Filter by reason
+    all: All
+    unknown: This page does not exist.
+    backToState: Go back to the database state to pick a qualification.
+    empty: No profile is missing this qualification.
+    column:
+      name: Name
+      location: Location
+      reason: Reason
+    reason:
+      NO_POSITION: No position
+      NO_USABLE_START_DATE: No usable start date
+      INCOHERENT_DATES: Inconsistent dates
+      UNDER_ONE_YEAR: Less than a year of experience
+      NO_ONGOING_POSITION: No ongoing position
+      ONGOING_WITHOUT_START_DATE: Ongoing position without a start date
+      UNDER_ONE_MONTH: In post for less than a month
+      NO_EDUCATION: No education
+      UNRECOGNIZED_TITLE: No recognised title
+      SOURCE_WITHOUT_DATE: Date not provided by the source
+cockpit:
+  close: Close inspector
+  profilePanel:
+    title: Full profile
+    close: Close profile
+  zone:
+    toolbar: Gutter
+    actions: Action bar
+    console: Console
+    main: Main view
+    inspector: Inspector
+    viewerAside: Side panel
+search:
+  new: New search
+  back: Back to searches
+  empty: No searches yet. Create one to explore the talent pool.
+  newAi: Assisted search
+  seeAll: See all {count} searches
+  sharedSection: Shared with me · {count}
+  loading: Loading…
+  error: Your searches could not be loaded.
+  card:
+    unnamed: Untitled search
+    noCriteria: No criteria yet — this search returns nothing.
+    shared: Shared with the team
+    readOnly: '{name}’s search · read-only'
+    sharedBy: shared by {name} · read-only
+    more: '+{count} criterion | +{count} criteria'
+    profiles: profile | profiles
+    newCount: '{count} new | {count} new'
+    # The number sits ABOVE its word: these two keys carry the label only, agreed on a count they
+    # do not display.
+    seen: seen | seen
+    noKeywords: no keywords
+    # « Shortlisted » and not « favourite »: the word names the recruiter's GESTURE where
+    # « favourite » names a state. The other screens still say « Favourites » until they are
+    # touched.
+    retained: shortlisted | shortlisted
+    retainedByTeam: '{count} shortlisted by the team | {count} shortlisted by the team'
+    closed: closed
+    closedOn: closed on {date} by {name}
+  broad:
+    title: Broad search — {count} profiles
+    body: Past a hundred or so, sorting becomes hard to see through. Add a criterion to narrow it down.
+  manage:
+    menu: Actions on “{name}”
+    modify: Edit criteria
+    saveAndBrowse: Save and view profiles
+    confirmTitle: Save these changes?
+    confirmBody: Changing the criteria reruns the search. Profiles you had shortlisted or dismissed may no longer appear — nothing is lost, they stay in your selection.
+    notEditable: This search cannot be edited. A search shared by a colleague is duplicated; a closed search must be reopened first.
+    backToList: Back to my searches
+    rename: Rename
+    renameHint: Clear the field to restore the automatic name.
+    duplicate: Duplicate
+    share: Share with the team
+    unshare: Stop sharing
+    delete: Delete
+    deleteTitle: Delete “{name}”?
+    deleteBody: Its shortlisted profiles and export history will be lost. This action is permanent.
+    cancel: Cancel
+    error: The action could not be completed. Try again.
+  closure:
+    close: Close
+    reopen: Reopen
+    hint: A closed search cannot be edited until it is reopened.
+    fold: '{count} closed search | {count} closed searches'
+    conflict: This search was closed in the meantime. Reopen it to make changes.
+    error: The search status could not be changed. Try again.
+  masked:
+    hidden: Hidden — reveal the profile to get it
+    none: No contact details
+  export:
+    action: Export
+    title: Export the selection
+    body: '{count} profile will be exported. | {count} profiles will be exported.'
+    ignored: '{count} masked profile will be skipped: the file only contains revealed profiles. | {count} masked profiles will be skipped: the file only contains revealed profiles.'
+    nothing: No revealed profile in this selection — there is nothing to export. Reveal the contact details first.
+    gdpr: I undertake to process these contact details in line with the GDPR.
+    cancel: Cancel
+    submit: Download the CSV
+  reveal:
+    balance: '{count} credit | {count} credits'
+    cost: '· {count} cr.'
+    owned: · already obtained
+    none: · none
+    insufficient: Not enough credits for this reveal
+    confirm:
+      title: Reveal the selection
+      body: 'You are about to reveal {access} on {count} profile for {cost} credit. | You are about to reveal {access} on {count} profiles for {cost} credits.'
+      capped: A batch is capped at {max} profiles; the {count} selected will not go in one go.
+      cancel: Cancel
+      submit: 'Reveal · {cost} cr.'
+    action:
+      EMAIL: Email
+      PHONE: Phone
+      RESUME: Résumé
+      INTERVIEW_REPORT: Interview notes
+    granted:
+      EMAIL: Email unlocked
+      PHONE: Phone unlocked
+      RESUME: Résumé unlocked
+      INTERVIEW_REPORT: Interview notes unlocked
+  action:
+    retain: Keep
+    release: Stop keeping
+    retained: Kept
+    dismiss: Set aside
+    restore: Put back
+  contact:
+    email:
+      available: Email available
+      none: No email
+    phone:
+      available: Phone available
+      none: No phone
+  badge:
+    met: Interviewed
+    inMorocco: In Morocco
+    available: Available
+    new: New
+    favorite: Favourite
+    seen: Reviewed
+    dismissed: Dismissed
+  horizon:
+    M3: Return within 3 months
+    M6: Return within 6 months
+    Y1: Return within the year
+    THINKING: Considering a return
+  console:
+    title: Search console
+    current: Current
+    primary: Main
+    secondary: Further
+  criterion:
+    facet:
+      q: Keyword
+      job: Target role
+      experienceMin: Experience
+      educationLevel: Education
+      availability: Availability
+      returnHorizon: Return horizon
+      geoMobility: Mobility
+      hasPiedATerre: Base in Morocco
+      star: Verified profile
+      country: Country
+      sector: Target sector
+      function: Target role
+      experienceSector: Sector worked in
+      language: Language
+      languageLevel: Language level
+      presenceCity: City in Morocco
+      presenceWithinDays: Presence in Morocco
+    value:
+      experienceMin: '{count} year or more | {count} years or more'
+      yes: 'Yes'
+      no: 'No'
+  return:
+    title: Return to Morocco
+    horizon: Horizon
+    piedATerre: Base in Morocco
+    mobility: Mobile in Morocco
+    yes: Yes
+  profile:
+    untitled: No job title
+    experience: '{count} year(s) of experience'
+    email: Email
+    phone: Phone
+    years: '{count} year | {count} years'
+    unknown: Not provided
+    facts:
+      experience: Experience
+      location: Location
+      availability: Availability
+      education: Education
+    open: View full profile
+    loading: Loading profile…
+    loadFailed: The profile details could not be loaded.
+    linkedin: LinkedIn profile
+    ongoing: present
+    experiences: Experience
+    educations: Education
+    languages: Languages
+    skills: Skills
+    jobs: Roles held
+    sectors: Sectors
+    presence: 'In Morocco from {start} to {end}'
+    presenceIn: '{city}, from {start} to {end}'
+    section:
+      morocco: Their move to Morocco
+      career: Their background
+      locked: To unlock
+    locked:
+      email: Email
+      phone: Phone
+      resume: Resume
+      report: Interview report
+      hidden: Hidden — 1 credit
+      available: Available
+      none: Not provided
+  state:
+    errorHint: Try again in a moment; if it persists, the search itself is not at fault.
+    noCriteriaHint: Start with a job title.
+    emptyHint: Drop a criterion, or widen the job title.
+  viewer:
+    noCriteria: No search criteria yet — start with a job title.
+    empty: No profile matches — widen your criteria.
+    stack:
+      title: Profiles to review
+      retry: Try again
+    verdict:
+      region: The displayed profile
+    panel:
+      title: Control panel
+      current: Current search
+      matches: This profile against your criteria
+      publicResumeOnly: >-
+        Criteria marked as not found are based on the public résumé. The interview notes may cover
+        them.
+      score:
+        summary: '{count} of {total} criteria found in this profile. | {count} of {total} criteria found in this profile.'
+        tier:
+          low: Far from your criteria
+          medium: Close to your criteria
+          high: In line with your criteria
+      tenure:
+        CURRENT: Current role
+        PAST: Past role
+      source:
+        HEADLINE: their headline
+        SKILL: one of their skills
+        JOB_TITLE: a role they held
+      progress: Profiles reviewed
+      position: 'Profile {position} of {total}'
+      of: 'of {count}'
+      positionOf: 'Profile {position} of {total} loaded, {count} profiles match'
+      scope: 'across {count} loaded profiles'
+      order:
+        label: Browsing order
+        unseen: Unseen first
+        relevance: Relevance
+      dismissedTitle: Profiles set aside
+      counts:
+        seen: Seen
+        favorites: Favourites
+        dismissed: Set aside
+  secondary:
+    any: Any
+    withinDays: Within {count} days
+    cityPlaceholder: Casablanca, Rabat…
+    sectorPlaceholder: IT, finance…
+    functionPlaceholder: Developer, accountant…
+    languagePlaceholder: Arabic, English…
+    group:
+      morocco: Morocco
+      return: Return plans
+      job: Field
+      profile: Profile
+      place: Location
+  refine:
+    kept: '{count} profile of {total} | {count} profiles of {total}'
+    clear: Clear all
+    emptyTitle: No profile matches
+    emptyHint: Clear one filter to get the rest of the search back.
+    currentJob: Currently in this position
+    star: Interviewed by Shortlist
+    languageLevel: Declared level, at least
+    group:
+      presence: In Morocco
+      return: Return plans
+      availability: Availability
+      sector: Sector
+      project: Role sought in Morocco
+    value:
+      presence:
+        now: Right now
+        '15': Within 15 d
+        '30': Within 30 d
+        '60': Within 60 d
+      returnHorizon:
+        M3: Within 3 months
+        M6: Within 6 months
+        Y1: Within the year
+        THINKING: Still thinking
+      availability:
+        IMMEDIATE: Immediate
+        NOTICE_1M: 1-month notice
+        NOTICE_3M: 3-month notice
+  selection:
+    toggle: Select this profile
+    count: '{count} selected'
+    hidden: '{count} outside this view'
+    show: Show the selected profiles
+    clear: Clear selection
+  view:
+    all: All
+    favorites: Retained
+  column:
+    role: Role
+    experience: Exp.
+    retain: Keep
+    tenure:
+      CURRENT: current
+      PAST: past
+    name: Full name
+    email: Email
+    phone: Phone
+    presence: Morocco window
+    city: Current city
+    mobility: Mobility
+  mobility:
+    all: All of Morocco
+  criteria:
+    remove: Remove the “{value}” criterion
+    refine: Refine
+    apply: Apply
+  create:
+    noCriteria: Set at least one criterion — the whole talent pool is not a search result.
+    error: The search could not be created. Try again.
+  guide:
+    list: Your saved searches
+    edit: Adjust this search's criteria
+    classic: Describe the profile you are looking for
+    ai: Say in one sentence who you are looking for
+    table: The profiles you retained, ready to contact
+  ai:
+    title: Assisted search
+    query:
+      label: Describe the profile you need
+      placeholder: A developer in Belgium who speaks Dutch
+      hint: Write in plain language. Only your sentence is sent to the model — never the candidate profiles.
+    understood: Understood criteria
+    removeFilter: Remove the “{filter}” criterion
+    submit: Search
+    launch: Run the search
+    pending: Analysing…
+    error:
+      generic: Translation failed. Rephrase your request or try again.
+      notConfigured: Assisted search is unavailable right now.
+    criteria:
+      country: 'Country: {value}'
+      city: 'City: {value}'
+      language: 'Language: {value}'
+      languageLevel: '{value} · {level}'
+      geoMobility: Willing to relocate
+    proficiency:
+      ELEMENTARY: elementary
+      LIMITED_WORKING: limited
+      PROFESSIONAL_WORKING: professional
+      FULL_PROFESSIONAL: fluent
+      NATIVE_OR_BILINGUAL: native
+  primary:
+    noResult: No match
+    jobTitle:
+      label: Job title
+      placeholder: Developer, project manager…
+      hint: Synonyms and related roles are included automatically.
+      loading: Searching job titles…
+    keywords:
+      label: Keywords
+      placeholder: Skill, technology, sector…
+      remove: Remove the keyword {value}
+      add: Add a keyword
+      close: Close the keyword list
+      loading: Searching…
+      unavailable: Suggestions unavailable — type your own term.
+      create: Add “{value}”
+      added: added
+      addAll: Add all {count}
+      addedCount: '{count} keywords added'
+    experience:
+      label: Years of experience
+      labelInJob: Years in this job
+      any: Any
+      value: '{count} year or more | {count} years or more'
+    education:
+      label: Education level
+    volume:
+      pending: Counting profiles…
+      none: No profile matches
+      unknownJob: '“{term}” is not a known job title — pick a suggestion from the list.'
+      count: '{count} profile matches | {count} profiles match'
+      failed: Count unavailable — you can still run the search.
+    submit: Search
+  sentence:
+    lead: 'I am looking for a '
+    with: ' with '
+    experience: ' of experience,'
+    experienceInJob: ' in this job,'
+    level: ' educated to '
+    jobPlaceholder: job title…
+    experienceAny: any
+    experienceValue: '{count} year | {count} years'
+    experienceMax: '{count} years or more'
+    educationAny: any
+    educationAtLeast: '{level} +'
+    keywords: skilled in at least one of these keywords
+    keywordAdd: Add a keyword
+    volumeUnit: profile | profiles
+    submit: Select profiles
+    name:
+      label: Search name
+      placeholder: Names itself…
+      edit: Rename this search
+  availability:
+    IMMEDIATE: Available immediately
+    NOTICE_1M: 1-month notice
+    NOTICE_3M: 3-month notice
+  education:
+    BAC: High school
+    BAC_PLUS_2: Two years of higher education
+    LICENCE: Bachelor's degree
+    MASTER: Master's degree
+    INGENIEUR: Engineering degree
+    DOCTORAT: Doctorate
+  sectorExperience:
+    CONSEIL_AUDIT: Consulting and audit
+    INFORMATIQUE: Information technology
+    INDUSTRIE: Manufacturing
+    BANQUE_FINANCE: Banking and finance
+    ASSURANCE: Insurance
+    TELECOM: Telecommunications
+    TRANSPORT_LOGISTIQUE: Transport and logistics
+    ENERGIE: Energy
+    AERONAUTIQUE: Aerospace
+    AUTOMOBILE: Automotive
+    SANTE_PHARMA: Healthcare and pharmaceuticals
+    DISTRIBUTION: Retail
+    BTP: Construction
+    AGROALIMENTAIRE: Food industry
+    PUBLIC_ADMINISTRATION: Public sector
+    EDUCATION: Education
+    INDEPENDANT: Self-employed
+    AUTRE: Other
+account:
+  menu: My account
+  appearance: Appearance
+notifications:
+  title: Notifications
+  open: 'Notifications ({count} unread)'
+  empty: No notifications yet.
+error:
+  notFound:
+    title: Page not found
+    message: This page does not exist or has been moved.
+  unexpected:
+    title: Something went wrong
+    message: An error occurred on our side. Please try again in a moment.
+  backHome: Back to home
+dashboard:
+  subtitle: Platform health, and what needs a decision.
+  organizationsInReview: Companies to review
+  logins: Logins (7 d)
+  reveals: Reveals (7 d)
+  signups: Signups (7 d)
+  vivier: Talent pool
+  total: Total
+  active: Active
+  goToCandidates: View talent pool
+  goToJarvi: Jarvi monitoring
+users:
+  user: User
+  roles: Roles
+  status: Status
+  lastLogin: Last login
+  never: Never
+  count: '{count} user(s)'
+  empty: No users.
+jarvi:
+  total: Profiles
+  active: Active
+  inactive: Deactivated
+  withConsent: With consent
+  syncTitle: Sync status
+  synced: Synced
+  pending: Pending
+  failed: Failed
+  streams: Sync streams
+  cursor: Last cursor
+  lastRun: Last import
+  healthy: Healthy
+  degraded: Needs attention
+candidate:
+  contact: Contact details
+  profile: Professional profile
+  skills: Skills
+  languages: Languages
+  experiences: Experience
+  educations: Education
+  morocco: Morocco project
+  availability: Availability
+  returnHorizon: Return horizon
+  returnProject: Return project
+  piedATerre: Pied-à-terre
+  geoMobility: Mobile across Morocco
+  presence: Presence in Morocco
+  star: Verified profile (Star)
+  ops: Operations
+  visibility: Visibility
+  active: Active
+  consent: Consent
+  consentSource: Source
+  sync: Sync
+  jarviId: Jarvi anchor
+  createdAt: Created
+  oui: 'Yes'
+  non: 'No'
+admin:
+  activity:
+    count: '{count} profile view(s)'
+    caption: Who viewed which candidate, most recent first
+    loading: Loading…
+    empty: No profile view recorded yet.
+    error: The feed could not be loaded.
+    unknown: Closed account
+    pagination: Page {page} of {total}
+    previous: Previous
+    next: Next
+    column:
+      moment: When
+      recruiter: Recruiter
+      organization: Company
+      candidate: Candidate viewed
+      revealed: Unlocked
+    revealed:
+      yes: Unlocked
+      no: Not unlocked
+  organization:
+    loading: Loading…
+    error: The sheet could not be loaded.
+    notFound: This company does not exist.
+    balance: Credit balance
+    subscription: Subscription
+    noSubscription: No subscription
+    until: 'until {date}'
+    unknownMember: Closed account
+    members: 'Members ({count})'
+    noMember: No member attached.
+    ledger: Credit movements
+    ledgerCaption: This company's credit movements, most recent first
+    noMovement: No credit movement.
+    balanceAfterLine: 'Balance after: {balance}'
+    column:
+      moment: When
+      nature: Nature
+      amount: Amount
+      balanceAfter: Balance after
+      reason: Reason
+    role:
+      ROLE_COMPANY_OWNER: Owner
+      ROLE_COMPANY_MEMBER: Member
+    subscriptionStatus:
+      ACTIVE: Active
+      PAST_DUE: Past due
+      CANCELED: Canceled
+    movement:
+      GRANT_FREE: Free credits
+      PURCHASE: Purchase
+      CONSUMPTION: Profile unlock
+      REFUND: Refund
+      ADJUSTMENT: Adjustment
+  overflow:
+    count: '{count} search(es) above the limit'
+    caption: Searches whose talent pool returns more profiles than are served
+    loading: Loading…
+    empty: No search exceeds the limit. Everything the pool returns fits within what is served.
+    error: The inventory could not be loaded.
+    unnamed: Search with no name or criteria
+    fromCriteria: Named after its criteria
+    matchesLine: '{count} matches, {hidden} of them never shown'
+    pagination: Page {page} of {total}
+    previous: Previous
+    next: Next
+    column:
+      search: Search
+      organization: Organisation
+      owner: Owner
+      matches: Matches
+      hidden: Not shown
+      state: State
+      activity: Last activity
+    state:
+      open: Open
+      closed: Closed
+  candidates:
+    name: Candidate
+    location: Location
+    contact: Contact
+    status: Status
+    inactive: Inactive
+    count: '{count} candidate(s)'
+    empty: No candidates.
+    fillRate:
+      title: Talent pool fill rate
+      detail: '{filled} of {total}'
+      field:
+        givenName: First name
+        familyName: Last name
+        linkedin: LinkedIn
+        employers: Employer
+        photo: Photo
+        email: Email
+        phone: Phone
+        resume: Resume
+        whatsapp: WhatsApp
+        interviewReport: Interview note
+  notifications:
+    title: Notifications
+    empty: No notifications
+  organizations:
+    name: Company
+    statusHeader: Status
+    actions: Actions
+    filter: Filter by status
+    count: '{count} company/companies'
+    empty: No company in this queue.
+    legalName: Legal name
+    taxId: Registration number
+    location: Location
+    website: Website
+    acquisitionChannel: How they heard about us
+    sector: Industry
+    validate: Approve
+    reject: Reject
+    confirmReject: Confirm rejection
+    cancel: Cancel
+    decisionFailed: The decision could not be saved. Please try again.
+inscription:
+  start:
+    title: Create access
+    message: For companies and recruitment agencies. Enter your email address to receive a secure sign-in link.
+    submit: Send me a link
+  sent:
+    title: Check your inbox
+    message: We've sent a link to {email}.
+    messageAnonymous: We've sent you a sign-in link.
+    action: Open that email to continue your registration.
+    hint: The link works only once. If you don't receive it within a few minutes, check your spam folder or use another email address.
+    retry: Use another address
+  social:
+    google: Continue with Google
+    linkedin: Continue with LinkedIn
+    name:
+      google: Google
+      linkedin: LinkedIn
+    or: or
+    failed: Signing in with that service did not work. Try again or use your email address.
+  link:
+    checking: One moment, we're checking your link…
+    next: Right after, we'll ask you for a few details about your company. Two minutes, no more.
+    invalidTitle: This link is no longer valid
+    invalidMessage: Sign-in links expire after 30 minutes and work only once. Request a new one, we'll send it to you right away.
+    restart: Get a new link
+  company:
+    title: Your company
+    message: These details let us verify your company before granting access to candidate profiles.
+    declarant: About you
+    company: Company
+    acquisition: How did you hear about us?
+    optional:
+      title: Optional, to speed up your review
+      message: None of this is required. It helps our team verify your company faster, and you can fill it in later.
+      more: Add more details
+    submit: Submit my request
+  onboarding:
+    company:
+      lead: Your address is confirmed.
+      focus: Tell us about your company.
+    contact:
+      lead: And you?
+      focus: Just tell us your first and last name.
+    channel:
+      lead: One last thing.
+      focus: How did you hear about us?
+    gauge:
+      label: Company profile
+      value: '{percent} %'
+    next: Continue
+    send: Submit my request
+    back: Back
+    incomplete: Fill in the fields to continue.
+  field:
+    cityPlaceholder: e.g. Casablanca
+    countryHint: 2-letter code (MA, FR, BE…)
+    countryPlaceholder: Choose a country
+    givenName: First name
+    contactGivenName: Your first name
+    contactFamilyName: Your last name
+    familyName: Last name
+    jobTitle: Your role in the company
+    legalName: Legal name
+    taxId: Registration number
+    sector: Industry
+    sectorPlaceholder: Choose or type a sector
+    sectorNoResult: No matching sector
+    country: Country
+    countryNoResult: No matching country
+    postalCode: Postal code
+    postalCodePlaceholder: e.g. 20000
+    city: City
+    address: Address
+    addressPlaceholder: Search your address…
+    addressNoResult: No matching address
+    addressLoading: Searching…
+    addressManual: Enter address manually
+    addressSearch: Search for an address
+    streetPlaceholder: Street and number
+    website: Website
+    websitePlaceholder: https://
+    description: Description
+    acquisitionChannel: How you heard about us
+    acquisitionChannelEmpty: Select an answer
+    acquisitionChannelDetail: Please specify
+    acquisitionChannelDetailPlaceholder: e.g. a trade show, a partner, an article…
+  review:
+    title: Your workspace is ready
+    received: Only your password is missing.
+    sent: "An email has just been sent to {email}. Open it to choose your password: you'll be in right after."
+    why: Our team is checking your company's details on its side. You don't have to wait to get started.
+    missing: Can't find it? Check your spam folder.
+  password:
+    title: Set your password
+    message: Choose a password — your Shortlist workspace opens right after.
+    field: Password
+    confirmField: Confirm password
+    submit: Set my password
+    mismatch: The two passwords do not match.
+    invalidTitle: Invalid or expired link
+    invalidMessage: This link has already been used or is no longer valid. Start again from the sign-in page.
+  login:
+    prompt: No company account?
+    link: Register your company
+    back: Already have an account?
+  error:
+    unexpected: Something went wrong. Please try again in a moment.
+organization:
+  websitePlaceholder: https://
+  name: Company name
+  legalName: Legal name
+  taxId: Tax ID
+  country: Country (2-letter code)
+  city: City
+  billingAddress: Billing address
+  website: Website
+  sector: Sector
+  description: Description
+  status:
+    NOUVEAU: New
+    EMAIL_VERIFIE: Email verified
+    EN_REVUE: Under review
+    INCOMPLET: Incomplete
+    VALIDEE: Approved
+    REFUSE: Rejected
+  channel:
+    RECOMMANDATION: Referral
+    LINKEDIN: LinkedIn
+    RECHERCHE_WEB: Web search
+    SALON: Trade show or event
+    CONTACT_DIRECT: Direct Shortlist contact
+    AUTRE: Other

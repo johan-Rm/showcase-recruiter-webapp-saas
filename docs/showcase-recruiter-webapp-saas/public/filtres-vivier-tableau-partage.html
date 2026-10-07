@@ -1,0 +1,464 @@
+<title>Filtres du vivier — showcase-recruiter-webapp-saas</title>
+<style>
+  :root {
+    --bg: #FBF9F6;
+    --surface: #FFFFFF;
+    --ink: #22303B;
+    --muted: #64707A;
+    --line: #E8E1D6;
+    --accent: #B08D5F;
+    --marine: #064260;
+    --group-bg: #F2EDE4;
+    --ok: #2E7D4F;
+    --ok-bg: #E7F2EB;
+    --mid: #B06A14;
+    --mid-bg: #FAF0E0;
+    --none: #B0433B;
+    --none-bg: #F9EAE8;
+    --neutral-bg: #EEF1F3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0E171E;
+      --surface: #16232C;
+      --ink: #E9E4DC;
+      --muted: #9AA7B0;
+      --line: #263743;
+      --accent: #C8A882;
+      --marine: #8FC1DD;
+      --group-bg: #1C2B36;
+      --ok: #6FBF8F;
+      --ok-bg: #1A2F24;
+      --mid: #DDA24E;
+      --mid-bg: #33270F;
+      --none: #E08078;
+      --none-bg: #391D1A;
+      --neutral-bg: #22303A;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #FBF9F6;
+    --surface: #FFFFFF;
+    --ink: #22303B;
+    --muted: #64707A;
+    --line: #E8E1D6;
+    --accent: #B08D5F;
+    --marine: #064260;
+    --group-bg: #F2EDE4;
+    --ok: #2E7D4F;
+    --ok-bg: #E7F2EB;
+    --mid: #B06A14;
+    --mid-bg: #FAF0E0;
+    --none: #B0433B;
+    --none-bg: #F9EAE8;
+    --neutral-bg: #EEF1F3;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0E171E;
+    --surface: #16232C;
+    --ink: #E9E4DC;
+    --muted: #9AA7B0;
+    --line: #263743;
+    --accent: #C8A882;
+    --marine: #8FC1DD;
+    --group-bg: #1C2B36;
+    --ok: #6FBF8F;
+    --ok-bg: #1A2F24;
+    --mid: #DDA24E;
+    --mid-bg: #33270F;
+    --none: #E08078;
+    --none-bg: #391D1A;
+    --neutral-bg: #22303A;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.55;
+    margin: 0;
+    padding: 40px 20px 64px;
+  }
+  .page { max-width: 940px; margin: 0 auto; }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-family: 'Exo 2', 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+    font-size: clamp(26px, 4.5vw, 36px);
+    line-height: 1.15;
+    color: var(--marine);
+    margin: 0 0 10px;
+    text-wrap: balance;
+  }
+  .lede { color: var(--muted); max-width: 62ch; margin: 0 0 26px; font-size: 15px; }
+  .lede strong { color: var(--ink); }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 26px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 28px;
+    font-size: 13.5px;
+  }
+  .legend-block { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .legend-title { font-weight: 700; margin-right: 2px; }
+
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: baseline; }
+  .dot.ok { background: var(--ok); }
+  .dot.mid { background: var(--mid); }
+  .dot.none { background: var(--none); }
+
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .pill.ready { background: var(--ok-bg); color: var(--ok); }
+  .pill.partial { background: var(--mid-bg); color: var(--mid); }
+  .pill.todo { background: var(--neutral-bg); color: var(--muted); }
+
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow-x: auto;
+    margin-bottom: 34px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 680px;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  thead th {
+    text-align: left;
+    font-size: 11.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 14px 16px 10px;
+    border-bottom: 2px solid var(--line);
+  }
+  tbody td { padding: 10px 16px; border-top: 1px solid var(--line); vertical-align: top; }
+  tbody tr:first-child td { border-top: none; }
+  td.filtre { font-weight: 700; min-width: 170px; }
+  td.exemple { color: var(--muted); }
+  td.donnee, td.pret { white-space: nowrap; }
+
+  tr.group td {
+    background: var(--group-bg);
+    font-family: 'Exo 2', 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--marine);
+    padding: 9px 16px;
+  }
+  tr.group .count { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); margin-left: 8px; }
+
+  .note {
+    font-size: 13px;
+    color: var(--muted);
+    margin: -22px 0 34px;
+    padding: 0 4px;
+  }
+
+  h2 {
+    font-family: 'Exo 2', 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+    font-size: 20px;
+    color: var(--marine);
+    margin: 0 0 14px;
+  }
+  .steps { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; counter-reset: t; }
+  .steps li {
+    counter-increment: t;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 18px 14px 54px;
+    position: relative;
+    max-width: 72ch;
+  }
+  .steps li::before {
+    content: counter(t);
+    position: absolute;
+    left: 18px;
+    top: 14px;
+    font-family: 'Exo 2', 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+    color: var(--accent);
+  }
+  .steps strong { color: var(--marine); }
+  .section-intro { color: var(--muted); max-width: 68ch; margin: -6px 0 16px; font-size: 14.5px; }
+  .decisions {
+    background: var(--group-bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 16px;
+    max-width: 72ch;
+    font-size: 14px;
+  }
+  .decisions .decisions-title {
+    font-family: 'Exo 2', 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 12.5px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--marine);
+    margin: 0 0 8px;
+  }
+  .decisions ul { margin: 0; padding-left: 18px; }
+  .decisions li { margin: 3px 0; }
+
+  footer {
+    margin-top: 36px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+</style>
+
+<div class="page">
+  <p class="eyebrow">showcase-recruiter-webapp-saas · Espace entreprise</p>
+  <h1>Les filtres de recherche du vivier, en clair</h1>
+  <p class="lede">
+    État des lieux au <strong>9 juillet 2026</strong>, établi en comparant un vrai profil et
+    l'ensemble du vivier importé (<strong>~1 700 candidats</strong>) entre la source
+    (Jarvi/LinkedIn) et showcase-recruiter-webapp-saas.
+  </p>
+
+  <div class="legend">
+    <div class="legend-block">
+      <span class="legend-title">La donnée existe ?</span>
+      <span><span class="dot ok"></span>quasi tous les profils</span>
+      <span><span class="dot mid"></span>une partie</span>
+      <span><span class="dot none"></span>presque personne</span>
+    </div>
+    <div class="legend-block">
+      <span class="legend-title">Le filtre est prêt ?</span>
+      <span class="pill ready">Prêt</span>
+      <span class="pill partial">En partie</span>
+      <span class="pill todo">À construire</span>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Filtre</th>
+          <th>Exemple d'usage</th>
+          <th>La donnée existe ?</th>
+          <th>Le filtre est prêt ?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="group"><td colspan="4">Parcours du candidat <span class="count">récupéré de LinkedIn — déjà bien rempli</span></td></tr>
+        <tr>
+          <td class="filtre">Mots-clés libres</td>
+          <td class="exemple">« ingénieur maintenance »</td>
+          <td class="donnee"><span class="dot ok"></span>quasi tous</td>
+          <td class="pret"><span class="pill partial">En partie</span> titre du profil seulement</td>
+        </tr>
+        <tr>
+          <td class="filtre">Compétences</td>
+          <td class="exemple">GMAO, comptabilité, Python…</td>
+          <td class="donnee"><span class="dot ok"></span>9 profils sur 10</td>
+          <td class="pret"><span class="pill todo">À construire</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Poste occupé</td>
+          <td class="exemple">« Responsable Maintenance »</td>
+          <td class="donnee"><span class="dot ok"></span>quasi tous</td>
+          <td class="pret"><span class="pill todo">À construire</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Entreprises fréquentées</td>
+          <td class="exemple">TotalEnergies, Sanofi…</td>
+          <td class="donnee"><span class="dot ok"></span>quasi tous</td>
+          <td class="pret"><span class="pill todo">À construire</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Années d'expérience</td>
+          <td class="exemple">au moins 5 ans</td>
+          <td class="donnee"><span class="dot ok"></span>quasi tous (à calculer)</td>
+          <td class="pret"><span class="pill todo">À construire</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Diplômes / formations</td>
+          <td class="exemple">Arts et Métiers, master…</td>
+          <td class="donnee"><span class="dot ok"></span>9 profils sur 10</td>
+          <td class="pret"><span class="pill todo">À construire</span> prévu plus tard</td>
+        </tr>
+        <tr>
+          <td class="filtre">Langues parlées (+ niveau)</td>
+          <td class="exemple">anglais courant, arabe…</td>
+          <td class="donnee"><span class="dot ok"></span>9 profils sur 10</td>
+          <td class="pret"><span class="pill todo">À construire</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">CV joint au profil</td>
+          <td class="exemple">télécharger le CV</td>
+          <td class="donnee"><span class="dot none"></span>3 profils sur 100</td>
+          <td class="pret"><span class="pill todo">À construire</span></td>
+        </tr>
+
+        <tr class="group"><td colspan="4">Où vit le candidat</td></tr>
+        <tr>
+          <td class="filtre">Pays de résidence</td>
+          <td class="exemple">vit en France, en Belgique…</td>
+          <td class="donnee"><span class="dot ok"></span>quasi tous</td>
+          <td class="pret"><span class="pill ready">Prêt</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Ville de résidence</td>
+          <td class="exemple">vit à Lyon, à Paris…</td>
+          <td class="donnee"><span class="dot mid"></span>7 profils sur 10</td>
+          <td class="pret"><span class="pill todo">À construire</span></td>
+        </tr>
+
+        <tr class="group"><td colspan="4">Projet Maroc ⭐ <span class="count">rempli par le candidat sur showcase-recruiter-webapp-saas — se remplira avec les inscriptions</span></td></tr>
+        <tr>
+          <td class="filtre">Horizon de retour</td>
+          <td class="exemple">rentre d'ici 3 mois, 6 mois, 1 an</td>
+          <td class="donnee"><span class="dot none"></span>presque personne</td>
+          <td class="pret"><span class="pill ready">Prêt</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Séjours prévus au Maroc</td>
+          <td class="exemple">à Casablanca dans les 30 jours</td>
+          <td class="donnee"><span class="dot none"></span>presque personne</td>
+          <td class="pret"><span class="pill ready">Prêt</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Disponibilité (préavis)</td>
+          <td class="exemple">disponible immédiatement</td>
+          <td class="donnee"><span class="dot none"></span>presque personne</td>
+          <td class="pret"><span class="pill ready">Prêt</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Mobilité géographique</td>
+          <td class="exemple">prêt à bouger dans tout le Maroc</td>
+          <td class="donnee"><span class="dot none"></span>presque personne</td>
+          <td class="pret"><span class="pill ready">Prêt</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Pied-à-terre au Maroc</td>
+          <td class="exemple">a déjà un logement sur place</td>
+          <td class="donnee"><span class="dot none"></span>presque personne</td>
+          <td class="pret"><span class="pill ready">Prêt</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Prétentions salariales</td>
+          <td class="exemple">budget maximum</td>
+          <td class="donnee"><span class="dot none"></span>presque personne</td>
+          <td class="pret"><span class="pill todo">À construire</span> règle €/DH à décider</td>
+        </tr>
+        <tr>
+          <td class="filtre">Secteur / fonction recherchés</td>
+          <td class="exemple">vise la finance, la logistique…</td>
+          <td class="donnee"><span class="dot none"></span>presque personne</td>
+          <td class="pret"><span class="pill ready">Prêt</span></td>
+        </tr>
+
+        <tr class="group"><td colspan="4">Suivi par votre équipe</td></tr>
+        <tr>
+          <td class="filtre">Profil vérifié showcase-recruiter-webapp-saas</td>
+          <td class="exemple">a passé l'entretien avec notre équipe</td>
+          <td class="donnee"><span class="dot none"></span>démarre à peine</td>
+          <td class="pret"><span class="pill ready">Prêt</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Nouveaux profils</td>
+          <td class="exemple">arrivés cette semaine</td>
+          <td class="donnee"><span class="dot ok"></span>tous</td>
+          <td class="pret"><span class="pill todo">À construire</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Mes favoris</td>
+          <td class="exemple">les profils mis de côté</td>
+          <td class="donnee">selon l'usage</td>
+          <td class="pret"><span class="pill todo">À construire</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Déjà dévoilés / pas encore</td>
+          <td class="exemple">coordonnées déjà obtenues</td>
+          <td class="donnee">selon l'usage</td>
+          <td class="pret"><span class="pill todo">À construire</span></td>
+        </tr>
+        <tr>
+          <td class="filtre">Assignés à un collègue</td>
+          <td class="exemple">suivis par Sophie, par Julien…</td>
+          <td class="donnee">selon l'usage</td>
+          <td class="pret"><span class="pill todo">À construire</span> prévu plus tard</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Alertes sur une recherche : comment ça marche</h2>
+  <p class="section-intro">
+    Un recruteur peut enregistrer une recherche (ses filtres + ses mots-clés) et
+    <strong>activer une alerte</strong> dessus. Voici le mécanisme des notifications, étape
+    par étape.
+  </p>
+  <ol class="steps">
+    <li>
+      <strong>Le recruteur active l'alerte</strong> sur une recherche enregistrée (ex.
+      « Supply Chain · présent au Maroc ») et peut la partager avec ses collègues — chacun
+      choisit de s'y abonner ou non.
+    </li>
+    <li>
+      <strong>Le vivier bouge :</strong> de nouveaux profils arrivent (import LinkedIn/Jarvi,
+      deux fois par jour) ou un candidat complète son projet Maroc (dates de séjour,
+      disponibilité…).
+    </li>
+    <li>
+      <strong>showcase-recruiter-webapp-saas rejoue automatiquement la recherche</strong> après chaque mouvement et
+      repère les profils qui correspondent <strong>et qu'on n'a pas déjà signalés</strong> —
+      jamais deux notifications pour le même profil sur la même alerte.
+    </li>
+    <li>
+      <strong>Une notification est créée</strong> pour chaque abonné de l'alerte, dans le même
+      circuit que toutes les notifications showcase-recruiter-webapp-saas (dévoilements, favoris…).
+    </li>
+    <li>
+      <strong>Elle est livrée sur deux canaux :</strong> en direct dans l'application — le
+      bandeau 🔔 en bas de l'écran (« 2 profils viennent d'arriver sur votre alerte ») — et par
+      email. Un clic ramène à la recherche avec les nouveaux profils en évidence.
+    </li>
+  </ol>
+  <div class="decisions">
+    <p class="decisions-title">Reste à décider ensemble</p>
+    <ul>
+      <li><strong>Le rythme des emails</strong> : envoi immédiat, résumé quotidien, ou au choix de chacun.</li>
+      <li><strong>Le regroupement</strong> : une notification par profil ou par lot (« 5 nouveaux profils ») pour éviter le trop-plein.</li>
+      <li><strong>Qui est abonné par défaut</strong> : seulement le créateur de l'alerte, ou toute l'équipe quand elle est partagée.</li>
+    </ul>
+  </div>
+
+  <footer>
+    showcase-recruiter-webapp-saas — document de travail interne · 9 juillet 2026 · chiffres mesurés sur le vivier
+    importé (~1 700 profils).
+  </footer>
+</div>

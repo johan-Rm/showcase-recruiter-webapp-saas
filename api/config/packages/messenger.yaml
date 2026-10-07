@@ -1,0 +1,29 @@
+framework:
+    messenger:
+        # Un e-mail que le worker n'arrive pas à envoyer part ici plutôt que d'être perdu :
+        # il reste rejouable (messenger:failed:retry).
+        failure_transport: failed
+
+        transports:
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                retry_strategy:
+                    max_retries: 3
+                    delay: 5000
+                    multiplier: 4
+            failed: 'doctrine://default?queue_name=failed&auto_setup=0'
+
+        routing:
+            # Sans ces lignes, les messages repartent dans la requête HTTP courante.
+            # L'e-mail : un SMTP indisponible ne doit pas faire échouer la requête.
+            Symfony\Component\Mailer\Messenger\SendEmailMessage: async
+            # Remontée candidat → Jarvi : l'inscription ne doit jamais attendre Jarvi (tâches 089/090).
+            App\Message\SubmitCandidateToJarvi: async
+            App\Message\RefreshCandidateFromJarvi: async
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                async: 'in-memory://'
+                failed: 'in-memory://'

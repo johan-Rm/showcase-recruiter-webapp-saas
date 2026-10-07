@@ -1,0 +1,255 @@
+# Conventions d'architecture vérifiées en CI (tâche 048).
+#
+# Chaque règle cite la section de README qui la porte : le README dit le POURQUOI,
+# le verifier dit le COMMENT VÉRIFIER. Une règle sans défaut réel observé n'entre pas ici.
+#
+# scope   : globs de fichiers concernés (modèle layers → base/** ET spaces/*/**)
+# region  : où chercher — `script`, `template` ou `all` (pour les .ts)
+# forbid  : motifs interdits ; `pattern` est une regex, `text` une sous-chaîne littérale
+rules:
+  - name: services-no-framework-imports
+    readme: services/README.md — « Zéro dépendance framework »
+    scope:
+      - services/**/*.ts
+    region: all
+    forbid:
+      - { pattern: 'from [''"]vue[''"]' }
+      - { pattern: 'from [''"]nuxt' }
+      - { pattern: 'from [''"]#app' }
+      - { pattern: 'from [''"]#imports' }
+      - { pattern: 'from [''"]pinia[''"]' }
+    message: >-
+      services/ est la couche métier pure : elle doit rester testable hors runtime Nuxt.
+      La logique réactive et les primitives Nuxt appartiennent aux composables ou aux pages.
+
+  - name: app-no-fetch-in-components
+    readme: base/app/README.md — « Réseau dans les composants »
+    scope:
+      - base/app/components/**/*.vue
+      - spaces/*/app/components/**/*.vue
+    region: script
+    forbid:
+      - { text: '$fetch(' }
+      - { text: 'useFetch(' }
+      - { text: 'useLazyFetch(' }
+    message: >-
+      Un composant ne récupère pas ses données : il les reçoit par props ou via un composable.
+      Déplacer l'appel dans un composable (cf. useLogin / useLogout).
+
+  - name: pages-no-space-meta
+    readme: base/app/pages/README.md — « Périmètre d'espace structurel »
+    scope:
+      - base/app/pages/**/*.vue
+      - spaces/*/app/pages/**/*.vue
+    region: script
+    forbid:
+      - { pattern: 'definePageMeta\([^)]*spaces' }
+    message: >-
+      En architecture layers, l'existence d'une page EST son périmètre d'espace (404 natif
+      ailleurs). Placer la page dans la layer de l'espace qui doit la porter.
+
+  - name: app-no-hardcoded-text
+    readme: base/app/README.md — « Aucun texte en dur »
+    scope:
+      - base/app/**/*.vue
+      - spaces/*/app/**/*.vue
+    # DETTE ouverte le 2026-07-30 par ENT-027 — même cause que ci-dessous : la région tronquée
+    # cachait tout ce qui suivait le premier slot nommé.
+    except:
+      - spaces/public/app/pages/artefacts/ux-kit.vue # public
+    region: template
+    forbid:
+      # Attribut NON lié : sa valeur est forcément du texte écrit là. Le `(?<![:\w-])` écarte les
+      # formes liées (`:placeholder="…"`), sinon la règle refusait aussi un composant générique qui
+      # reçoit son texte en prop — alors que la traduction a bien lieu, chez l'appelant.
+      - { pattern: '(?<![:\w-])(aria-label|placeholder|title|alt)="[^"$][^"]*"' }
+      # Attribut lié à un LITTÉRAL : la liaison ne rachète rien, le texte est toujours écrit là.
+      # Sans ce second motif, écarter les formes liées ci-dessus ouvrait une porte de sortie.
+      - { pattern: ':(aria-label|placeholder|title|alt)="\s*[''`]' }
+    message: >-
+      Tout texte annoncé à l'utilisateur passe par $t, y compris les attributs lus par les
+      lecteurs d'écran. Un attribut lié à une PROP est accepté : la traduction a lieu chez
+      l'appelant. Les valeurs techniques (class, data-*, role, aria-hidden) sont hors périmètre.
+
+  - name: encapsulation-i18n
+    readme: base/app/README.md — « Encapsulation des modules externes »
+    scope:
+      - base/app/**/*.vue
+      - base/app/**/*.ts
+      - spaces/*/app/**/*.vue
+      - spaces/*/app/**/*.ts
+    except:
+      - base/app/composables/useLocale.ts
+    region: script
+    forbid:
+      - { text: 'useI18n(' }
+      - { text: 'useLocalePath(' }
+    message: >-
+      @nuxtjs/i18n est encapsulé derrière useLocale() : c'est le seul point autorisé à toucher
+      le module. useI18n() casse en route middleware (« Must be called at the top of a setup »),
+      et la liste des langues se dupliquait dans l'UI — le wrapper absorbe les deux. Exception
+      assumée : $t, la raison d'être du module, utilisé tel quel dans les templates.
+
+  - name: pages-no-interactive-template
+    readme: base/app/pages/README.md — « Modèle de page lisible d'un coup d'œil »
+    scope:
+      - base/app/pages/**/*.vue
+      - spaces/*/app/pages/**/*.vue
+    # DETTE ouverte le 2026-07-30 par ENT-027, qui a rendu la vue au vérificateur : ces pages
+    # violaient la règle depuis toujours, sans que rien ne le dise. Chaque ligne se retire par une
+    # carte de l'espace nommé — toute page NOUVELLE ou modifiée est prise immédiatement.
+    # Le segment dynamique s'écrit `*` et non `[uuid]` : les crochets sont une classe de caractères
+    # pour le glob, le chemin littéral ne matcherait pas.
+    except:
+      - spaces/public/app/pages/artefacts/ux-kit.vue # public
+      - base/app/pages/auth/define-password.vue # socle-webapp
+      - spaces/admin/app/pages/referentiels.vue # admin
+      - spaces/entreprise/app/pages/recherches/*/table.vue # entreprise
+    region: template
+    forbid:
+      - { pattern: '<(form|input|textarea|select)\b' }
+      - { pattern: '\bv-model\b' }
+      - { pattern: '@submit\b' }
+    message: >-
+      Une page orchestre : elle assemble des sections et se lit d'un coup d'œil. Le code
+      interactif — champs, liaison bidirectionnelle, soumission — vit dans un composant
+      (cf. AuthLoginForm, extrait de la page /login).
+
+  - name: components-root-marker
+    readme: base/app/components/README.md — « Marqueur de composant sur la racine »
+    scope:
+      - base/app/components/**/*.vue
+      - spaces/*/app/components/**/*.vue
+    check: components-root-marker
+    message: >-
+      Un composant à racine unique porte en PREMIÈRE classe le marqueur kebab-case de son nom
+      (auth/LoginForm.vue → auth-login-form) : c'est ce qui permet, dans le DOM inspecté, de
+      remonter d'un bloc de page au fichier qui le rend. Les fragments (racines multiples,
+      <template v-if>) sont dispensés — il n'y a pas d'élément à marquer.
+
+  - name: components-no-page-region
+    readme: base/app/pages/README.md — « La balise de région appartient à celui qui place »
+    scope:
+      - base/app/components/**/*.vue
+      - spaces/*/app/components/**/*.vue
+    # DETTE ouverte le 2026-07-31 par WEB-006, qui pose la règle : ces six composants s'attribuaient
+    # une région du modèle de page avant qu'elle ne morde. Chaque ligne se retire par une carte de
+    # l'espace nommé ; `ENT-036` a retiré les trois de la Visionneuse.
+    except:
+      - spaces/entreprise/app/components/account/CreditJournal.vue # entreprise
+      - spaces/admin/app/components/FillRateSection.vue # admin
+      - base/app/components/auth/Showcase.vue # socle-webapp
+    check: components-no-page-region
+    message: >-
+      <section>, <aside> et <main> découpent le DOCUMENT : la page, le layout ou le composant
+      composeur les écrit, avec leur nom accessible et les classes de placement dans SA grille.
+      Le composant placé possède son contenu — sa racine est l'élément sémantiquement juste de ce
+      qu'il rend. <header>, <footer> et <nav> qualifient un contenu et restent libres.
+
+  - name: layouts-single-main
+    readme: base/app/layouts/README.md — « Le repère principal appartient au layout »
+    scope:
+      - base/app/layouts/**/*.vue
+      - spaces/*/app/layouts/**/*.vue
+    check: layouts-single-main
+    message: >-
+      Un layout pose le repère principal autour de son <slot/>, et un seul par document : c'est la
+      cible du « aller au contenu » et le seul point de saut d'un lecteur d'écran. Employer <UMain>
+      en neutralisant son min-h de thème, qui suppose un header Nuxt UI et déborde des coques plein
+      écran. Deux repères valent zéro — aucun n'est plus désigné.
+
+  - name: layouts-no-raw-spacing
+    readme: 4.design/design-system.md — « Ce qu'on n'écrit pas dans un composant », interdit n°3
+    scope:
+      - base/app/layouts/**/*.vue
+      - spaces/*/app/layouts/**/*.vue
+    # DETTE ouverte le 2026-08-04 par WEB-011, qui pose la règle : le panneau de marque du tunnel
+    # d'inscription espace sa baseline par un `mt-4`. Marge individuelle ET palier brut — le socle
+    # demande d'espacer par le conteneur. Se retire par une carte de la lane nommée.
+    except:
+      - spaces/entreprise/app/layouts/inscription.vue # entreprise
+    check: layouts-no-raw-spacing
+    message: >-
+      Le rythme d'un layout gouverne TOUS les écrans qu'il porte : un `p-1` posé dans une coque a
+      fait diverger les trente-deux écrans de l'espace admin. Employer les paliers du socle
+      (`p-element`, `gap-block`, `py-pane`, `p-section`, `px-gutter`) ; un besoin non couvert
+      s'obtient en ajoutant un palier à `sizing.css`, jamais en improvisant dans un écran. Les
+      remises à zéro (`p-0`) et les valeurs arbitraires restent libres.
+
+  - name: pages-no-main
+    readme: base/app/pages/README.md — « La balise de région appartient à celui qui place »
+    scope:
+      - base/app/pages/**/*.vue
+      - spaces/*/app/pages/**/*.vue
+    check: pages-no-main
+    message: >-
+      Le repère principal appartient au LAYOUT, qui le pose une fois pour tous les écrans qu'il
+      gouverne. Une page qui en écrit un en produit un second dès que sa coque aura le sien. Les
+      <section> et <aside> de la page, eux, restent à elle.
+
+  - name: app-prefer-useeventlistener
+    readme: base/app/README.md — « Écoute d'événements et minuteries (VueUse) »
+    scope:
+      - base/app/**/*.vue
+      - base/app/**/*.ts
+      - spaces/*/app/**/*.vue
+      - spaces/*/app/**/*.ts
+    region: all
+    forbid:
+      - { text: '.addEventListener(' }
+      - { text: '.removeEventListener(' }
+    message: >-
+      L'écoute d'événements passe par `useEventListener` (VueUse, déjà installé) : SSR-safe et
+      auto-nettoyée, sans retrait manuel. Éviter addEventListener / removeEventListener bruts.
+      requestAnimationFrame et requestIdleCallback n'ont pas d'équivalent VueUse et restent autorisés.
+
+  - name: app-no-space-prefix
+    readme: base/app/components/README.md — « Un fichier ne répète pas le nom de son espace »
+    scope:
+      - spaces/*/app/**/*.vue
+      - spaces/*/app/**/*.ts
+    # Dette ouverte par WEB-012 le 2026-08-04, retirée par ADM-016 le même jour : l'espace admin
+    # était le seul à se préfixer, et il ne le fait plus. Aucune exception — la règle mord partout.
+    check: app-no-space-prefix
+    message: >-
+      La layer porte déjà le domaine : un fichier de spaces/<espace>/ qui reprend le nom de son
+      espace le dit deux fois. AdminTopbar.vue devient Topbar.vue, useAdminNav.ts devient useNav.ts —
+      et pour un composable, c'est le nom de l'EXPORT qui compte, pas celui du fichier. Le préfixe ne
+      protège d'aucune collision : chaque espace est compilé séparément, une build par SHOWCASE_RECRUITER_WEBAPP_SAAS_SPACE.
+
+  - name: app-no-comment-journal
+    readme: base/app/README.md — « Ce qu'un commentaire ne raconte pas »
+    scope:
+      - base/app/**/*.vue
+      - spaces/*/app/**/*.vue
+      - base/app/**/*.ts
+      - base/server/**/*.ts
+      - spaces/*/app/**/*.ts
+      - services/**/*.ts
+      - shared/**/*.ts
+    except:
+      - shared/types/api.ts
+      - shared/types/organization-constraints.ts
+    check: app-no-comment-journal
+    message: >-
+      Un commentaire décrit un état PRÉSENT : pourquoi le code est ainsi, jamais par quel chemin il
+      y est arrivé. `git log` porte la chronologie, `dev-book/tasks/` porte la décision — le fichier
+      est le seul des trois qui ne soit pas fait pour ça, et le seul dont rien ne vérifie qu'il dit
+      encore vrai. Le passé se RÉÉCRIT au présent, il ne se coupe pas : « avant, elle poussait :
+      `flex-none` sans hauteur maximale » devient « jamais `flex-none` sans hauteur maximale — sous
+      cette forme elle chasse les autres blocs hors de la colonne ». La contrainte reste, le récit
+      part. Les temps du passé, eux, ne sont pas jugés ici : ils demandent une relecture.
+
+  - name: app-no-ambiguous-kit-class
+    readme: 4.design/design-system.md — « Ce qu'on n'écrit pas dans un composant », interdit n°6
+    scope:
+      - base/app/**/*.vue
+      - spaces/*/app/**/*.vue
+    check: app-no-ambiguous-kit-class
+    message: >-
+      `bg-muted` et `border-muted` ne désignent PAS le gris du nuancier : ces deux noms appartiennent
+      à Nuxt UI, qui les branche sur la surface douce et sur le filet. L'écriture rend donc une autre
+      couleur que celle visée, sans qu'aucune gate ne le voie — c'est ainsi que la barre
+      d'avancement de la carte de recherche s'est peinte dans la couleur de son propre fond.
+      Pour peindre avec le gris du nuancier, poser la couleur par `text-muted` — la seule forme que
+      Nuxt UI remappe sur la bonne valeur — puis peindre avec `bg-current` ou `border-current`.

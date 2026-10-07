@@ -1,0 +1,987 @@
+app:
+  name: Shortlist
+  tagline: الكفاءات المناسبة،{break}في المكان المناسب.
+  loading: جارٍ التحميل…
+  journey:
+    search: البحث
+    select: الاختيار
+    contact: التواصل
+a11y:
+  moreInfo: مزيد من المعلومات
+space:
+  public: الموقع العام
+  candidat: فضاء المرشح
+  entreprise: فضاء الشركة
+  admin: فضاء الإدارة
+nav:
+  login: تسجيل الدخول
+  logout: تسجيل الخروج
+  home: الرئيسية
+  brandHome: '{app} — العودة إلى الرئيسية'
+  theme: السمة
+  language: اللغة
+  toggleTheme: تبديل السمة
+  main: التنقل الرئيسي
+  breadcrumb: مسار التنقل
+  entreprise:
+    dashboard: لوحة القيادة
+    searches: عمليات البحث
+    account: حسابي
+    credits: الأرصدة
+    team: الفريق
+    company: الشركة
+    profile: ملفي
+  admin:
+    pilotage: الإدارة
+    comptes: الحسابات
+    supervision: المراقبة
+    referentiels: المرجعيات
+    vivier: حالة القاعدة
+    recherches: عمليات بحث متجاوزة
+    activite: النشاط
+    dashboard: لوحة القيادة
+    entreprises: الشركات
+    candidats: قاعدة المواهب
+    utilisateurs: المستخدمون
+    jarvi: Jarvi
+    compte: الحساب
+    openMenu: فتح القائمة
+    collapseMenu: طيّ قائمة التنقل
+    expandMenu: بسط قائمة التنقل
+auth:
+  intro: سجّل الدخول إلى {space}.
+  email: البريد الإلكتروني
+  password: كلمة المرور
+  submit: دخول
+  invalidCredentials: بيانات الدخول غير صحيحة
+  accountSuspended: حسابك موقوف. راسلنا لمعرفة السبب وطلب إعادة النظر.
+  sessionExpired: انتهت صلاحية جلستك. سجّل الدخول من جديد للعودة إلى مساحتك.
+  showPassword: إظهار كلمة المرور
+  hidePassword: إخفاء كلمة المرور
+  passwordRulesTitle: يجب أن تحتوي كلمة المرور على
+  passwordRule:
+    length: '{n} أحرف على الأقل'
+    upper: حرف كبير
+    lower: حرف صغير
+    digit: رقم
+home:
+  public:
+    title: المنصة الوحيدة المخصصة للكفاءات المقيمة في أوروبا والمتجهة نحو المغرب
+    candidateCta: أنا مرشح
+    companyCta: أنا أوظف
+  candidat:
+    title: لوحتي
+  entreprise:
+    title: الرئيسية الذكية
+  admin:
+    title: مركز التحكم
+demo:
+  loggedInAs: متصل باسم {email}
+  spaceServedBy: هذه الصفحة مقدمة من فضاء « {space} »
+page:
+  candidat:
+    projet: مشروع عودتي
+  entreprise:
+    vivier: قاعدة المواهب
+    searches:
+      title: عمليات البحث
+    editSearch:
+      title: تعديل البحث
+    newSearch:
+      title: بحث جديد
+    viewer:
+      title: تصفّح الملفات
+      lead: ملف واحد في كل مرة، بكامل تفاصيله.
+      aside: سياقه
+      criteria: معاييرك، قابلة للتعديل دون مغادرة نتائجك
+    table:
+      title: اختياري
+      empty: لا يوجد ملف في هذا البحث.
+      emptyRetained: لا يوجد ملف محتفظ به بعد
+      emptyRetainedHint: >-
+        تصفّح ملفات هذا البحث وضع جانبًا ما يهمّك: ستظهر هنا.
+    account:
+      title: حسابي
+      lead: ما يدير حسابك، منفصلًا عمّا تبحث به.
+    credits:
+      title: الأرصدة
+      lead: الرصيد وسجل الاستهلاك، مشتركان على مستوى الشركة. الشراء محصور بمالك الحساب.
+      error: تعذّر تحميل الأرصدة.
+      journal: الحركات
+      empty: لا توجد حركات بعد.
+      wallet: 'الرصيد : {count} رصيد | الرصيد : {count} أرصدة'
+      after: الرصيد {count}
+      howTo: 'للحصول على أرصدة، راسلنا : نعدّل رصيد شركتك خلال يوم عمل.'
+      type:
+        GRANT_FREE: أرصدة مهداة
+        PURCHASE: شراء
+        CONSUMPTION: كشف
+        REFUND: استرداد
+        ADJUSTMENT: تعديل
+    team:
+      title: الفريق
+      lead: أعضاء الشركة ودعواتهم وأدوارهم.
+      error: تعذّر تحميل الفريق.
+      members: '{count} عضو | {count} أعضاء'
+      pending: '{count} دعوة معلّقة | {count} دعوات معلّقة'
+      expires: 'تنتهي في {date}'
+      remove: 'إزالة {name} من الفريق'
+      role:
+        ROLE_COMPANY_OWNER: مالك
+        ROLE_COMPANY_MEMBER: عضو
+      invite:
+        label: دعوة زميل
+        hint: سيتلقّى رابطًا للانضمام إلى الشركة كعضو. المالك وحده يدير الفريق.
+        placeholder: "prenom.nom{'@'}entreprise.com"
+        submit: إرسال الدعوة
+        failed: هذا العنوان عضو في الشركة بالفعل أو تمت دعوته.
+    company:
+      title: الشركة
+      lead: الشركة والفوترة والاشتراك.
+      error: تعذّر تحميل بطاقة الشركة.
+      saved: تم حفظ التعديلات.
+      failed: رُفضت بعض القيم — تحقّق من عنوان الموقع والقطاع.
+      submit: حفظ
+      sectorPlaceholder: اختر قطاعًا
+    profile:
+      title: ملفي
+      lead: هويتك وتفضيلاتك وكلمة المرور.
+      error: 'تعذّر تحميل الملف الشخصي.'
+      identity: 'الهوية'
+      name: 'الاسم'
+      email: 'البريد الإلكتروني'
+      role: 'الدور في الشركة'
+      jobTitle: 'المنصب'
+      readOnly: 'لا يمكن تعديل هذه المعلومات من التطبيق. راسلنا لتصحيحها.'
+      password: 'كلمة المرور'
+      currentPassword: 'كلمة المرور الحالية'
+      newPassword: 'كلمة المرور الجديدة'
+      submit: 'تغيير كلمة المرور'
+      saved: 'تم تغيير كلمة المرور.'
+      failed: 'رُفض التغيير — تحقّق من كلمة المرور الحالية.'
+  admin:
+    recherches: عمليات بحث متجاوزة
+    activite: النشاط
+    entreprises: الشركات — قائمة المراجعة
+    dashboard: مركز التحكم
+    candidats: قاعدة المواهب
+    utilisateurs: المستخدمون والصلاحيات
+    jarvi: استيراد Jarvi
+    referentiels: المرجعيات المؤهَّلة
+    vivier: حالة القاعدة
+    compte: حسابي
+referentials:
+  subtitle: مراجعة المفردات المشتقة والمصادقة عليها. ما لم تُعتمد، يوسّع البحث دون تأكيد.
+  loading: جارٍ التحميل…
+  previous: السابق
+  next: التالي
+  filter:
+    all: كل الحالات
+  type:
+    METIER: المهن
+    COMPETENCE: المهارات
+  status:
+    CANDIDAT: للمراجعة
+    VALIDE: مُعتمد
+    DEPRECIE: مُهمَل
+  column:
+    concept: المفهوم
+    frequency: التكرار
+    coverage: التغطية التراكمية
+    status: الحالة
+  action:
+    validate: اعتماد
+    deprecate: إهمال
+  label:
+    exclude: استبعاد هذه التسمية من التوسيع
+    restore: استعادة هذه التسمية
+  selected: 'محدد: {count}'
+  pagination: 'صفحة {page} من {total}'
+vivier:
+  subtitle: 'بتاريخ {at}. نفس الأرقام الواردة في تقرير سطر الأوامر.'
+  loading: جارٍ التحميل…
+  empty: لا توجد بيانات على هذا المحور.
+  axis:
+    sectors: أبرز قطاعات الخبرة
+    jobs: أبرز المهن المُمارَسة
+    languages: أبرز اللغات
+  gap:
+    open: '{metric}: عرض {count} ملفًا لا يحتسبها هذا الرقم'
+    count: '{count} ملفًا لا يحتسبها هذا الرقم'
+    filter: التصفية حسب السبب
+    all: الكل
+    unknown: هذه الصفحة غير موجودة.
+    backToState: عد إلى حالة قاعدة البيانات لاختيار بيان.
+    empty: لا يوجد ملف تنقصه هذه البيانات.
+    column:
+      name: الاسم
+      location: المكان
+      reason: السبب
+    reason:
+      NO_POSITION: لا يوجد منصب
+      NO_USABLE_START_DATE: لا يوجد تاريخ بداية صالح
+      INCOHERENT_DATES: تواريخ غير متسقة
+      UNDER_ONE_YEAR: أقل من سنة خبرة
+      NO_ONGOING_POSITION: لا يوجد منصب حالي
+      ONGOING_WITHOUT_START_DATE: منصب حالي بدون تاريخ بداية
+      UNDER_ONE_MONTH: في المنصب منذ أقل من شهر
+      NO_EDUCATION: لا يوجد تكوين
+      UNRECOGNIZED_TITLE: لا يوجد مسمى معروف
+      SOURCE_WITHOUT_DATE: المصدر لم يوفّر التاريخ
+cockpit:
+  close: إغلاق المفتّش
+  profilePanel:
+    title: الملف الكامل
+    close: إغلاق الملف
+  zone:
+    toolbar: الشريط الفاصل
+    actions: شريط الإجراءات
+    console: لوحة التحكم
+    main: العرض الرئيسي
+    inspector: المفتّش
+    viewerAside: اللوحة الجانبية
+search:
+  new: إنشاء بحث
+  back: العودة إلى عمليات البحث
+  empty: لا توجد عمليات بحث بعد. أنشئ واحدة لاستكشاف قاعدة المواهب.
+  newAi: بحث بمساعدة الذكاء الاصطناعي
+  seeAll: عرض عمليات البحث ({count})
+  sharedSection: مشتركة معي ({count})
+  loading: جارٍ التحميل…
+  error: تعذّر تحميل عمليات البحث.
+  card:
+    unnamed: بحث بدون اسم
+    noCriteria: لا توجد معايير — هذا البحث لا يعيد أي نتيجة بعد.
+    shared: مُشارَك مع الفريق
+    readOnly: بحث {name} · للقراءة فقط
+    sharedBy: مُشارَك من {name} · للقراءة فقط
+    more: '+{count} معيار | +{count} معايير'
+    profiles: ملف | ملفات
+    newCount: '{count} جديد | {count} جديدة'
+    # الرقم يُعرض فوق كلمته : هذان المفتاحان يحملان التسمية وحدها، موافقةً لعدد لا يعرضانه.
+    seen: مُشاهَد | مُشاهَدة
+    noKeywords: لا كلمات مفتاحية
+    # « مُختار » وليس « مفضّل » : الكلمة تصف فِعل المُوظِّف بينما « مفضّل » تصف حالة. بقية الشاشات
+    # ما زالت تقول « المفضّلة » إلى أن تُراجَع.
+    retained: مُختار | مُختارة
+    retainedByTeam: '{count} مُختار من الفريق | {count} مُختارة من الفريق'
+    closed: مُغلق
+    closedOn: أُغلق في {date} بواسطة {name}
+  broad:
+    title: بحث واسع — {count} ملف
+    body: بعد المائة تقريبًا، يصبح الفرز صعب الإتمام. أضف معيارًا لتضييق النتائج.
+  manage:
+    menu: إجراءات على « {name} »
+    modify: تعديل المعايير
+    saveAndBrowse: احفظ واعرض الملفات
+    confirmTitle: حفظ التعديلات؟
+    confirmBody: تغيير المعايير يعيد تشغيل البحث. قد لا تظهر بعد ذلك ملفات كنت قد احتفظت بها أو استبعدتها — لا شيء يضيع، فهي تبقى ضمن اختيارك.
+    notEditable: لا يمكن تعديل هذا البحث. البحث الذي شاركه زميل يُنسخ ؛ والبحث المغلق يُعاد فتحه أولًا.
+    backToList: العودة إلى عمليات البحث
+    rename: إعادة تسمية
+    renameHint: أفرِغ الحقل لاستعادة الاسم التلقائي.
+    duplicate: تكرار
+    share: مشاركة مع الفريق
+    unshare: إيقاف المشاركة
+    delete: حذف
+    deleteTitle: حذف « {name} » ؟
+    deleteBody: ستُفقد ملفاته المُختارة وسجلّ التصدير. هذا الإجراء نهائي.
+    cancel: إلغاء
+    error: تعذّر إتمام الإجراء. أعِد المحاولة.
+  closure:
+    close: إغلاق
+    reopen: إعادة فتح
+    hint: لا يمكن تعديل بحث مُغلق ما لم يُعَد فتحه.
+    fold: '{count} بحث مُغلق | {count} عمليات بحث مُغلقة'
+    conflict: أُغلق هذا البحث في هذه الأثناء. أعِد فتحه لتعديله.
+    error: تعذّر تغيير حالة البحث. أعِد المحاولة.
+  masked:
+    hidden: مُخفى — اكشف الملف للحصول عليه
+    none: لا توجد بيانات اتصال
+  export:
+    action: تصدير
+    title: تصدير التحديد
+    body: 'سيُصدَّر {count} ملف. | ستُصدَّر {count} ملفات.'
+    ignored: 'سيُتجاهل {count} ملف مخفي : لا يحتوي الملف إلا على الملفات المكشوفة. | ستُتجاهل {count} ملفات مخفية : لا يحتوي الملف إلا على الملفات المكشوفة.'
+    nothing: لا يوجد ملف مكشوف في هذا التحديد — لا شيء للتصدير. اكشف بيانات الاتصال أولًا.
+    gdpr: أتعهّد بمعالجة بيانات الاتصال هذه وفقًا للائحة حماية البيانات.
+    cancel: إلغاء
+    submit: تنزيل CSV
+  reveal:
+    balance: '{count} رصيد | {count} أرصدة'
+    cost: '· {count} ر.'
+    owned: · تم الحصول عليه
+    none: · لا شيء
+    insufficient: الأرصدة غير كافية لهذا الكشف
+    confirm:
+      title: كشف التحديد
+      body: 'ستكشف {access} عن {count} ملف مقابل {cost} رصيد. | ستكشف {access} عن {count} ملفات مقابل {cost} أرصدة.'
+      capped: الدفعة محدودة بـ {max} ملفًا ؛ الملفات المحددة ({count}) لن تُرسل دفعة واحدة.
+      cancel: إلغاء
+      submit: 'كشف · {cost} ر.'
+    action:
+      EMAIL: البريد الإلكتروني
+      PHONE: الهاتف
+      RESUME: السيرة الذاتية
+      INTERVIEW_REPORT: تقرير المقابلة
+    granted:
+      EMAIL: تم الحصول على البريد الإلكتروني
+      PHONE: تم الحصول على الهاتف
+      RESUME: تم الحصول على السيرة الذاتية
+      INTERVIEW_REPORT: تم الحصول على تقرير المقابلة
+  action:
+    retain: احتفظ
+    release: إزالة من المحتفظ بهم
+    retained: محتفَظ به
+    dismiss: استبعاد
+    restore: إعادة
+  contact:
+    email:
+      available: البريد الإلكتروني متاح
+      none: لا يوجد بريد إلكتروني
+    phone:
+      available: الهاتف متاح
+      none: لا يوجد هاتف
+  badge:
+    met: تمت مقابلته
+    inMorocco: في المغرب
+    available: متاح
+    new: جديد
+    favorite: مفضّل
+    seen: مطّلع عليه
+    dismissed: مستبعَد
+  horizon:
+    M3: العودة خلال 3 أشهر
+    M6: العودة خلال 6 أشهر
+    Y1: العودة خلال السنة
+    THINKING: يفكّر في العودة
+  console:
+    title: لوحة البحث
+    current: الحالي
+    primary: الأساسية
+    secondary: إضافية
+  criterion:
+    facet:
+      q: كلمة مفتاحية
+      job: المنصب المطلوب
+      experienceMin: الخبرة
+      educationLevel: الدراسة
+      availability: التوفر
+      returnHorizon: أفق العودة
+      geoMobility: التنقل
+      hasPiedATerre: مقرّ بالمغرب
+      star: ملف موثّق
+      country: البلد
+      sector: القطاع المستهدف
+      function: الوظيفة المستهدفة
+      experienceSector: قطاع الخبرة
+      language: اللغة
+      languageLevel: مستوى اللغة
+      presenceCity: مدينة بالمغرب
+      presenceWithinDays: التواجد بالمغرب
+    value:
+      experienceMin: '{count} سنة فأكثر | {count} سنوات فأكثر'
+      yes: نعم
+      no: لا
+  return:
+    title: العودة إلى المغرب
+    horizon: الأفق
+    piedATerre: مقرّ بالمغرب
+    mobility: متنقّل بالمغرب
+    yes: نعم
+  profile:
+    untitled: المنصب غير محدّد
+    experience: '{count} سنة خبرة'
+    email: البريد الإلكتروني
+    phone: الهاتف
+    years: '{count} سنة | {count} سنوات'
+    unknown: غير محدّد
+    facts:
+      experience: الخبرة
+      location: الموقع
+      availability: التوفّر
+      education: التعليم
+    open: عرض الملف الكامل
+    loading: جارٍ تحميل الملف…
+    loadFailed: تعذّر تحميل تفاصيل الملف.
+    linkedin: ملف لينكد إن
+    ongoing: حتى الآن
+    experiences: الخبرات
+    educations: الشهادات
+    languages: اللغات
+    skills: المهارات
+    jobs: المهن
+    sectors: القطاعات
+    presence: 'في المغرب من {start} إلى {end}'
+    presenceIn: '{city}، من {start} إلى {end}'
+    section:
+      morocco: مشروع العودة إلى المغرب
+      career: المسار المهني
+      locked: للكشف
+    locked:
+      email: البريد الإلكتروني
+      phone: الهاتف
+      resume: السيرة الذاتية
+      report: تقرير المقابلة
+      hidden: مخفي — رصيد واحد
+      available: متاح
+      none: غير متوفّر
+  state:
+    errorHint: أعد المحاولة بعد لحظات ؛ إن استمر الأمر فالبحث ليس السبب.
+    noCriteriaHint: ابدأ بمسمّى وظيفي.
+    emptyHint: احذف معيارًا، أو وسّع المسمّى الوظيفي.
+  viewer:
+    noCriteria: لا توجد معايير بحث — ابدأ بمسمّى وظيفي.
+    empty: لا يوجد ملف مطابق — وسّع معاييرك.
+    stack:
+      title: الملفات المطلوب فحصها
+      retry: إعادة المحاولة
+    verdict:
+      region: الملف المعروض
+    panel:
+      title: لوحة التحكم
+      current: البحث الحالي
+      matches: هذا الملف أمام معاييرك
+      publicResumeOnly: >-
+        المعايير غير الموجودة تستند إلى السيرة الذاتية العلنية. وقد يغطّيها تقرير المقابلة.
+      score:
+        summary: '{count} معيار من أصل {total} موجود في الملف. | {count} معايير من أصل {total} موجودة في الملف.'
+        tier:
+          low: بعيد عن معاييرك
+          medium: قريب من معاييرك
+          high: مطابق لمعاييرك
+      tenure:
+        CURRENT: المنصب الحالي
+        PAST: منصب سابق
+      source:
+        HEADLINE: عنوانه التعريفي
+        SKILL: إحدى مهاراته
+        JOB_TITLE: منصب شغله
+      progress: الملفات المطّلع عليها
+      position: 'الملف {position} من {total}'
+      of: 'من {count}'
+      positionOf: 'الملف {position} من {total} المحمّلة، {count} ملفات مطابقة'
+      scope: 'من أصل {count} ملفًا محمّلًا'
+      order:
+        label: ترتيب التصفح
+        unseen: غير المطّلع عليها أولاً
+        relevance: الملاءمة
+      dismissedTitle: الملفات المستبعدة
+      counts:
+        seen: مُطّلع عليها
+        favorites: المفضّلة
+        dismissed: مستبعدة
+  secondary:
+    any: لا يهم
+    withinDays: خلال {count} يومًا
+    cityPlaceholder: الدار البيضاء، الرباط…
+    sectorPlaceholder: المعلوميات، المالية…
+    functionPlaceholder: مطوّر، محاسب…
+    languagePlaceholder: العربية، الإنجليزية…
+    group:
+      morocco: المغرب
+      return: مشروع العودة
+      job: المجال
+      profile: الملف
+      place: المكان
+  refine:
+    kept: 'ملف {count} من {total} | {count} ملفات من {total}'
+    clear: إزالة الكل
+    emptyTitle: لا يوجد ملف مطابق
+    emptyHint: أزل أحد عوامل التضييق لاستعادة بقية البحث.
+    currentJob: يشغل هذا المنصب اليوم
+    star: ملف تحقّقت منه Shortlist
+    languageLevel: المستوى المصرّح به، على الأقل
+    group:
+      presence: التواجد في المغرب
+      return: مشروع العودة
+      availability: الجاهزية
+      sector: القطاع
+      project: المنصب المطلوب في المغرب
+    value:
+      presence:
+        now: الآن
+        '15': خلال 15 يومًا
+        '30': خلال 30 يومًا
+        '60': خلال 60 يومًا
+      returnHorizon:
+        M3: خلال 3 أشهر
+        M6: خلال 6 أشهر
+        Y1: خلال السنة
+        THINKING: قيد التفكير
+      availability:
+        IMMEDIATE: فورية
+        NOTICE_1M: إشعار شهر
+        NOTICE_3M: إشعار 3 أشهر
+  selection:
+    toggle: اختيار هذا الملف
+    count: '{count} محدد'
+    hidden: '{count} خارج هذا العرض'
+    show: عرض الملفات المحددة
+    clear: إلغاء التحديد
+  view:
+    all: الكل
+    favorites: المحتفظ بهم
+  column:
+    role: المنصب
+    experience: الخبرة
+    retain: احتفظ
+    tenure:
+      CURRENT: حالي
+      PAST: سابق
+    name: الاسم الكامل
+    email: البريد الإلكتروني
+    phone: الهاتف
+    presence: نافذة المغرب
+    city: المدينة الحالية
+    mobility: التنقل
+  mobility:
+    all: كل المغرب
+  criteria:
+    remove: إزالة المعيار «{value}»
+    refine: تنقيح
+    apply: تطبيق
+  create:
+    noCriteria: 'حدّد معيارًا واحدًا على الأقل: قاعدة المواهب بأكملها ليست نتيجة بحث.'
+    error: تعذّر إنشاء البحث. حاول مجددًا.
+  guide:
+    list: عمليات البحث المحفوظة
+    edit: عدّل معايير هذا البحث
+    classic: صِف الملف الذي تبحث عنه
+    ai: قل في جملة واحدة عمّن تبحث
+    table: الملفات المحتفظ بها، جاهزة للتواصل
+  ai:
+    title: بحث بمساعدة الذكاء الاصطناعي
+    query:
+      label: صِف الملف الذي تبحث عنه
+      placeholder: مطوّر في بلجيكا يتحدث الهولندية
+      hint: اكتب بلغة طبيعية. تُرسَل جملتك فقط إلى النموذج، ولا تُرسَل ملفات المرشحين أبدًا.
+    understood: المعايير المفهومة
+    removeFilter: إزالة المعيار «{filter}»
+    submit: بحث
+    launch: تشغيل البحث
+    pending: جارٍ التحليل…
+    error:
+      generic: تعذّرت الترجمة. أعد صياغة طلبك أو حاول مجددًا.
+      notConfigured: البحث بمساعدة الذكاء الاصطناعي غير متاح حاليًا.
+    criteria:
+      country: 'البلد: {value}'
+      city: 'المدينة: {value}'
+      language: 'اللغة: {value}'
+      languageLevel: '{value} · {level}'
+      geoMobility: قابلية التنقّل الجغرافي
+    proficiency:
+      ELEMENTARY: مبتدئ
+      LIMITED_WORKING: محدود
+      PROFESSIONAL_WORKING: مهني
+      FULL_PROFESSIONAL: طليق
+      NATIVE_OR_BILINGUAL: لغة أم
+  primary:
+    noResult: لا توجد نتائج
+    jobTitle:
+      label: المسمى الوظيفي
+      placeholder: مطوّر، مدير مشروع…
+      hint: تُدرَج المرادفات والأدوار المشابهة تلقائيًا.
+      loading: جارٍ البحث عن المسميات…
+    keywords:
+      label: كلمات مفتاحية
+      placeholder: مهارة، تقنية، قطاع…
+      remove: إزالة الكلمة المفتاحية {value}
+      add: إضافة كلمة مفتاحية
+      close: إغلاق قائمة الكلمات المفتاحية
+      loading: جارٍ البحث…
+      unavailable: الاقتراحات غير متاحة — اكتب كلمتك.
+      create: إضافة «{value}»
+      added: مُضافة
+      addAll: أضف الـ{count}
+      addedCount: 'أُضيفت {count} كلمات مفتاحية'
+    experience:
+      label: سنوات الخبرة
+      labelInJob: سنوات في هذه المهنة
+      any: الكل
+      value: 'سنة {count} فأكثر | {count} سنوات فأكثر'
+    education:
+      label: المستوى الدراسي
+    volume:
+      pending: جارٍ عدّ الملفات…
+      none: لا يوجد ملف مطابق
+      unknownJob: '«{term}» ليس مسمى وظيفي معروف — اختر اقتراحًا من القائمة.'
+      count: 'ملف واحد مطابق | {count} ملفات مطابقة'
+      failed: 'العدّ غير متاح — لا يزال بالإمكان إطلاق البحث.'
+    submit: بحث
+  sentence:
+    lead: 'أبحث عن ملف '
+    with: ' بخبرة '
+    experience: '،'
+    experienceInJob: ' في هذه المهنة،'
+    level: ' مستوى '
+    jobPlaceholder: المسمى الوظيفي…
+    experienceAny: لا يهم
+    experienceValue: 'سنة {count} | {count} سنوات'
+    experienceMax: '{count} سنوات فأكثر'
+    educationAny: لا يهم
+    educationAtLeast: '{level} +'
+    keywords: يتقن إحدى هذه الكلمات المفتاحية
+    keywordAdd: إضافة كلمة مفتاحية
+    volumeUnit: ملف | ملفات
+    submit: اختيار الملفات
+    name:
+      label: اسم البحث
+      placeholder: يُسمّى تلقائيًا…
+      edit: إعادة تسمية البحث
+  availability:
+    IMMEDIATE: متاح فورًا
+    NOTICE_1M: مهلة شهر واحد
+    NOTICE_3M: مهلة 3 أشهر
+  education:
+    BAC: البكالوريا
+    BAC_PLUS_2: سنتان بعد البكالوريا
+    LICENCE: الإجازة
+    MASTER: الماستر
+    INGENIEUR: شهادة مهندس
+    DOCTORAT: الدكتوراه
+  sectorExperience:
+    CONSEIL_AUDIT: الاستشارة والتدقيق
+    INFORMATIQUE: المعلوميات
+    INDUSTRIE: الصناعة
+    BANQUE_FINANCE: البنوك والمالية
+    ASSURANCE: التأمين
+    TELECOM: الاتصالات
+    TRANSPORT_LOGISTIQUE: النقل واللوجستيك
+    ENERGIE: الطاقة
+    AERONAUTIQUE: الطيران
+    AUTOMOBILE: السيارات
+    SANTE_PHARMA: الصحة والأدوية
+    DISTRIBUTION: التوزيع
+    BTP: البناء والأشغال العمومية
+    AGROALIMENTAIRE: الصناعات الغذائية
+    PUBLIC_ADMINISTRATION: القطاع العام
+    EDUCATION: التعليم
+    INDEPENDANT: العمل المستقل
+    AUTRE: أخرى
+account:
+  menu: حسابي
+  appearance: المظهر
+notifications:
+  title: الإشعارات
+  open: 'الإشعارات ({count} غير مقروءة)'
+  empty: لا توجد إشعارات بعد.
+error:
+  notFound:
+    title: الصفحة غير موجودة
+    message: هذه الصفحة غير موجودة أو تم نقلها.
+  unexpected:
+    title: حدث خطأ
+    message: حدث خطأ من جانبنا. يرجى المحاولة بعد قليل.
+  backHome: العودة إلى الرئيسية
+dashboard:
+  subtitle: حالة المنصة وما ينتظر قرارًا.
+  organizationsInReview: شركات للمراجعة
+  logins: تسجيلات الدخول (7 أيام)
+  reveals: عمليات الكشف (7 أيام)
+  signups: التسجيلات (7 أيام)
+  vivier: قاعدة المواهب
+  total: الإجمالي
+  active: نشط
+  goToCandidates: عرض قاعدة المواهب
+  goToJarvi: مراقبة Jarvi
+users:
+  user: المستخدم
+  roles: الأدوار
+  status: الحالة
+  lastLogin: آخر دخول
+  never: أبدًا
+  count: '{count} مستخدم'
+  empty: لا يوجد مستخدمون.
+jarvi:
+  total: الملفات
+  active: نشط
+  inactive: مُعطّل
+  withConsent: بموافقة
+  syncTitle: حالة المزامنة
+  synced: متزامن
+  pending: قيد الانتظار
+  failed: فشل
+  streams: تدفقات المزامنة
+  cursor: آخر مؤشر
+  lastRun: آخر استيراد
+  healthy: سليم
+  degraded: يحتاج انتباه
+candidate:
+  contact: معلومات الاتصال
+  profile: الملف المهني
+  skills: المهارات
+  languages: اللغات
+  experiences: الخبرة
+  educations: التعليم
+  morocco: مشروع المغرب
+  availability: التوفر
+  returnHorizon: أفق العودة
+  returnProject: مشروع العودة
+  piedATerre: مقر إقامة
+  geoMobility: متنقل في كل المغرب
+  presence: التواجد في المغرب
+  star: ملف موثّق (Star)
+  ops: التشغيل
+  visibility: الظهور
+  active: نشط
+  consent: الموافقة
+  consentSource: المصدر
+  sync: المزامنة
+  jarviId: مرجع Jarvi
+  createdAt: أُنشئ في
+  oui: نعم
+  non: لا
+admin:
+  activity:
+    count: '{count} اطّلاع على الملفات'
+    caption: من اطّلع على أي مرشّح، من الأحدث إلى الأقدم
+    loading: جارٍ التحميل…
+    empty: لا يوجد أي اطّلاع مسجّل حتى الآن.
+    error: تعذّر تحميل السجل.
+    unknown: حساب مغلق
+    pagination: الصفحة {page} من {total}
+    previous: السابق
+    next: التالي
+    column:
+      moment: متى
+      recruiter: مسؤول التوظيف
+      organization: الشركة
+      candidate: المرشّح المطّلع عليه
+      revealed: تم الكشف
+    revealed:
+      yes: تم الكشف
+      no: لم يتم الكشف
+  organization:
+    loading: جارٍ التحميل…
+    error: تعذّر تحميل البطاقة.
+    notFound: هذه الشركة غير موجودة.
+    balance: رصيد النقاط
+    subscription: الاشتراك
+    noSubscription: لا يوجد اشتراك
+    until: 'حتى {date}'
+    unknownMember: حساب مغلق
+    members: 'الأعضاء ({count})'
+    noMember: لا يوجد أعضاء مرتبطون.
+    ledger: حركات النقاط
+    ledgerCaption: حركات نقاط هذه الشركة، من الأحدث إلى الأقدم
+    noMovement: لا توجد حركات نقاط.
+    balanceAfterLine: 'الرصيد بعد العملية: {balance}'
+    column:
+      moment: متى
+      nature: النوع
+      amount: المبلغ
+      balanceAfter: الرصيد بعد
+      reason: السبب
+    role:
+      ROLE_COMPANY_OWNER: المالك
+      ROLE_COMPANY_MEMBER: عضو
+    subscriptionStatus:
+      ACTIVE: نشط
+      PAST_DUE: متأخر السداد
+      CANCELED: ملغى
+    movement:
+      GRANT_FREE: نقاط مهداة
+      PURCHASE: شراء
+      CONSUMPTION: كشف ملف
+      REFUND: استرجاع
+      ADJUSTMENT: تعديل
+  overflow:
+    count: '{count} عملية بحث تتجاوز الحد'
+    caption: عمليات البحث التي يعيد فيها المخزون ملفات أكثر مما يُعرض
+    loading: جارٍ التحميل…
+    empty: لا توجد عملية بحث تتجاوز الحد. كل ما يعيده المخزون يدخل ضمن ما يُعرض.
+    error: تعذّر تحميل الجرد.
+    unnamed: بحث بلا اسم ولا معايير
+    fromCriteria: مُسمّى وفق معاييره
+    matchesLine: '{count} تطابقًا، منها {hidden} لا تُعرض أبدًا'
+    pagination: الصفحة {page} من {total}
+    previous: السابق
+    next: التالي
+    column:
+      search: البحث
+      organization: المؤسسة
+      owner: المالك
+      matches: التطابقات
+      hidden: غير معروضة
+      state: الحالة
+      activity: آخر نشاط
+    state:
+      open: مفتوحة
+      closed: مغلقة
+  candidates:
+    name: المرشح
+    location: الموقع
+    contact: التواصل
+    status: الحالة
+    inactive: غير نشط
+    count: '{count} مرشح'
+    empty: لا يوجد مرشحون.
+    fillRate:
+      title: نسبة اكتمال قاعدة المرشحين
+      detail: '{filled} من {total}'
+      field:
+        givenName: الاسم
+        familyName: اللقب
+        linkedin: لينكدإن
+        employers: جهة العمل
+        photo: الصورة
+        email: البريد الإلكتروني
+        phone: الهاتف
+        resume: السيرة الذاتية
+        whatsapp: واتساب
+        interviewReport: تقرير المقابلة
+  notifications:
+    title: الإشعارات
+    empty: لا توجد إشعارات
+  organizations:
+    name: الشركة
+    statusHeader: الحالة
+    actions: إجراءات
+    filter: التصفية حسب الحالة
+    count: '{count} شركة'
+    empty: لا توجد شركة في هذه القائمة.
+    legalName: الاسم القانوني
+    taxId: رقم التسجيل
+    location: الموقع
+    website: الموقع الإلكتروني
+    acquisitionChannel: مصدر التعرف علينا
+    sector: قطاع النشاط
+    validate: قبول
+    reject: رفض
+    confirmReject: تأكيد الرفض
+    cancel: إلغاء
+    decisionFailed: تعذّر حفظ القرار. حاول مرة أخرى.
+inscription:
+  start:
+    title: إنشاء حساب
+    message: مخصّص للشركات ومكاتب التوظيف. أدخل بريدك الإلكتروني لتلقّي رابط دخول آمن.
+    submit: أرسل لي الرابط
+  sent:
+    title: تحقق من بريدك
+    message: لقد أرسلنا رابطًا إلى {email}.
+    messageAnonymous: لقد أرسلنا إليك رابط تسجيل الدخول.
+    action: افتح هذه الرسالة لمتابعة تسجيلك.
+    hint: الرابط صالح لمرة واحدة فقط. إذا لم تصلك الرسالة خلال بضع دقائق، تحقّق من مجلد الرسائل غير المرغوب فيها أو استخدم عنوان بريد آخر.
+    retry: استخدام عنوان آخر
+  social:
+    google: المتابعة باستخدام Google
+    linkedin: المتابعة باستخدام LinkedIn
+    name:
+      google: Google
+      linkedin: LinkedIn
+    or: أو
+    failed: لم تنجح عملية الدخول عبر هذه الخدمة. أعد المحاولة أو استخدم بريدك الإلكتروني.
+  link:
+    checking: لحظة من فضلك، نتحقق من رابطك…
+    next: بعد ذلك مباشرة، سنطلب منك بعض المعلومات عن شركتك. دقيقتان لا أكثر.
+    invalidTitle: لم يعد هذا الرابط صالحًا
+    invalidMessage: تنتهي صلاحية روابط الدخول بعد 30 دقيقة وتُستخدم مرة واحدة فقط. اطلب رابطًا جديدًا، وسنرسله إليك فورًا.
+    restart: طلب رابط جديد
+  company:
+    title: شركتك
+    message: تتيح لنا هذه المعلومات التحقق من شركتك قبل منحك حق الوصول إلى الملفات.
+    declarant: عنك
+    company: الشركة
+    acquisition: كيف تعرفت علينا؟
+    optional:
+      title: اختياري، لتسريع عملية التحقق
+      message: لا شيء من هذا إلزامي. تساعد هذه المعلومات فريقنا على التحقق من شركتك بسرعة أكبر، ويمكنك إكمالها لاحقًا.
+      more: إضافة تفاصيل
+    submit: إرسال الطلب
+  onboarding:
+    company:
+      lead: تم تأكيد عنوانك.
+      focus: أخبرنا عن شركتك.
+    contact:
+      lead: وأنت؟
+      focus: أخبِرنا ببساطة باسمك الشخصي والعائلي.
+    channel:
+      lead: آخر شيء.
+      focus: كيف تعرفت علينا؟
+    gauge:
+      label: ملف الشركة
+      value: '{percent} ٪'
+    next: متابعة
+    send: إرسال طلبي
+    back: رجوع
+    incomplete: أكمل الحقول للمتابعة.
+  field:
+    cityPlaceholder: 'مثال: الدار البيضاء'
+    countryHint: 'رمز من حرفين (MA، FR، BE…)'
+    countryPlaceholder: اختر بلدًا
+    givenName: الاسم الشخصي
+    contactGivenName: اسمك الشخصي
+    contactFamilyName: اسمك العائلي
+    familyName: الاسم العائلي
+    jobTitle: وظيفتك في الشركة
+    legalName: الاسم القانوني
+    taxId: رقم التسجيل
+    sector: قطاع النشاط
+    sectorPlaceholder: اختر أو اكتب قطاعًا
+    sectorNoResult: لا يوجد قطاع مطابق
+    country: البلد
+    countryNoResult: لا يوجد بلد مطابق
+    postalCode: الرمز البريدي
+    postalCodePlaceholder: 'مثال: 20000'
+    city: المدينة
+    address: العنوان
+    addressPlaceholder: ابحث عن عنوانك…
+    addressNoResult: لا يوجد عنوان مطابق
+    addressLoading: جارٍ البحث…
+    addressManual: إدخال العنوان يدويًا
+    addressSearch: البحث عن عنوان
+    streetPlaceholder: الشارع والرقم
+    website: الموقع الإلكتروني
+    websitePlaceholder: https://
+    description: الوصف
+    acquisitionChannel: مصدر التعرف علينا
+    acquisitionChannelEmpty: اختر إجابة
+    acquisitionChannelDetail: يرجى التوضيح
+    acquisitionChannelDetailPlaceholder: 'مثال: معرض، شريك، مقال…'
+  review:
+    title: فضاؤك جاهز
+    received: لم يبق سوى كلمة المرور.
+    sent: 'أُرسلت للتو رسالة إلى {email}. افتحها لاختيار كلمة المرور، وستدخل مباشرة بعدها.'
+    why: يتحقق فريقنا من معلومات شركتك من جهته. لا داعي للانتظار كي تبدأ.
+    missing: لا تجدها؟ تحقق من مجلد الرسائل غير المرغوب فيها.
+  password:
+    title: حدّد كلمة المرور
+    message: اختر كلمة مرور، وستُفتح مساحة Shortlist الخاصة بك مباشرة بعدها.
+    field: كلمة المرور
+    confirmField: تأكيد كلمة المرور
+    submit: تحديد كلمة المرور
+    mismatch: كلمتا المرور غير متطابقتين.
+    invalidTitle: رابط غير صالح أو منتهي الصلاحية
+    invalidMessage: هذا الرابط استُخدم من قبل أو لم يعد صالحًا. ابدأ من جديد من صفحة تسجيل الدخول.
+  login:
+    prompt: ليس لديك حساب شركة؟
+    link: سجّل شركتك
+    back: هل لديك حساب بالفعل؟
+  error:
+    unexpected: حدث خطأ. حاول مرة أخرى بعد قليل.
+organization:
+  websitePlaceholder: https://
+  name: اسم الشركة
+  legalName: الاسم القانوني
+  taxId: المعرّف الضريبي
+  country: البلد (رمز من حرفين)
+  city: المدينة
+  billingAddress: عنوان الفوترة
+  website: الموقع الإلكتروني
+  sector: قطاع النشاط
+  description: الوصف
+  status:
+    NOUVEAU: جديد
+    EMAIL_VERIFIE: بريد مؤكَّد
+    EN_REVUE: قيد المراجعة
+    INCOMPLET: غير مكتمل
+    VALIDEE: مقبولة
+    REFUSE: مرفوضة
+  channel:
+    RECOMMANDATION: توصية
+    LINKEDIN: لينكدإن
+    RECHERCHE_WEB: بحث على الويب
+    SALON: معرض أو حدث
+    CONTACT_DIRECT: اتصال مباشر مع Shortlist
+    AUTRE: أخرى

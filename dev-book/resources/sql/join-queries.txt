@@ -1,0 +1,492 @@
+showcase-recruiter-webapp-saas - Requetes SELECT avec jointures
+
+Base locale : showcase-recruiter-webapp-saas
+Schema : public
+
+-- Candidats avec identite et libelles FR du secteur/fonction souhaitee.
+-- Tables impliquees :
+-- - candidate : profil candidat metier, disponibilite, mobilite, salaire et lien Jarvi.
+-- - person : identite civile et coordonnees du candidat.
+-- - category_code : referentiel des secteurs et fonctions souhaites.
+-- - category_code_translation : libelles localises des secteurs et fonctions.
+
+SELECT
+    c.id AS candidate_id,
+    c.uuid AS candidate_uuid,
+    p.given_name,
+    p.family_name,
+    p.contact_email,
+    p.country,
+    p.city,
+    c.headline,
+    c.return_horizon,
+    c.availability,
+    c.visibility,
+    sector_t.label AS desired_sector,
+    function_t.label AS desired_function
+FROM candidate c
+JOIN person p ON p.id = c.person_id
+LEFT JOIN category_code sector ON sector.id = c.desired_sector_id
+LEFT JOIN category_code_translation sector_t
+    ON sector_t.category_code_id = sector.id
+    AND sector_t.locale = 'fr'
+LEFT JOIN category_code function_code ON function_code.id = c.desired_function_id
+LEFT JOIN category_code_translation function_t
+    ON function_t.category_code_id = function_code.id
+    AND function_t.locale = 'fr'
+ORDER BY c.created_at DESC;
+
+-- Competences des candidats avec libelle FR.
+-- Tables impliquees :
+-- - candidate_skill : association candidat/competence.
+-- - candidate : profil candidat porteur des competences.
+-- - person : identite civile et coordonnees du candidat.
+-- - category_code : referentiel des competences.
+-- - category_code_translation : libelles localises des competences.
+
+SELECT
+    c.id AS candidate_id,
+    c.uuid AS candidate_uuid,
+    p.given_name,
+    p.family_name,
+    code.in_code_set,
+    code.code_value,
+    code.term_code,
+    code_t.label AS skill_label
+FROM candidate_skill cs
+JOIN candidate c ON c.id = cs.candidate_id
+JOIN person p ON p.id = c.person_id
+JOIN category_code code ON code.id = cs.category_code_id
+LEFT JOIN category_code_translation code_t
+    ON code_t.category_code_id = code.id
+    AND code_t.locale = 'fr'
+ORDER BY p.family_name, p.given_name, skill_label;
+
+-- Langues des candidats.
+-- Tables impliquees :
+-- - candidate_language : association candidat/langue avec niveau declare.
+-- - candidate : profil candidat porteur des langues.
+-- - person : identite civile et coordonnees du candidat.
+-- - language : referentiel des langues disponibles.
+
+SELECT
+    c.id AS candidate_id,
+    c.uuid AS candidate_uuid,
+    p.given_name,
+    p.family_name,
+    l.code AS language_code,
+    cl.level
+FROM candidate_language cl
+JOIN candidate c ON c.id = cl.candidate_id
+JOIN person p ON p.id = c.person_id
+JOIN language l ON l.id = cl.language_id
+ORDER BY p.family_name, p.given_name, l.code;
+
+-- Experiences professionnelles des candidats.
+-- Tables impliquees :
+-- - work_experience : experiences professionnelles rattachees au candidat.
+-- - candidate : profil candidat porteur des experiences.
+-- - person : identite civile et coordonnees du candidat.
+
+SELECT
+    c.id AS candidate_id,
+    c.uuid AS candidate_uuid,
+    p.given_name,
+    p.family_name,
+    we.role_name,
+    we.organization_name,
+    we.start_date,
+    we.end_date,
+    we.current
+FROM work_experience we
+JOIN candidate c ON c.id = we.candidate_id
+JOIN person p ON p.id = c.person_id
+ORDER BY p.family_name, p.given_name, we.start_date DESC NULLS LAST;
+
+-- Formations des candidats.
+-- Tables impliquees :
+-- - education : formations rattachees au candidat.
+-- - candidate : profil candidat porteur des formations.
+-- - person : identite civile et coordonnees du candidat.
+
+SELECT
+    c.id AS candidate_id,
+    c.uuid AS candidate_uuid,
+    p.given_name,
+    p.family_name,
+    e.school,
+    e.degree,
+    e.field_of_study,
+    e.start_date,
+    e.end_date
+FROM education e
+JOIN candidate c ON c.id = e.candidate_id
+JOIN person p ON p.id = c.person_id
+ORDER BY p.family_name, p.given_name, e.start_date DESC NULLS LAST;
+
+-- Periodes de presence declarees au Maroc.
+-- Tables impliquees :
+-- - presence_period : periodes de presence physique declarees au Maroc.
+-- - candidate : profil candidat porteur des periodes.
+-- - person : identite civile et coordonnees du candidat.
+
+SELECT
+    c.id AS candidate_id,
+    c.uuid AS candidate_uuid,
+    p.given_name,
+    p.family_name,
+    pp.city,
+    pp.start_date,
+    pp.end_date
+FROM presence_period pp
+JOIN candidate c ON c.id = pp.candidate_id
+JOIN person p ON p.id = c.person_id
+ORDER BY pp.start_date ASC, p.family_name, p.given_name;
+
+-- Entreprises avec recruteurs rattaches.
+-- Tables impliquees :
+-- - organization : entreprise cliente/recruteuse.
+-- - recruiter : membre recruteur rattache a l'entreprise.
+-- - person : identite civile et coordonnees du recruteur.
+
+SELECT
+    co.id AS organization_id,
+    co.uuid AS organization_uuid,
+    co.name AS organization_name,
+    co.country,
+    co.city,
+    r.id AS recruiter_id,
+    r.uuid AS recruiter_uuid,
+    r.organization_role,
+    r.job_title,
+    r.status AS recruiter_status,
+    p.given_name,
+    p.family_name,
+    p.contact_email
+FROM organization co
+LEFT JOIN recruiter r ON r.organization_id = co.id
+LEFT JOIN person p ON p.id = r.person_id
+ORDER BY co.name, p.family_name, p.given_name;
+
+-- Utilisateurs applicatifs avec identite.
+-- Tables impliquees :
+-- - app_user : compte applicatif d'authentification, roles et statut.
+-- - person : identite civile et coordonnees associees au compte.
+
+SELECT
+    u.id AS user_id,
+    u.uuid AS user_uuid,
+    u.email,
+    u.roles,
+    u.status,
+    p.given_name,
+    p.family_name,
+    p.contact_email
+FROM app_user u
+JOIN person p ON p.id = u.person_id
+ORDER BY u.email;
+
+-- Wallet credit par entreprise.
+-- Tables impliquees :
+-- - credit_wallet : solde courant de credits par entreprise.
+-- - organization : entreprise proprietaire du wallet.
+
+SELECT
+    co.id AS organization_id,
+    co.uuid AS organization_uuid,
+    co.name AS organization_name,
+    cw.balance,
+    cw.updated_at AS wallet_updated_at
+FROM credit_wallet cw
+JOIN organization co ON co.id = cw.organization_id
+ORDER BY co.name;
+
+-- Transactions de credits avec recruteur et profil revele associes.
+-- Tables impliquees :
+-- - credit_transaction : journal des mouvements de credits.
+-- - organization : entreprise concernee par la transaction.
+-- - recruiter : recruteur a l'origine du mouvement, si applicable.
+-- - person : identites du recruteur et du candidat revele.
+-- - revealed_profile : profil devoile associe a la transaction, si applicable.
+-- - candidate : profil candidat revele, si applicable.
+
+SELECT
+    ct.id AS transaction_id,
+    ct.uuid AS transaction_uuid,
+    co.name AS organization_name,
+    ct.type,
+    ct.amount,
+    ct.balance_after,
+    ct.reason,
+    ct.stripe_payment_id,
+    recruiter_person.given_name AS recruiter_given_name,
+    recruiter_person.family_name AS recruiter_family_name,
+    candidate_person.given_name AS revealed_candidate_given_name,
+    candidate_person.family_name AS revealed_candidate_family_name,
+    ct.created_at
+FROM credit_transaction ct
+JOIN organization co ON co.id = ct.organization_id
+LEFT JOIN recruiter r ON r.id = ct.recruiter_id
+LEFT JOIN person recruiter_person ON recruiter_person.id = r.person_id
+LEFT JOIN revealed_profile rp ON rp.id = ct.revealed_profile_id
+LEFT JOIN candidate c ON c.id = rp.candidate_id
+LEFT JOIN person candidate_person ON candidate_person.id = c.person_id
+ORDER BY ct.created_at DESC;
+
+-- Favoris par entreprise, candidat et recruteur.
+-- Tables impliquees :
+-- - favorite : lien favori entre une entreprise et un candidat.
+-- - organization : entreprise proprietaire du favori.
+-- - candidate : profil candidat ajoute en favori.
+-- - person : identites du candidat et du recruteur.
+-- - recruiter : recruteur ayant ajoute le favori.
+
+SELECT
+    f.id AS favorite_id,
+    co.name AS organization_name,
+    candidate_person.given_name AS candidate_given_name,
+    candidate_person.family_name AS candidate_family_name,
+    recruiter_person.given_name AS added_by_given_name,
+    recruiter_person.family_name AS added_by_family_name,
+    f.created_at
+FROM favorite f
+JOIN organization co ON co.id = f.organization_id
+JOIN candidate c ON c.id = f.candidate_id
+JOIN person candidate_person ON candidate_person.id = c.person_id
+JOIN recruiter r ON r.id = f.added_by_id
+JOIN person recruiter_person ON recruiter_person.id = r.person_id
+ORDER BY f.created_at DESC;
+
+-- Notes internes sur les profils candidats.
+-- Tables impliquees :
+-- - profile_note : note interne d'une entreprise sur un candidat.
+-- - organization : entreprise proprietaire de la note.
+-- - candidate : profil candidat concerne par la note.
+-- - person : identites du candidat et de l'auteur.
+-- - recruiter : recruteur auteur de la note.
+
+SELECT
+    pn.id AS note_id,
+    co.name AS organization_name,
+    candidate_person.given_name AS candidate_given_name,
+    candidate_person.family_name AS candidate_family_name,
+    author_person.given_name AS author_given_name,
+    author_person.family_name AS author_family_name,
+    pn.body,
+    pn.created_at,
+    pn.updated_at
+FROM profile_note pn
+JOIN organization co ON co.id = pn.organization_id
+JOIN candidate c ON c.id = pn.candidate_id
+JOIN person candidate_person ON candidate_person.id = c.person_id
+JOIN recruiter author ON author.id = pn.author_id
+JOIN person author_person ON author_person.id = author.person_id
+ORDER BY pn.updated_at DESC, pn.created_at DESC;
+
+-- Profils consultes par recruteur.
+-- Tables impliquees :
+-- - profile_view : historique de consultation d'un profil candidat.
+-- - organization : entreprise ayant consulte le profil.
+-- - candidate : profil candidat consulte.
+-- - person : identites du candidat et du recruteur.
+-- - recruiter : recruteur ayant consulte le profil, si connu.
+
+SELECT
+    pv.id AS profile_view_id,
+    co.name AS organization_name,
+    candidate_person.given_name AS candidate_given_name,
+    candidate_person.family_name AS candidate_family_name,
+    recruiter_person.given_name AS recruiter_given_name,
+    recruiter_person.family_name AS recruiter_family_name,
+    pv.created_at
+FROM profile_view pv
+JOIN organization co ON co.id = pv.organization_id
+JOIN candidate c ON c.id = pv.candidate_id
+JOIN person candidate_person ON candidate_person.id = c.person_id
+LEFT JOIN recruiter r ON r.id = pv.recruiter_id
+LEFT JOIN person recruiter_person ON recruiter_person.id = r.person_id
+ORDER BY pv.created_at DESC;
+
+-- Profils devoiles par entreprise.
+-- Tables impliquees :
+-- - revealed_profile : deblocage d'un profil candidat pour une entreprise.
+-- - organization : entreprise ayant devoile le profil.
+-- - candidate : profil candidat devoile.
+-- - person : identites du candidat et du recruteur.
+-- - recruiter : recruteur ayant realise le devoilement.
+
+SELECT
+    rp.id AS revealed_profile_id,
+    rp.uuid AS revealed_profile_uuid,
+    co.name AS organization_name,
+    candidate_person.given_name AS candidate_given_name,
+    candidate_person.family_name AS candidate_family_name,
+    recruiter_person.given_name AS revealed_by_given_name,
+    recruiter_person.family_name AS revealed_by_family_name,
+    rp.created_at
+FROM revealed_profile rp
+JOIN organization co ON co.id = rp.organization_id
+JOIN candidate c ON c.id = rp.candidate_id
+JOIN person candidate_person ON candidate_person.id = c.person_id
+JOIN recruiter r ON r.id = rp.revealed_by_id
+JOIN person recruiter_person ON recruiter_person.id = r.person_id
+ORDER BY rp.created_at DESC;
+
+-- Recherches sauvegardees par entreprise et proprietaire.
+-- Tables impliquees :
+-- - saved_search : criteres de recherche sauvegardes et alertes.
+-- - organization : entreprise proprietaire de la recherche.
+-- - recruiter : recruteur proprietaire de la recherche.
+-- - person : identite du recruteur proprietaire.
+
+SELECT
+    ss.id AS saved_search_id,
+    ss.uuid AS saved_search_uuid,
+    co.name AS organization_name,
+    owner_person.given_name AS owner_given_name,
+    owner_person.family_name AS owner_family_name,
+    ss.name,
+    ss.criteria,
+    ss.alert_enabled,
+    ss.channels,
+    ss.created_at
+FROM saved_search ss
+JOIN organization co ON co.id = ss.organization_id
+JOIN recruiter owner ON owner.id = ss.owner_id
+JOIN person owner_person ON owner_person.id = owner.person_id
+ORDER BY ss.created_at DESC;
+
+-- Invitations entreprise avec recruteur emetteur.
+-- Tables impliquees :
+-- - invitation : invitation d'un collaborateur dans une entreprise.
+-- - organization : entreprise qui emet l'invitation.
+-- - recruiter : recruteur emetteur de l'invitation.
+-- - person : identite du recruteur emetteur.
+
+SELECT
+    i.id AS invitation_id,
+    i.uuid AS invitation_uuid,
+    co.name AS organization_name,
+    i.email,
+    i.role,
+    i.status,
+    i.expires_at,
+    inviter_person.given_name AS invited_by_given_name,
+    inviter_person.family_name AS invited_by_family_name,
+    i.created_at
+FROM invitation i
+JOIN organization co ON co.id = i.organization_id
+JOIN recruiter inviter ON inviter.id = i.invited_by_id
+JOIN person inviter_person ON inviter_person.id = inviter.person_id
+ORDER BY i.created_at DESC;
+
+-- Notifications avec destinataire et contexte optionnel.
+-- Tables impliquees :
+-- - notification : message in-app/email et donnees de contexte.
+-- - person : destinataire et identite du candidat lie.
+-- - organization : entreprise liee a la notification, si applicable.
+-- - candidate : candidat lie a la notification, si applicable.
+
+SELECT
+    n.id AS notification_id,
+    n.uuid AS notification_uuid,
+    recipient.given_name AS recipient_given_name,
+    recipient.family_name AS recipient_family_name,
+    n.type,
+    n.channels,
+    n.data,
+    n.read_at,
+    n.email_sent_at,
+    co.name AS related_organization_name,
+    candidate_person.given_name AS related_candidate_given_name,
+    candidate_person.family_name AS related_candidate_family_name,
+    n.created_at
+FROM notification n
+JOIN person recipient ON recipient.id = n.recipient_id
+LEFT JOIN organization co ON co.id = n.related_organization_id
+LEFT JOIN candidate c ON c.id = n.related_candidate_id
+LEFT JOIN person candidate_person ON candidate_person.id = c.person_id
+ORDER BY n.created_at DESC;
+
+-- Abonnements par entreprise.
+-- Tables impliquees :
+-- - subscription : abonnement, plan et statut de paiement.
+-- - organization : entreprise titulaire de l'abonnement.
+
+SELECT
+    s.id AS subscription_id,
+    s.uuid AS subscription_uuid,
+    co.name AS organization_name,
+    s.plan,
+    s.status,
+    s.current_period_end,
+    s.stripe_subscription_id,
+    s.updated_at
+FROM subscription s
+JOIN organization co ON co.id = s.organization_id
+ORDER BY co.name, s.updated_at DESC;
+
+-- Codes de categorie avec toutes leurs traductions.
+-- Tables impliquees :
+-- - category_code : referentiel de codes metier reutilisable.
+-- - category_code_translation : libelles localises des codes.
+
+SELECT
+    cc.id AS category_code_id,
+    cc.uuid AS category_code_uuid,
+    cc.in_code_set,
+    cc.code_value,
+    cc.term_code,
+    cc.status,
+    cct.locale,
+    cct.label
+FROM category_code cc
+LEFT JOIN category_code_translation cct ON cct.category_code_id = cc.id
+ORDER BY cc.in_code_set, cc.code_value, cct.locale;
+
+-- Cartes star profile avec candidat et traductions.
+-- Tables impliquees :
+-- - star_profile_card : carte editoriale de profil candidat mis en avant.
+-- - candidate : profil candidat mis en avant.
+-- - person : identite civile et coordonnees du candidat.
+-- - star_profile_card_translation : contenus localises de la carte.
+
+SELECT
+    spc.id AS card_id,
+    spc.uuid AS card_uuid,
+    spc.display_order,
+    spc.active,
+    spc.starts_at,
+    spc.ends_at,
+    candidate_person.given_name AS candidate_given_name,
+    candidate_person.family_name AS candidate_family_name,
+    spct.locale,
+    spct.headline,
+    spct.role_label,
+    spct.summary
+FROM star_profile_card spc
+JOIN candidate c ON c.id = spc.candidate_id
+JOIN person candidate_person ON candidate_person.id = c.person_id
+LEFT JOIN star_profile_card_translation spct ON spct.card_id = spc.id
+ORDER BY spc.display_order, spct.locale;
+
+-- Options payantes des candidats.
+-- Tables impliquees :
+-- - candidate_option : option payante ou mise en avant souscrite par un candidat.
+-- - candidate : profil candidat proprietaire de l'option.
+-- - person : identite civile et coordonnees du candidat.
+
+SELECT
+    co.id AS option_id,
+    c.uuid AS candidate_uuid,
+    p.given_name,
+    p.family_name,
+    co.type,
+    co.status,
+    co.starts_at,
+    co.ends_at,
+    co.stripe_payment_id
+FROM candidate_option co
+JOIN candidate c ON c.id = co.candidate_id
+JOIN person p ON p.id = c.person_id
+ORDER BY co.starts_at DESC NULLS LAST;

@@ -1,0 +1,21 @@
+# Dépendances & artefacts (réinstallés/regénérés dans l'image — jamais copiés du host)
+node_modules
+.output
+.nuxt
+.data
+.nitro
+
+# Secrets & env locaux (fournis au runtime par le compose : NUXT_*)
+.env
+.env.*
+!.env.example
+
+# Outils, cache & dev
+.git
+.gitignore
+.github
+.idea
+.vscode
+.eslintcache
+*.log
+*.md

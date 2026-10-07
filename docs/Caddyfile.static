@@ -1,0 +1,9 @@
+# Sert le site Docus PRÉRENDU (.output/public) en statique, sur :3000.
+# Évite le serveur SSR Nitro (qui crashe au runtime : @nuxt/image → ipx → ofetch
+# non tracé par Nitro). Les sites de doc sont entièrement prérendus, le statique suffit.
+:3000 {
+	root * /srv
+	encode zstd gzip
+	try_files {path} {path}.html {path}/index.html /index.html
+	file_server
+}

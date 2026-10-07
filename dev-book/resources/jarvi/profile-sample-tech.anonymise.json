@@ -1,0 +1,994 @@
+{
+  "__ANONYMISE__": "Échantillon Jarvi réel anonymisé (RGPD) — structure conservée, identité/contacts factices. Brut réel jamais versionné.",
+  "id": "973fcd0b-9587-461c-81a7-40b119523c56",
+  "addedAt": "2026-06-16T08:45:40.298Z",
+  "birthday": null,
+  "canSendInMail": null,
+  "countConnexionsWithThisProfile": 0,
+  "countInvitationsScheduledToThisProfile": 0,
+  "countInvitationsSentToThisProfile": 0,
+  "countApplicationsFromThisProfile": 1,
+  "countMessagesReceivedFromThisProfile": 2,
+  "countMessagesScheduledToThisProfile": 0,
+  "countMessagesSentToThisProfile": 3,
+  "countAttachedFiles": 1,
+  "createdAt": "2026-06-16T08:45:40.298Z",
+  "createdByUserId": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+  "deletedAt": null,
+  "distance": null,
+  "externalId": null,
+  "firstInteractionDate": "2026-06-16T08:45:41.407Z",
+  "firstName": "Yassine",
+  "firstNameParsed": "Yassine",
+  "firstNameManual": null,
+  "groupId": "60c0b72f-1656-46a1-810e-288bcbfcd610",
+  "countResumes": 1,
+  "headline": "Technicien spécialisé en Cloud computing et IT support",
+  "imageId": null,
+  "isTalent": true,
+  "isContact": false,
+  "isHiring": false,
+  "isOpenToNewOpportunities": true,
+  "isInfluencer": false,
+  "isPremium": false,
+  "lastInteractionDate": "2026-06-26T10:46:54.197Z",
+  "lastPastInteractionDate": "2026-06-26T10:46:54.197Z",
+  "lastInteractionType": "OTHER",
+  "lastResumeUpdatedAt": "2026-06-16T08:56:19.641Z",
+  "lastName": "Bennani",
+  "lastNameParsed": "Bennani",
+  "lastNameManual": null,
+  "linkedinId": null,
+  "memberId": "ACoAAFA-56UB4QgErjk50hgEI1dNet1AnXR9sX8",
+  "profileUrl": "https://www.linkedin.com/in/Yassine-bennani-000000000/",
+  "publicIdentifier": "Yassine-bennani-000000000",
+  "primaryLocale": "en",
+  "searchString": null,
+  "source": "INDEED",
+  "statusId": "ac6c3c8a-a85b-11ed-afa1-0242ac120002",
+  "talentIdentifier": null,
+  "linkedinSalesNavigatorIdentifier": null,
+  "linkedinSignificantIdentifier": null,
+  "summary": "Bienvenue sur mon profil LinkedIn ! Je m'appelle Yassine Bennani et je suis passionné par les nouvelles technologies, notamment le cloud computing et le secteur IT. Titulaire d’un diplôme en Cloud Computing de l'Institut spécialisé de technologie [anonymisé], j'ai acquis les compétences nécessaires pour gérer et maintenir des infrastructures numériques complexes. Je suis particulièrement intéressé par l'optimisation des solutions technologiques et l'assurance d'opérations transparentes pour les entreprises.",
+  "updatedAt": "2026-06-26T10:47:31.376Z",
+  "pendingExecuteTriggerTasks": [],
+  "unreadMessagesNotifications": {
+    "aggregate": {
+      "count": 0,
+      "__typename": "notifications_aggregate_fields"
+    },
+    "__typename": "notifications_aggregate"
+  },
+  "protectedCompaniesWorksIn": [],
+  "createdBy": {
+    "displayName": "Recruteur Jarvi (anonymisé)",
+    "id": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+    "__typename": "users"
+  },
+  "image": null,
+  "locations": [
+    {
+      "id": "eae890b9-9352-4ac3-8d02-402737392cbf",
+      "source": "LINKEDIN",
+      "location": {
+        "id": "dc4106c8-db79-489a-a3a2-f3013055a0bf",
+        "search": "Marrakesh, Marrakesh-Safi, Morocco",
+        "center": null,
+        "formattedAddress": "Marrakesh, Morocco",
+        "locality": "Marrakesh",
+        "postalCode": null,
+        "countryName": "Morocco",
+        "accuracyLevel": null,
+        "__typename": "locations"
+      },
+      "__typename": "profiles_locations"
+    },
+    {
+      "id": "3f22ac80-1585-4ff3-9ea2-ebdac66cf4c4",
+      "source": "RESUME",
+      "location": {
+        "id": "a498dd64-7f00-4b6e-bd55-26b62e07bb29",
+        "search": "Marrakech",
+        "center": null,
+        "formattedAddress": "Marrakech, Morocco",
+        "locality": "Marrakech",
+        "postalCode": null,
+        "countryName": "Morocco",
+        "accuracyLevel": null,
+        "__typename": "locations"
+      },
+      "__typename": "profiles_locations"
+    }
+  ],
+  "files": [
+    {
+      "fileId": "d5e9e7c3-c354-4243-8496-4dba30779ab1",
+      "createdAt": "2026-06-16T08:45:40.298Z",
+      "updatedAt": "2026-06-16T08:45:53.590Z",
+      "shouldBeParsed": true,
+      "parsedAt": "2026-06-16T08:45:53.527Z",
+      "file": {
+        "id": "d5e9e7c3-c354-4243-8496-4dba30779ab1",
+        "name": "CVYASSINEBENNANI.pdf",
+        "etag": "\"c334fc46fa2a68f97690edf6d4cfb85f\"",
+        "mimeType": "application/pdf",
+        "__typename": "files"
+      },
+      "__typename": "profiles_files"
+    }
+  ],
+  "lastPosition": {
+    "id": "42d67513-220f-4609-afe3-099469caf3ee",
+    "startDate": "2025-09-01T00:00:00.000Z",
+    "endDate": null,
+    "title": "Informaticien",
+    "source": "LINKEDIN",
+    "companyName": "Clinique [anonymisée]",
+    "linkedinCompanyId": "ea78b7e5-d4ae-46a8-9d75-f7fd9bc7d23b",
+    "linkedinCompanyData": {
+      "id": "ea78b7e5-d4ae-46a8-9d75-f7fd9bc7d23b",
+      "name": "Clinique [anonymisée]",
+      "image": null,
+      "__typename": "linkedin_companies_data"
+    },
+    "__typename": "profiles_positions_last_view"
+  },
+  "positions": [
+    {
+      "id": "42d67513-220f-4609-afe3-099469caf3ee",
+      "startDate": "2025-09-01T00:00:00.000Z",
+      "endDate": null,
+      "title": "Informaticien",
+      "source": "LINKEDIN",
+      "companyName": "Clinique [anonymisée]",
+      "linkedinCompanyId": "ea78b7e5-d4ae-46a8-9d75-f7fd9bc7d23b",
+      "linkedinCompanyData": {
+        "id": "ea78b7e5-d4ae-46a8-9d75-f7fd9bc7d23b",
+        "name": "Clinique [anonymisée]",
+        "image": null,
+        "__typename": "linkedin_companies_data"
+      },
+      "__typename": "profiles_positions"
+    },
+    {
+      "id": "86719f54-4b5f-4093-8878-23b2e62343f6",
+      "startDate": null,
+      "endDate": "2025-09-30T23:59:59.999Z",
+      "title": "INFORMATICIEN / TECHNICIEN IT",
+      "source": "RESUME",
+      "companyName": "Clinique [anonymisée]",
+      "linkedinCompanyId": null,
+      "linkedinCompanyData": null,
+      "__typename": "profiles_positions"
+    },
+    {
+      "id": "7263d835-7859-4f71-a59a-efef672463d4",
+      "startDate": "2025-06-30T00:00:00.000Z",
+      "endDate": "2025-08-31T23:59:59.999Z",
+      "title": "TECHNICIEN INFORMATIQUE (STAGE)",
+      "source": "RESUME",
+      "companyName": "Jardin majorelle",
+      "linkedinCompanyId": null,
+      "linkedinCompanyData": null,
+      "__typename": "profiles_positions"
+    },
+    {
+      "id": "cfba87d9-563b-45a6-a04d-3012901c69e3",
+      "startDate": "2025-06-01T00:00:00.000Z",
+      "endDate": "2025-08-31T23:59:59.999Z",
+      "title": "Technicien informatique",
+      "source": "LINKEDIN",
+      "companyName": "Jardin Majorelle, Musée Yves Saint Laurent Marrakech & Musée Pierre Bergé des Arts Berbères",
+      "linkedinCompanyId": "dab187f1-2240-48c2-8583-bf32ddc4682d",
+      "linkedinCompanyData": {
+        "id": "dab187f1-2240-48c2-8583-bf32ddc4682d",
+        "name": "Jardin Majorelle, Musée Yves Saint Laurent Marrakech & Musée Pierre Bergé des Arts Berbères",
+        "image": null,
+        "__typename": "linkedin_companies_data"
+      },
+      "__typename": "profiles_positions"
+    },
+    {
+      "id": "f78a718a-6cc0-4270-bc7c-74c1bad389ce",
+      "startDate": "2024-12-31T00:00:00.000Z",
+      "endDate": "2025-02-28T23:59:59.999Z",
+      "title": "TECHNICIEN RÉSEAU ET MAINTENANCE (STAGE)",
+      "source": "RESUME",
+      "companyName": "ELECMAG",
+      "linkedinCompanyId": null,
+      "linkedinCompanyData": null,
+      "__typename": "profiles_positions"
+    },
+    {
+      "id": "6a235cb9-24bf-4149-8677-e47e6e5fc4f0",
+      "startDate": "2024-12-01T00:00:00.000Z",
+      "endDate": "2025-02-28T23:59:59.999Z",
+      "title": "Technicien",
+      "source": "LINKEDIN",
+      "companyName": "ELEC MAG",
+      "linkedinCompanyId": "650fa97e-d108-4f63-8498-7135d32342ef",
+      "linkedinCompanyData": {
+        "id": "650fa97e-d108-4f63-8498-7135d32342ef",
+        "name": "ELEC MAG",
+        "image": null,
+        "__typename": "linkedin_companies_data"
+      },
+      "__typename": "profiles_positions"
+    }
+  ],
+  "manualHistoryEntries": [
+    {
+      "id": "775fbef9-8429-408b-a5cb-a248707169b5",
+      "userId": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+      "occurredAt": "2026-06-26T10:46:54.197Z",
+      "sender": {
+        "id": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+        "displayName": "Recruteur Jarvi (anonymisé)",
+        "__typename": "users"
+      },
+      "subType": {
+        "id": "a25d0401-1840-4786-aa9e-5d3676e8ae94",
+        "name": "Informations diverses",
+        "__typename": "historyentries_subtypes"
+      },
+      "eventStartAt": null,
+      "eventEndAt": null,
+      "project": {
+        "id": "ad7f286c-8e47-45a4-bfa3-9ce821a27367",
+        "name": "support technique Microsoft 365 ",
+        "__typename": "projects"
+      },
+      "subjectWithConfidentialitySettings": null,
+      "messageWithConfidentialitySettings": "<p>Entretien de 15 min. Candidat qualifié, bonne présentation, répond à toutes les questions et en pose beaucoup. Français : 6/10, principal point de vigilance. Prétentions salariales : 5 000 MAD. Le recruteur s'est projeté avec lui sur le long terme. </p><p>Mais le problème de langue reste le vrai frein </p>",
+      "source": null,
+      "tags": [],
+      "files": [],
+      "__typename": "historyentries"
+    },
+    {
+      "id": "c2a5a1ec-0f04-47fd-ae73-091aa3c90eac",
+      "userId": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+      "occurredAt": "2026-06-24T13:30:24.848Z",
+      "sender": {
+        "id": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+        "displayName": "Recruteur Jarvi (anonymisé)",
+        "__typename": "users"
+      },
+      "subType": {
+        "id": "a25d0401-1840-4786-aa9e-5d3676e8ae94",
+        "name": "Informations diverses",
+        "__typename": "historyentries_subtypes"
+      },
+      "eventStartAt": null,
+      "eventEndAt": null,
+      "project": {
+        "id": "ad7f286c-8e47-45a4-bfa3-9ce821a27367",
+        "name": "support technique Microsoft 365 ",
+        "__typename": "projects"
+      },
+      "subjectWithConfidentialitySettings": null,
+      "messageWithConfidentialitySettings": "<p>ok pour lui : 10h 15 vendredi</p>",
+      "source": null,
+      "tags": [],
+      "files": [],
+      "__typename": "historyentries"
+    },
+    {
+      "id": "afdeee70-9764-4aa9-9d83-022ae08b0283",
+      "userId": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+      "occurredAt": "2026-06-23T13:20:25.512Z",
+      "sender": {
+        "id": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+        "displayName": "Recruteur Jarvi (anonymisé)",
+        "__typename": "users"
+      },
+      "subType": {
+        "id": "a25d0401-1840-4786-aa9e-5d3676e8ae94",
+        "name": "Informations diverses",
+        "__typename": "historyentries_subtypes"
+      },
+      "eventStartAt": null,
+      "eventEndAt": null,
+      "project": {
+        "id": "ad7f286c-8e47-45a4-bfa3-9ce821a27367",
+        "name": "support technique Microsoft 365 ",
+        "__typename": "projects"
+      },
+      "subjectWithConfidentialitySettings": null,
+      "messageWithConfidentialitySettings": "<p>Vendredi Matin : </p><p>10h à midi </p>",
+      "source": null,
+      "tags": [],
+      "files": [],
+      "__typename": "historyentries"
+    },
+    {
+      "id": "058f7b08-d20f-47cd-b4c9-71e9632ed970",
+      "userId": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+      "occurredAt": "2026-06-16T13:14:42.728Z",
+      "sender": {
+        "id": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+        "displayName": "Recruteur Jarvi (anonymisé)",
+        "__typename": "users"
+      },
+      "subType": {
+        "id": "17a5ada9-24a4-4591-bb47-b2319740432d",
+        "name": "jarvis.historyEntriesTypeChoices.PHONECALL",
+        "__typename": "historyentries_subtypes"
+      },
+      "eventStartAt": "2026-06-16T13:14:42.728Z",
+      "eventEndAt": null,
+      "project": {
+        "id": "ad7f286c-8e47-45a4-bfa3-9ce821a27367",
+        "name": "support technique Microsoft 365 ",
+        "__typename": "projects"
+      },
+      "subjectWithConfidentialitySettings": null,
+      "messageWithConfidentialitySettings": "<p>pourquoi pas en Shortlist : le niveau de langue est moins bon que les deux autres candidats en shortlist, </p><p>il a beaucoup de connaissance théoriques ' durant sa formation' , son expérience réelle est  est en support N1 ET N2, et tech IT, </p><p>il a travaillé avec Zabbix, Kaspersky...</p><p>il assure l interconnexion entre 2 sites : 2 cliniques, </p><p>A voir : Shortlist ou Pas </p>",
+      "source": null,
+      "tags": [],
+      "files": [],
+      "__typename": "historyentries"
+    },
+    {
+      "id": "83fcb7ca-cae6-4c67-869a-7001fbcb1ad7",
+      "userId": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+      "occurredAt": "2026-06-16T12:58:20.674Z",
+      "sender": {
+        "id": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+        "displayName": "Recruteur Jarvi (anonymisé)",
+        "__typename": "users"
+      },
+      "subType": {
+        "id": "17a5ada9-24a4-4591-bb47-b2319740432d",
+        "name": "jarvis.historyEntriesTypeChoices.PHONECALL",
+        "__typename": "historyentries_subtypes"
+      },
+      "eventStartAt": null,
+      "eventEndAt": null,
+      "project": {
+        "id": "ad7f286c-8e47-45a4-bfa3-9ce821a27367",
+        "name": "support technique Microsoft 365 ",
+        "__typename": "projects"
+      },
+      "subjectWithConfidentialitySettings": null,
+      "messageWithConfidentialitySettings": null,
+      "source": null,
+      "tags": [],
+      "files": [],
+      "__typename": "historyentries"
+    },
+    {
+      "id": "28e69c0d-3487-498d-8d6f-c793c2b1100e",
+      "userId": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+      "occurredAt": "2026-06-16T08:45:41.407Z",
+      "sender": {
+        "id": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+        "displayName": "Recruteur Jarvi (anonymisé)",
+        "__typename": "users"
+      },
+      "subType": null,
+      "eventStartAt": null,
+      "eventEndAt": null,
+      "project": {
+        "id": "ad7f286c-8e47-45a4-bfa3-9ce821a27367",
+        "name": "support technique Microsoft 365 ",
+        "__typename": "projects"
+      },
+      "subjectWithConfidentialitySettings": null,
+      "messageWithConfidentialitySettings": null,
+      "source": null,
+      "tags": [],
+      "files": [],
+      "__typename": "historyentries"
+    }
+  ],
+  "lastMessages": [],
+  "locales": [
+    {
+      "language": "ar",
+      "country": null,
+      "proficiency": "NATIVE_OR_BILINGUAL",
+      "__typename": "profiles_locales"
+    },
+    {
+      "language": "en",
+      "country": "US",
+      "proficiency": null,
+      "__typename": "profiles_locales"
+    },
+    {
+      "language": "en",
+      "country": null,
+      "proficiency": "NATIVE_OR_BILINGUAL",
+      "__typename": "profiles_locales"
+    },
+    {
+      "language": "fr",
+      "country": null,
+      "proficiency": "NATIVE_OR_BILINGUAL",
+      "__typename": "profiles_locales"
+    }
+  ],
+  "educations": [
+    {
+      "id": "46e95908-ac3c-4017-b56b-e533955664c2",
+      "schoolId": "9dad68f7-7f15-4366-8e82-3458053c0fa4",
+      "school": {
+        "id": "9dad68f7-7f15-4366-8e82-3458053c0fa4",
+        "name": "Institut spécialisé de technologie [anonymisé]",
+        "__typename": "schools"
+      },
+      "title": "technicien spécialisé en cloud computing ",
+      "startDate": "2022-10-01T00:00:00.000Z",
+      "endDate": "2024-07-01T00:00:00.000Z",
+      "source": "LINKEDIN",
+      "__typename": "profiles_educations"
+    },
+    {
+      "id": "cfecd8d1-17a8-4145-bba1-155c92247dd1",
+      "schoolId": null,
+      "school": null,
+      "title": "BACCALAURÉAT EN SCIENCES DE LA VIE ET DE LA TERRE (SVT) ",
+      "startDate": "2021-01-01T00:00:00.000Z",
+      "endDate": "2022-01-31T23:59:59.999Z",
+      "source": "RESUME",
+      "__typename": "profiles_educations"
+    },
+    {
+      "id": "9673fb65-6bed-4cfe-b408-76dbdf62ec7d",
+      "schoolId": null,
+      "school": null,
+      "title": "FORMATION DE TESTEUR D'INTRUSIONS CYBERNÉTIQUES\n\nTECHNICIEN SPÉCIALISÉ EN INFRASTRUCTURE DIGITALE (OPTION CLOUD) ",
+      "startDate": null,
+      "endDate": null,
+      "source": "RESUME",
+      "__typename": "profiles_educations"
+    },
+    {
+      "id": "e9b03f98-8b41-4762-bc74-3072420972a1",
+      "schoolId": "48b63c72-ada8-4ddb-abfc-6ec51991e1e3",
+      "school": {
+        "id": "48b63c72-ada8-4ddb-abfc-6ec51991e1e3",
+        "name": "Lycée Ibn Al Haythem",
+        "__typename": "schools"
+      },
+      "title": " ",
+      "startDate": null,
+      "endDate": null,
+      "source": "RESUME",
+      "__typename": "profiles_educations"
+    }
+  ],
+  "skills": [
+    {
+      "id": "17edc44b-5ba7-4823-9a7b-715f7586b979",
+      "name": "3COM Certified IP Telephony NBX Expert",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "65d5259b-4f4b-451f-b8d2-8fb2a2260b44",
+      "name": "Computer Networks",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "e48ac40a-a02a-4b2a-9a60-8f503466cc6c",
+      "name": "Unified Process",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "eabc354d-5060-48f7-b2fd-7d853d9f0cb8",
+      "name": "Kaspersky Anti-Virus",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "a768458a-e3d2-4449-8b02-202fb322a631",
+      "name": "Computer Security",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "946aedd6-58d9-414f-b9b5-9f73fc92ba73",
+      "name": "(Grandstream,",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "bc12da51-defb-4803-954c-9c398f279fa5",
+      "name": "Avaya (Telecommunications)",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "50ab80b6-59cd-4c53-a008-02f1e5b70f35",
+      "name": "Grandstream.",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "667158c9-e22f-4ed8-ac0c-4e2fcaec04ea",
+      "name": "Ruijie",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "5bebfa0c-6f66-4734-b896-b41f67f3776d",
+      "name": "Multifile",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "a87b8b50-f126-4159-a0c4-088e78b89987",
+      "name": "Network Switches",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "e2c7bf19-90c3-40a0-85b1-ddac930e7f04",
+      "name": "Switchover",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "039972f0-0666-4a46-90fc-60d5eb44f076",
+      "name": "Community Management",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "c7c08c5e-3f77-44f4-9ec2-40ec92d3d884",
+      "name": "Open Cloud Computing Interface",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "4c0c9378-b9af-4918-9a5a-968741f036d4",
+      "name": "Virtualization",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "8bdee233-3962-4d36-b432-8e086474fc22",
+      "name": "Telephony",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "b3db4980-b226-4e53-a239-2e47ec55fe35",
+      "name": "Alibaba Cloud",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "5af78178-3789-4c8e-bba7-b342fc8d930f",
+      "name": "Pentesting,",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "7cce3b1e-aed7-4308-abb5-00ae00fb8dde",
+      "name": "Aircraft Maintenance",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "c774cb0d-bc7b-482d-9a4a-a54235666c9d",
+      "name": "Aviation Safety",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "7708e67e-4bdc-4b99-9a98-94874d1df630",
+      "name": "Monitoring",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "957aac1a-b91b-4320-bfe7-0cae32dbc984",
+      "name": "Cash Register",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "9d4254ba-2249-4528-8ed9-3aed2b6e956e",
+      "name": "Consulting",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "5cf0771d-5d9f-40da-a415-2f4ef13f144b",
+      "name": "Cyber Security",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "756c42ea-6ea1-41d5-b8ce-dc9c491f9c77",
+      "name": "Help Desk Support",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "effc685d-551f-4124-9733-df9d7cbaae58",
+      "name": "Clinical Practices",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "cc49d1ab-0154-4feb-b735-92aa740aa2c7",
+      "name": "Quick Learning",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "3c07eca1-37a4-4f59-a8bf-6e7aa16c2d03",
+      "name": "Software Engineering",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "02e4627b-91b2-4ddd-a470-9ff19457cd64",
+      "name": "Surveillance de la sécurité",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "36aaa4e0-7f19-4204-85e2-4e96fa082f25",
+      "name": "Ubiquiti",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "f72acd5f-b16d-4cf3-b771-5968e4444d68",
+      "name": "Transformation numérique",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "53929098-b399-4725-91d4-3ded521b2f6f",
+      "name": "Network Printers",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "2a055561-e491-493a-bb4d-fc157aed0e38",
+      "name": "Network Intrusion Analysis SecOps",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "bbfa7618-75c1-42bd-8238-0d7d0ccbccae",
+      "name": "GLPI",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "70ceb4f2-e910-48b1-b24f-25396974bd8d",
+      "name": "Security Concepts",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "548539f0-c69b-4a80-82fe-6d6ca7e399f0",
+      "name": "Internet des objets",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "0a4e4d5a-5355-4d84-a0f4-2db64b9b73ec",
+      "name": "Administration système",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "9c1ae842-eea3-4f74-843b-c8b26b3586ca",
+      "name": "Politique de sécurité",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "66003feb-2d8b-4189-823b-b18eba068e56",
+      "name": "Ruiji",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "5366320d-6702-462f-a110-352c63151734",
+      "name": "Zabbix",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "53d967b1-da79-436f-ba11-ab41f9fe0bce",
+      "name": "Test d’intrusion",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "9ffebb63-91ac-4510-8769-da1325499cf5",
+      "name": "Windows Server",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "a74c38af-5497-4cb7-b37e-624410cb592e",
+      "name": "Analyse des logiciels malveillants",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "55681443-4563-482f-b696-0dc4df044312",
+      "name": "Unifi",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "88e98dc6-d9d4-4184-a8ad-45a7e737b730",
+      "name": "Active Directory",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "9fb62903-393f-41cf-be89-fa8a8ffa48e2",
+      "name": "Technical Support",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "f3e33b49-b609-4175-9407-861ef4516d15",
+      "name": "Attack Methods",
+      "__typename": "profiles_skills"
+    },
+    {
+      "id": "51e6503e-baea-4022-ac2c-27c92c7219ab",
+      "name": "Antivirus",
+      "__typename": "profiles_skills"
+    }
+  ],
+  "fieldsValues": [
+    {
+      "id": "fba08dc7-0619-4e35-a309-6870ac71bebc",
+      "fieldId": "9baa71c7-8c98-4464-bb99-31cc9c751657",
+      "fieldValueId": null,
+      "value": "<p><strong>Yassine BENNANI</strong></p><ul><li><p>Disponible sous préavis de 2 semaines</p></li><li><p>Basé à Marrakech</p></li><li><p>Prétentions salariales : 4 500 – 5 000 MAD</p></li></ul><p><strong>Formation</strong><br>Technicien spécialisé en cloud computing et systèmes et réseaux.</p><p><strong>Expérience</strong><br>Technicien IT avec une expérience opérationnelle en environnement multi-sites (clinique et centre de radiologie), avec responsabilité directe de l’infrastructure informatique.</p><p>Intervient sur la gestion des incidents utilisateurs, la maintenance des serveurs, des postes de travail et des périphériques, ainsi que sur la continuité des services IT.</p><p>Expérience de support technique en autonomie complète sur plusieurs sites, incluant le diagnostic et la résolution d’incidents à distance et sur site.</p><p><strong>Compétences pertinentes</strong></p><ul><li><p>Support utilisateurs N1/N2 et gestion des incidents IT</p></li><li><p>Administration et maintenance des environnements systèmes (Windows Server avec Active Directory / ADP)</p></li><li><p>Gestion des comptes utilisateurs et création d’accès dans un environnement opérationnel</p></li><li><p>Supervision et monitoring des infrastructures IT (Zabbix)</p></li><li><p>Utilisation d’outils de ticketing et gestion des demandes (GLPI / Zoho)</p></li><li><p>Maintenance des serveurs, postes de travail et équipements réseau</p></li><li><p>Support multi-sites avec forte autonomie opérationnelle</p></li><li><p>Expérience sur VPN et environnements virtualisés (Azure / AVD en usage)</p></li></ul><p><strong>Support utilisateurs</strong><br>Profil orienté support IT généraliste avec prise en charge complète des incidents utilisateurs en environnement de production. Bonne capacité de diagnostic et résolution autonome des incidents techniques et applicatifs.</p><p><strong>Sécurité &amp; environnement Microsoft</strong><br>Connaissances des environnements Microsoft (Windows Server, Active Directory, gestion des accès utilisateurs). Exposition théorique aux solutions cloud Microsoft (M365, Entra ID) sans expérience avancée en administration cloud.</p><p><strong>Communication</strong><br>Bon niveau de français oral permettant une communication fluide en environnement professionnel.</p><p><strong>Avis recruteur</strong><br>Profil très opérationnel avec forte autonomie sur la gestion IT multi-sites. Bonne maîtrise des environnements systèmes, du support utilisateurs et des outils de supervision (Zabbix) et ticketing (GLPI / Zoho). Profil adapté à un environnement de support Microsoft 365 avec capacité à monter rapidement en compétences sur les outils cloud.</p>",
+      "field": {
+        "id": "9baa71c7-8c98-4464-bb99-31cc9c751657",
+        "type": "richtext",
+        "name": "Récap Entretien",
+        "parent": null,
+        "__typename": "fields"
+      },
+      "fieldValue": null,
+      "location": null,
+      "__typename": "profiles_fieldsvalues"
+    }
+  ],
+  "emailAddresses": [
+    {
+      "id": "55f11b32-865d-44e0-9b53-953189e8e21e",
+      "email": "bennani.Yassine@example.com",
+      "source": "RESUME",
+      "userId": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+      "__typename": "email_addresses"
+    }
+  ],
+  "phoneNumbers": [
+    {
+      "id": "846af3d2-fb7b-47fa-b448-a56ca1058df8",
+      "number": "+212 600000000",
+      "source": "RESUME",
+      "type": "MOBILE",
+      "canonicalNumber": "212600000000",
+      "whatsappIdentifier": "212600000000@s.whatsapp.net",
+      "whatsappLastCheckedAt": "2026-06-24T13:13:13.828Z",
+      "telegramIdentifier": null,
+      "telegramLastCheckedAt": null,
+      "userId": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+      "__typename": "phone_numbers"
+    }
+  ],
+  "assignees": [
+    {
+      "user": {
+        "displayName": "Recruteur Jarvi (anonymisé)",
+        "id": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+        "__typename": "users"
+      },
+      "__typename": "profiles_assignees_cache"
+    }
+  ],
+  "status": {
+    "title": "jarvis.statuses.applicants",
+    "colorId": "#651fff",
+    "isAuto": true,
+    "id": "ac6c3c8a-a85b-11ed-afa1-0242ac120002",
+    "isProtected": false,
+    "__typename": "statuses"
+  },
+  "associations": [
+    {
+      "id": "4aa7c247-608c-44f9-baec-11321dab4dc1",
+      "statusId": "f32a6d03-31a1-46dd-9760-9f5aef7712d5",
+      "associationType": "PROJECT_PROFILE",
+      "source": null,
+      "createdAt": "2026-06-16T08:45:40.298Z",
+      "updatedAt": "2026-06-26T13:31:31.126Z",
+      "updatedByUserId": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+      "updatedStatusAt": "2026-06-26T13:31:31.126Z",
+      "status": {
+        "title": "Refusé entreprise après entretien",
+        "colorId": "#33691e",
+        "isAuto": false,
+        "isProtected": false,
+        "isArchived": false,
+        "isRejected": false,
+        "isHired": false,
+        "id": "f32a6d03-31a1-46dd-9760-9f5aef7712d5",
+        "order": 1000,
+        "parentId": "1fbb967e-e237-41c8-b075-a4367b0a584b",
+        "parent": {
+          "id": "1fbb967e-e237-41c8-b075-a4367b0a584b",
+          "title": "jarvis.statusesGroups.archived",
+          "order": 30000,
+          "__typename": "statuses"
+        },
+        "__typename": "statuses"
+      },
+      "externalId": "ad7f286c-8e47-45a4-bfa3-9ce821a27367",
+      "companyId": null,
+      "company": null,
+      "projectId": "ad7f286c-8e47-45a4-bfa3-9ce821a27367",
+      "project": {
+        "id": "ad7f286c-8e47-45a4-bfa3-9ce821a27367",
+        "referenceId": null,
+        "isMadeForSales": false,
+        "isMadeForRecruitment": true,
+        "presetId": "b3d21056-8eec-47f2-8afa-1e5cbf239740",
+        "assignees": [
+          {
+            "user": {
+              "id": "b95486c0-fd4e-43be-aafb-612bff90ac7d",
+              "__typename": "users"
+            },
+            "__typename": "projects_assignees"
+          }
+        ],
+        "status": {
+          "id": "d7573010-77f9-44f2-91c1-7039be50d454",
+          "title": "jarvis.statuses.projectInProgress",
+          "colorId": "#a5d6a7",
+          "isArchived": false,
+          "__typename": "statuses"
+        },
+        "fieldsValues": [
+          {
+            "id": "8d69bfc0-8fc2-4ac4-b127-5f531a8998ed",
+            "field": {
+              "id": "50591504-2f13-4efe-8803-bb4365ffee01",
+              "type": "boolean",
+              "name": "resources.fields.purposes.joboffer_is_fulltime.name",
+              "__typename": "fields"
+            },
+            "fieldValue": null,
+            "location": null,
+            "value": "true",
+            "__typename": "projects_fieldsvalues"
+          },
+          {
+            "id": "6911aaf6-74a0-4f37-8e96-027efd5af5a9",
+            "field": {
+              "id": "8d21f6d2-8494-4736-9731-137e328a05c9",
+              "type": "boolean",
+              "name": "resources.fields.purposes.joboffer_salary_is_public.name",
+              "__typename": "fields"
+            },
+            "fieldValue": null,
+            "location": null,
+            "value": "true",
+            "__typename": "projects_fieldsvalues"
+          },
+          {
+            "id": "ecbba85a-428a-4b33-a187-f3bcee541684",
+            "field": {
+              "id": "2c8e99e2-5b14-4617-bf3a-8c2b8592354c",
+              "type": "singlechoice",
+              "name": "resources.fields.purposes.joboffer_contract_type.name",
+              "__typename": "fields"
+            },
+            "fieldValue": {
+              "id": "99168f85-42f9-4fe2-9cde-460e662ed4ab",
+              "name": "resources.fields.purposes.joboffer_contract_type.values.permanent",
+              "__typename": "fieldsvalues"
+            },
+            "location": null,
+            "value": null,
+            "__typename": "projects_fieldsvalues"
+          },
+          {
+            "id": "fd9115bb-83f2-4d51-9f6f-5662f2426d80",
+            "field": {
+              "id": "46744c0f-b0c8-442e-af4a-882e1c97b313",
+              "type": "richtext",
+              "name": "resources.fields.purposes.joboffer_company_description.name",
+              "__typename": "fields"
+            },
+            "fieldValue": null,
+            "location": null,
+            "value": "Le Groupe ODICE accompagne les professionnels dans l’aménagement, l’installation, la maintenance et le dépannage de cuisines professionnelles.<br /><br />1er groupe indépendant Français, implanté dans le Sud de la France, le groupe compte 9 sociétés  :<br />Provence Froid, Martinon, Dimco, Savec, Altecc, SVR Équipement, Froid Cuisine 33, Creat Services et Miditech ITR.<br /><br />Cette organisation nous permet d’allier proximité terrain, expertise technique et réactivité, au plus près des besoins de nos clients.<br /><br />🎯 Notre mission : proposer des installations fiables et durables, et garantir la continuité d’activité grâce à un accompagnement technique performant.<br /><br />Nous accompagnons :<br />🍽️ Restaurants, brasseries et établissements de restauration<br />🏨 Hôtels et établissements touristiques<br />🏥 Établissements de santé, cliniques, EHPAD<br />🏢 Restauration collective, cuisines centrales, collectivités<br />🛍️ Métiers de bouche : traiteurs, boulangers, pâtissiers<br /><br />🤝 Notre force : des équipes engagées, réparties sur le territoire, avec une approche commune fondée sur la qualité de service, la rigueur technique et la proximité client <br /><br />Chaque projet bénéficie d’un suivi global, de l’aménagement à la mise en service, jusqu’à la maintenance et au dépannage.<br /><br />Le groupe Odice c'est la puissance d'un grand groupe avec la proximité des PME 🤝<br /><br />📞 Un besoin, un projet ? Échangeons dès aujourd’hui.",
+            "__typename": "projects_fieldsvalues"
+          },
+          {
+            "id": "e5b2ff00-17fe-493e-86f2-bf37cbf97a85",
+            "field": {
+              "id": "8a07a416-8529-4cda-986a-8a2ff94dc6f2",
+              "type": "richtext",
+              "name": "resources.fields.purposes.joboffer_description.name",
+              "__typename": "fields"
+            },
+            "fieldValue": null,
+            "location": null,
+            "value": "<p>Vous êtes titulaire d’un Bac+2 ou Bac+3 en informatique et disposez d’une première expérience réussie en support technique ou en gestion de parc informatique ? Vous êtes rigoureux, méthodique et capable de résoudre des problèmes de manière autonome ? Cette opportunité pourrait vous convenir.</p><p><strong>Missions principales</strong></p><ul><li><p>Administration Microsoft 365 &amp; Entra ID : Gestion des comptes (onboarding/offboarding), des licences et des droits d'accès.</p></li><li><p>Support Utilisateurs à distance : Résolution des incidents (Niveau 1/2) sur la suite Office, Teams, SharePoint et OneDrive via prise de main sécurisée.</p></li><li><p>Gestion du parc via Intune &amp; Autopilot : Déploiement automatisé des profils de postes (Zéro Touche), télédistribution de logiciels et supervision des mises à jour Windows.</p></li><li><p>Sécurité &amp; Connectivité : Support MFA, gestion des alertes Microsoft Defender et assistance aux accès VPN / Azure Virtual Desktop.</p></li></ul>",
+            "__typename": "projects_fieldsvalues"
+          },
+          {
+            "id": "1dfcb1f5-5cf6-4c79-a6b2-461e6dd2c017",
+            "field": {
+              "id": "fe0cc7af-679a-4259-9396-05ba32aea273",
+              "type": "singlelocation",
+              "name": "resources.fields.purposes.joboffer_location.name",
+              "__typename": "fields"
+            },
+            "fieldValue": null,
+            "location": {
+              "id": "fe738eb6-5b16-4218-8b12-a7dd15ea9ab0",
+              "locality": "Marrakech",
+              "__typename": "locations"
+            },
+            "value": null,
+            "__typename": "projects_fieldsvalues"
+          },
+          {
+            "id": "32246789-d4b4-4901-af92-55ca6cab570b",
+            "field": {
+              "id": "2780d09e-d881-4b01-a325-ade0e47b7b12",
+              "type": "richtext",
+              "name": "resources.fields.purposes.joboffer_profile_description.name",
+              "__typename": "fields"
+            },
+            "fieldValue": null,
+            "location": null,
+            "value": "<p><strong>Profil recherché</strong></p><ul><li><p>Maîtrise des consoles d'administration Microsoft (M365, Entra ID, Intune).</p></li><li><p>Excellente communication et aisance dans le support client à distance.</p></li><li><p>Autonomie et rigueur dans le suivi des tickets.</p></li></ul><p><strong>La maîtrise du français (oral et écrit) est indispensable pour ce poste ; les candidatures de profils ne disposant pas d’un niveau suffisant ne pourront pas être retenues.</strong></p><p><strong>Merci de ne pas postuler si :</strong></p><ul><li><p>Vous résidez hors de Marrakech sans projet de déménagement immédiat</p></li><li><p>Vous n’avez pas d’expérience pratique sur un poste similaire (stage ou emploi)</p></li><li><p>Vous n’êtes pas à l’aise avec les environnements Microsoft et outils collaboratifs</p></li></ul><p><strong>Environnement de travail :</strong></p><p>Poste en CDI, au sein d’une équipe structurée, des bureaux et des équipement neufs avec accompagnement par des prestataires spécialisés et des projets en développement constant.</p><p>Les candidatures pertinentes seront recontactées sous 10 jours.</p><p>Langue:</p><p></p><ul><li><p>Français (Requis)</p></li></ul>",
+            "__typename": "projects_fieldsvalues"
+          }
+        ],
+        "colorId": null,
+        "name": "support technique Microsoft 365 ",
+        "publicUrl": null,
+        "company": {
+          "id": "3eb6cc85-891b-4391-ba04-8091761a6b0e",
+          "name": "Groupe ODICE",
+          "image": null,
+          "fieldsValues": [
+            {
+              "id": "eb6eafdf-c4d5-4847-a7d3-de3308a3f405",
+              "field": {
+                "id": "5143c2c4-82fd-4926-9022-7ffd02eee7c4",
+                "type": "multiplechoice",
+                "name": "Type de client",
+                "__typename": "fields"
+              },
+              "fieldValue": {
+                "id": "00bf0210-37a6-4206-aee4-3f7c7e728498",
+                "name": "Recrutement France",
+                "__typename": "fieldsvalues"
+              },
+              "value": null,
+              "__typename": "companies_fieldsvalues"
+            },
+            {
+              "id": "204d5797-2ee5-4289-a342-44d4b4fd1af7",
+              "field": {
+                "id": "5143c2c4-82fd-4926-9022-7ffd02eee7c4",
+                "type": "multiplechoice",
+                "name": "Type de client",
+                "__typename": "fields"
+              },
+              "fieldValue": {
+                "id": "b495070d-f294-4c46-8549-6acd124a7364",
+                "name": "Partneraire Maroc",
+                "__typename": "fieldsvalues"
+              },
+              "value": null,
+              "__typename": "companies_fieldsvalues"
+            },
+            {
+              "id": "7bfc81e4-4653-4dbc-8ba0-e56902e03685",
+              "field": {
+                "id": "b35220cb-d086-44ab-bcaf-846a468c5f9d",
+                "type": "richtext",
+                "name": "resources.fields.defaultFields.clientNeed",
+                "__typename": "fields"
+              },
+              "fieldValue": null,
+              "value": "<h2>1. Compte-rendu pour le CRM (Fiche Groupe ODICE)</h2><p><strong>Contact :</strong> William FOLLENBACH – Directeur SAV Groupe <strong>Périmètre :</strong> Pilote les 8 agences du groupe. Décisionnaire final sur les recrutements.</p><h3>Synthèse du besoin Groupe</h3><ul><li><p><strong>Volume :</strong> Recrutement constant (\"Besoin permanent\"). Environ 30 recrutements prévus sur 2025.</p></li><li><p><strong>Réactivité :</strong> S'engage à un retour sous 24h. Valorise la pertinence et la qualité technique du dossier plutôt que le volume.</p></li></ul><h3>Critères Techniques &amp; Profils</h3><ul><li><p><strong>Cœur de cible :</strong> Profils issus de la Cuisine Professionnelle (concurrence directe).</p></li><li><p><strong>Ouverture :</strong> Électromécaniciens avec habilitation fluides + froid (volonté de monter en compétence) ou Frigoristes (accoutumés aux astreintes).</p></li><li><p><strong>Questions éliminatoires (Checklist technique) :</strong></p><ul><li><p><em>Capacité Froid :</em> Prise de pression, brasage, recharge d'installation.</p></li><li><p><em>Expertise Équipement :</em> Doit citer des marques et types précis (four, lave-batterie) et non juste \"chaud/froid\".</p></li><li><p><em>Dépannage :</em> Capacité à gérer une panne de friteuse et mettre en \"mode dégradé\".</p></li></ul></li><li><p><strong>Soft Skills :</strong> Comportement irréprochable (vigilance sur les antécédents d'addiction ou d'attitude en clientèle).</p></li></ul><h3>Conditions &amp; Contraintes</h3><ul><li><p><strong>Astreintes :</strong> Week-ends et jours fériés (journée). Pas de nuit. Pas de GMS/Boulangerie/Boucherie.</p></li><li><p><strong>Rémunération :</strong> Grille large selon zone géo.</p><ul><li><p><em>Standard :</em> 2500 € à 3500 € brut.</p></li><li><p><em>Zones de tension (Savoie / 06) :</em> Entre 4000 € et 4500 € pour attirer.</p></li><li><p><em>Zones rurales (05 / Fréjus) :</em> 3000 € pour un profil \"Top\".</p></li></ul></li></ul>",
+              "__typename": "companies_fieldsvalues"
+            }
+          ],
+          "linkedinCompanyId": "558cf889-bd5d-480e-ab57-099beab99627",
+          "linkedinCompanyData": {
+            "id": "558cf889-bd5d-480e-ab57-099beab99627",
+            "name": "Groupe ODICE",
+            "image": {
+              "publicUrl": "https://qimsyaozqntinmrokopq.storage.eu-west-2.nhost.run/v1/files/a6692303-2b29-45ce-b9a1-40465e0901f8",
+              "__typename": "images"
+            },
+            "__typename": "linkedin_companies_data"
+          },
+          "__typename": "companies"
+        },
+        "__typename": "projects"
+      },
+      "__typename": "profiles_associations"
+    }
+  ],
+  "__typename": "profiles",
+  "customFieldsValues": {
+    "9baa71c7-8c98-4464-bb99-31cc9c751657": "<p><strong>Yassine BENNANI</strong></p><ul><li><p>Disponible sous préavis de 2 semaines</p></li><li><p>Basé à Marrakech</p></li><li><p>Prétentions salariales : 4 500 – 5 000 MAD</p></li></ul><p><strong>Formation</strong><br>Technicien spécialisé en cloud computing et systèmes et réseaux.</p><p><strong>Expérience</strong><br>Technicien IT avec une expérience opérationnelle en environnement multi-sites (clinique et centre de radiologie), avec responsabilité directe de l’infrastructure informatique.</p><p>Intervient sur la gestion des incidents utilisateurs, la maintenance des serveurs, des postes de travail et des périphériques, ainsi que sur la continuité des services IT.</p><p>Expérience de support technique en autonomie complète sur plusieurs sites, incluant le diagnostic et la résolution d’incidents à distance et sur site.</p><p><strong>Compétences pertinentes</strong></p><ul><li><p>Support utilisateurs N1/N2 et gestion des incidents IT</p></li><li><p>Administration et maintenance des environnements systèmes (Windows Server avec Active Directory / ADP)</p></li><li><p>Gestion des comptes utilisateurs et création d’accès dans un environnement opérationnel</p></li><li><p>Supervision et monitoring des infrastructures IT (Zabbix)</p></li><li><p>Utilisation d’outils de ticketing et gestion des demandes (GLPI / Zoho)</p></li><li><p>Maintenance des serveurs, postes de travail et équipements réseau</p></li><li><p>Support multi-sites avec forte autonomie opérationnelle</p></li><li><p>Expérience sur VPN et environnements virtualisés (Azure / AVD en usage)</p></li></ul><p><strong>Support utilisateurs</strong><br>Profil orienté support IT généraliste avec prise en charge complète des incidents utilisateurs en environnement de production. Bonne capacité de diagnostic et résolution autonome des incidents techniques et applicatifs.</p><p><strong>Sécurité &amp; environnement Microsoft</strong><br>Connaissances des environnements Microsoft (Windows Server, Active Directory, gestion des accès utilisateurs). Exposition théorique aux solutions cloud Microsoft (M365, Entra ID) sans expérience avancée en administration cloud.</p><p><strong>Communication</strong><br>Bon niveau de français oral permettant une communication fluide en environnement professionnel.</p><p><strong>Avis recruteur</strong><br>Profil très opérationnel avec forte autonomie sur la gestion IT multi-sites. Bonne maîtrise des environnements systèmes, du support utilisateurs et des outils de supervision (Zabbix) et ticketing (GLPI / Zoho). Profil adapté à un environnement de support Microsoft 365 avec capacité à monter rapidement en compétences sur les outils cloud.</p>"
+  }
+}

@@ -1,0 +1,49 @@
+# ─── PROD (déployée sur tag vX.Y.Z + approbation manuelle) ─────────────────
+.PHONY: prod-build prod-docs-build prod-up prod-docs-up prod-down prod-clean prod-status prod-logs
+prod-build: ## Builder les images prod (api + worker + 1 image par espace) — UNE À LA FOIS (anti-OOM)
+	@for s in api $(WORKER_SERVICE) $(WEBAPP_SERVICES); do \
+		echo "→ build prod: $$s"; \
+		COMPOSE_BAKE=false $(COMPOSE_PROD) build $$s || exit 1; \
+	done
+
+prod-docs-build: ## Builder uniquement les 3 documentations prod
+	$(COMPOSE_PROD) build $(DOCS_SERVICES)
+
+prod-up: ## Lancer les services prod
+	$(COMPOSE_PROD) up -d
+
+prod-docs-up: ## Lancer uniquement les 3 documentations prod
+	$(COMPOSE_PROD) up -d $(DOCS_SERVICES)
+
+prod-down: ## Arrêter et supprimer les containers prod
+	$(COMPOSE_PROD) down
+
+prod-clean: ## Reset volumes prod (DANGER — efface la BDD prod)
+	$(COMPOSE_PROD) down -v
+
+prod-status: ## État des services prod
+	$(COMPOSE_PROD) ps
+
+prod-logs: ## Suivre les logs prod
+	$(COMPOSE_PROD) logs -f --tail=200
+
+.PHONY: prod-migrate prod-messenger-setup prod-messenger-failed prod-healthcheck prod-deploy
+prod-migrate: ## Migrations Doctrine (prod)
+	$(COMPOSE_PROD) exec -T api php bin/console doctrine:migrations:migrate --no-interaction
+
+prod-messenger-setup: ## Créer les tables des transports Messenger (hors mapping Doctrine, idempotent)
+	$(COMPOSE_PROD) exec -T api php bin/console messenger:setup-transports
+
+prod-messenger-failed: ## Lister les e-mails en échec (rejeu : messenger:failed:retry)
+	$(COMPOSE_PROD) exec -T api php bin/console messenger:failed:show
+
+prod-healthcheck: ## Vérifier que l'API prod répond (via le proxy frontal)
+	@. ./.env && curl -fsSk --resolve api.$${BASE_DOMAIN}:443:127.0.0.1 https://api.$${BASE_DOMAIN}/v1/health > /dev/null && echo "OK" || (echo "KO" && exit 1)
+
+prod-deploy: ## Déploiement prod : build → up → JWT → migrate → tables Messenger → healthcheck
+	$(COMPOSE_PROD) build
+	$(COMPOSE_PROD) up -d
+	$(COMPOSE_PROD) exec -T api php bin/console lexik:jwt:generate-keypair --skip-if-exists
+	$(MAKE) prod-migrate
+	$(MAKE) prod-messenger-setup
+	$(MAKE) prod-healthcheck

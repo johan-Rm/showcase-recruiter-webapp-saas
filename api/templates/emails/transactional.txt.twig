@@ -1,0 +1,37 @@
+{# Pendant texte du gabarit HTML : mêmes paramètres, même ordre. Il n'est pas décoratif — un e-mail
+   sans partie texte perd des points de réputation chez les filtres anti-spam, et c'est lui que lisent
+   les clients qui refusent le HTML. Les `{%-` tiennent l'interligne : sans eux, chaque bloc absent
+   laisserait sa ligne vide. #}
+{{ heading }}
+
+{% for paragraph in paragraphs %}{{ paragraph }}
+
+{% endfor %}
+{%- if changes is defined and changes|length > 0 %}Ce qui change
+
+{% for change in changes %}- {{ change }}
+{% endfor %}
+
+{% endif %}
+{%- if cta is defined and cta is not null %}{{ cta.label }} :
+{{ cta.url }}
+
+{% endif %}
+{%- if accesses is defined and accesses|length > 0 %}Vos accès
+
+{% for access in accesses %}{{ access.label }}
+{{ access.url }}
+login : {{ access.login }}
+mot de passe : {{ access.password }}
+
+{% endfor %}
+{% endif %}
+{%- if note is defined and note is not null %}{{ note }}
+
+{% endif %}
+{%- if footer_note is defined and footer_note is not null %}{{ footer_note }}
+
+{% endif %}
+L'équipe Shortlist
+Le pont entre les talents d'Europe et les entreprises du Maroc.
+E-mail automatique, merci de ne pas y répondre.

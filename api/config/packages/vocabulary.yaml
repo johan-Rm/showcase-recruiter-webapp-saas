@@ -1,0 +1,12 @@
+# Vocabulaire — traitements DÉTERMINISTES (aucun LLM, donc distincts de anthropic.yaml).
+#
+# Concepts proches (tâche 111) : deux seuils, tous deux nécessaires.
+# - min_cooccurrences écarte le hasard des petits nombres ;
+# - min_npmi écarte les associations banales. Mesuré sur le vivier : à 0, « Communication » ressort
+#   proche de 344 concepts ; à 0,3 il lui en reste 5, et 426 des 493 concepts gardent un voisin.
+parameters:
+    env(VOCABULARY_SIMILARITY_MIN_COOCCURRENCES): '4'
+    env(VOCABULARY_SIMILARITY_MIN_NPMI): '0.3'
+
+    vocabulary.similarity.min_cooccurrences: '%env(int:VOCABULARY_SIMILARITY_MIN_COOCCURRENCES)%'
+    vocabulary.similarity.min_npmi: '%env(float:VOCABULARY_SIMILARITY_MIN_NPMI)%'

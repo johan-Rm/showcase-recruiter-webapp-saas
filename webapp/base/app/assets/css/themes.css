@@ -1,0 +1,54 @@
+/* Tokens sémantiques de la marque. Les deux thèmes partagent les échelles
+   ardoise et bleu ; leurs niveaux s'adaptent au contraste et à l'élévation. */
+
+:root {
+  --bg: var(--color-slate-50);
+  --surface: #ffffff;
+  --surface-soft: var(--color-slate-100);
+  --dropdown-bg: #ffffff;
+  --text: var(--color-slate-900);
+  --muted: var(--color-slate-600);
+  --line: color-mix(in srgb, var(--text) 14%, transparent);
+  --overlay-shadow: 0 12px 28px -8px rgb(15 23 42 / 0.14), 0 2px 6px -2px rgb(15 23 42 / 0.08);
+
+  --accent: var(--color-blue-700);
+  --on-accent: #ffffff;
+  --accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
+  --sl-hover: color-mix(in srgb, var(--accent) 6%, transparent);
+  --sl-press: color-mix(in srgb, var(--accent) 12%, transparent);
+  --scrim: rgb(2 6 23 / 0.55);
+  --alert: #b91c1c;
+
+  /* Les états restent reconnaissables par leur libellé et leur icône.
+     Leur teinte colore le badge, sans teinter la ligne de données. */
+  --state-met: #8b5cf6;
+  --state-available: #10b981;
+  --state-new: #0ea5e9;
+  --state-morocco: #f59e0b;
+  --verdict-met: #047857;
+  --verdict-missed: #b45309;
+  --tint-fill: 18%;
+}
+
+.dark {
+  --bg: var(--color-slate-950);
+  --surface: var(--color-slate-900);
+  --surface-soft: var(--color-slate-800);
+  --dropdown-bg: var(--color-slate-900);
+  --text: var(--color-slate-50);
+  --muted: var(--color-slate-400);
+  --line: color-mix(in srgb, var(--text) 16%, transparent);
+  --overlay-shadow: 0 16px 32px -12px rgb(0 0 0 / 0.55), 0 2px 8px -4px rgb(0 0 0 / 0.4);
+
+  --accent: var(--color-blue-300);
+  --on-accent: var(--color-slate-950);
+  /* Déclarer les tokens dérivés ici aussi : .dark peut être un îlot dans une page claire. */
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
+  --sl-hover: color-mix(in srgb, var(--accent) 8%, transparent);
+  --sl-press: color-mix(in srgb, var(--accent) 14%, transparent);
+  --scrim: rgb(2 6 23 / 0.65);
+  --alert: #fca5a5;
+  --verdict-met: #6ee7b7;
+  --verdict-missed: #fcd34d;
+  --tint-fill: 22%;
+}

@@ -1,0 +1,156 @@
+# Caddy frontal UNIQUE (compose : docker-compose.proxy.yml) — TLS automatique.
+# Route par domaine : *.{$BASE_DOMAIN} → stack prod, *.preprod.{$BASE_DOMAIN} → stack preprod.
+# Les upstreams sont les alias réseau des stacks sur `showcase-recruiter-webapp-saas_edge` (suffixes -prod / -preprod).
+# Une seule app Nuxt sert le public + les 3 espaces ; l'API et les docs sont séparées.
+
+# ═══ PROD ═══════════════════════════════════════════════════════════════════
+
+# API → FrankenPHP
+api.{$BASE_DOMAIN} {
+	encode zstd gzip
+	# Schéma OpenAPI / Swagger UI (`/v1/docs*`) protégé en basic-auth : ne pas exposer
+	# publiquement la cartographie de l'API. Les endpoints restent ouverts (JWT), et le
+	# healthcheck (`/v1/health`) n'est pas impacté.
+	@docs path /v1/docs /v1/docs*
+	basic_auth @docs {
+		{$DOCS_BASIC_AUTH_USER} {$DOCS_BASIC_AUTH_HASH}
+	}
+	reverse_proxy api-prod:80
+}
+
+# Public Website + espaces candidat / entreprise / admin → UNE BUILD NUXT PAR ESPACE.
+# Architecture layers : une image ne contient que son espace. Router les 4 hosts vers un
+# seul service afficherait le même espace partout — le host EST la sélection de l'espace.
+{$BASE_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy webapp-public-prod:3000
+}
+
+candidat.{$BASE_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy webapp-candidat-prod:3000
+}
+
+entreprise.{$BASE_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy webapp-entreprise-prod:3000
+}
+
+admin.{$BASE_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy webapp-admin-prod:3000
+}
+
+# Documentation projet → Docus (doc d'équipe : basic auth + noindex, même en prod)
+docs.{$BASE_DOMAIN} {
+	encode zstd gzip
+	header X-Robots-Tag "noindex, nofollow"
+	basic_auth {
+		{$DOCS_BASIC_AUTH_USER} {$DOCS_BASIC_AUTH_HASH}
+	}
+	reverse_proxy docs-prod:3000
+}
+
+# Documentation OpenAPI → Docus (doc d'équipe : basic auth + noindex, même en prod)
+swagger.{$BASE_DOMAIN} {
+	encode zstd gzip
+	header X-Robots-Tag "noindex, nofollow"
+	basic_auth {
+		{$DOCS_BASIC_AUTH_USER} {$DOCS_BASIC_AUTH_HASH}
+	}
+	reverse_proxy swagger-prod:3000
+}
+
+# Documentation de cadrage interne → Docus (doc d'équipe : basic auth + noindex, même en prod)
+dev-book.{$BASE_DOMAIN} {
+	encode zstd gzip
+	header X-Robots-Tag "noindex, nofollow"
+	basic_auth {
+		{$DOCS_BASIC_AUTH_USER} {$DOCS_BASIC_AUTH_HASH}
+	}
+	reverse_proxy devbook-prod:3000
+}
+
+# ═══ PREPROD ════════════════════════════════════════════════════════════════
+# Verrouillée : basic auth + noindex sur tout, SAUF l'API (protégée par JWT,
+# et le healthcheck de deploy doit passer sans credentials).
+
+# API preprod → FrankenPHP
+api.preprod.{$BASE_DOMAIN} {
+	encode zstd gzip
+	header X-Robots-Tag "noindex, nofollow"
+	reverse_proxy api-preprod:80
+}
+
+# Webapp preprod — une build par espace, comme en prod.
+# Pas de basic auth : accès géré par le login applicatif (Nuxt/BFF). `noindex` conservé
+# pour ne pas indexer le site vitrine de recette. Mailpit et docs restent, eux, protégés.
+preprod.{$BASE_DOMAIN} {
+	encode zstd gzip
+	header X-Robots-Tag "noindex, nofollow"
+	# Maquettes de conception (`/artefacts/*`) : la preprod est le seul environnement déployé qui
+	# les serve — en prod les routes n'existent pas (drapeau NUXT_PUBLIC_ARTEFACTS absent). Le
+	# `noindex` du vhost les couvre déjà ; ce basic auth ferme l'accès. Mêmes identifiants que les
+	# docs d'équipe : même public, un seul secret.
+	@artefacts path /artefacts /artefacts/*
+	basic_auth @artefacts {
+		{$DOCS_BASIC_AUTH_USER} {$DOCS_BASIC_AUTH_HASH}
+	}
+	reverse_proxy webapp-public-preprod:3000
+}
+
+candidat.preprod.{$BASE_DOMAIN} {
+	encode zstd gzip
+	header X-Robots-Tag "noindex, nofollow"
+	reverse_proxy webapp-candidat-preprod:3000
+}
+
+entreprise.preprod.{$BASE_DOMAIN} {
+	encode zstd gzip
+	header X-Robots-Tag "noindex, nofollow"
+	reverse_proxy webapp-entreprise-preprod:3000
+}
+
+admin.preprod.{$BASE_DOMAIN} {
+	encode zstd gzip
+	header X-Robots-Tag "noindex, nofollow"
+	reverse_proxy webapp-admin-preprod:3000
+}
+
+# Mailpit preprod (magic links & e-mails de recette — jamais public)
+mailpit.preprod.{$BASE_DOMAIN} {
+	encode zstd gzip
+	header X-Robots-Tag "noindex, nofollow"
+	basic_auth {
+		{$PREPROD_BASIC_AUTH_USER} {$PREPROD_BASIC_AUTH_HASH}
+	}
+	reverse_proxy mailpit-preprod:8025
+}
+
+# Docs preprod — mêmes identifiants « docs » que la prod (équipe), pas ceux de la preprod
+docs.preprod.{$BASE_DOMAIN} {
+	encode zstd gzip
+	header X-Robots-Tag "noindex, nofollow"
+	basic_auth {
+		{$DOCS_BASIC_AUTH_USER} {$DOCS_BASIC_AUTH_HASH}
+	}
+	reverse_proxy docs-preprod:3000
+}
+
+swagger.preprod.{$BASE_DOMAIN} {
+	encode zstd gzip
+	header X-Robots-Tag "noindex, nofollow"
+	basic_auth {
+		{$DOCS_BASIC_AUTH_USER} {$DOCS_BASIC_AUTH_HASH}
+	}
+	reverse_proxy swagger-preprod:3000
+}
+
+dev-book.preprod.{$BASE_DOMAIN} {
+	encode zstd gzip
+	header X-Robots-Tag "noindex, nofollow"
+	basic_auth {
+		{$DOCS_BASIC_AUTH_USER} {$DOCS_BASIC_AUTH_HASH}
+	}
+	reverse_proxy devbook-preprod:3000
+}

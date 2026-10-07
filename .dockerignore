@@ -1,0 +1,23 @@
+**/.git
+**/node_modules
+**/vendor
+**/var
+**/.nuxt
+**/.output
+**/.env
+**/.env.*
+dev-book
+scripts
+*.md
+
+# Docus documentation images are built from the repository root because the
+# dev-book site symlinks its content to dev-book/. The showcase-recruiter-webapp-saas and api sites
+# embed their content in place (docs/showcase-recruiter-webapp-saas/content, docs/api/content).
+!dev-book
+!dev-book/**
+!docs
+!docs/**
+docs/**/node_modules
+docs/**/.nuxt
+docs/**/.output
+docs/**/.data

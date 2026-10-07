@@ -1,0 +1,4 @@
+# Point de contrôle du json_login (firewall « login ») — géré par LexikJWT.
+api_login_check:
+    path: /v1/auth/login
+    methods: [POST]
